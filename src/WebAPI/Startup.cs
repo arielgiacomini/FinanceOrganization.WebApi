@@ -1,6 +1,7 @@
 ﻿using Application;
 using Domain.Options;
 using Infrastructure;
+using Infrastructure.Repository;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -29,6 +30,7 @@ namespace WebAPI
             services.AddHostedServices();
             services.AddApplication();
             services.AddInfrastructure();
+            services.AddInfrastructureRepository();
 
             services.AddSingleton<Serilog.ILogger, Serilog.Core.Logger>(x =>
             {

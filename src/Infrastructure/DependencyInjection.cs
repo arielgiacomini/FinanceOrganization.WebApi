@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Infrastructure.Database.Context;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Infrastructure
 {
@@ -6,6 +7,8 @@ namespace Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
+            services.AddScoped<FinanceOrganizationContext>();
+
             return services;
         }
     }

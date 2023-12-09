@@ -1,5 +1,8 @@
-﻿namespace Domain
+﻿namespace Domain.Entities
 {
+    /// <summary>
+    /// [Contas a pagar] - Todos os registros de contas a pagar existente
+    /// </summary>
     public class WalletToPay
     {
         public string? Account { get; set; }
