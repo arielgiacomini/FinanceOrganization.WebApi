@@ -1,4 +1,4 @@
-﻿namespace Application.Feature.EventHandlers.WalletToPay
+﻿namespace Application.EventHandlers.WalletToPay
 {
     public class WalletToPayInput
     {

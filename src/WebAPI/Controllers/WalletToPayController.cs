@@ -1,12 +1,34 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Feature.CreateFixedInvoice;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace WebAPI.Controllers
 {
-    public class WalletToPayController : Controller
+    [ApiController]
+    [Route("v1/wallet-to-pay")]
+    [Produces("application/json")]
+    public class WalletToPayController : ControllerBase
     {
-        public IActionResult Index()
+        private readonly ILogger<WalletToPayController> _logger;
+        private readonly ICreateFixedInvoiceHandler _createFixedInvoiceHandler;
+
+        public WalletToPayController(
+            ILogger<WalletToPayController> logger,
+            ICreateFixedInvoiceHandler createFixedInvoiceHandler)
         {
-            return View();
+            _logger = logger;
+            _createFixedInvoiceHandler = createFixedInvoiceHandler;
+        }
+
+        [HttpPost("fixed-invoice")]
+        public async Task<IActionResult> CreateFixedInvoice([FromBody] CreateFixedInvoiceInput input,
+            CancellationToken cancellationToken)
+        {
+            _logger.LogInformation($"[WalletToPayController.CreateFixedInvoice()] - Cadastro de uma nova conta/fatura fixa. Input: {JsonSerializer.Serialize(input)}");
+
+            var output = await _createFixedInvoiceHandler.Handler(input, cancellationToken);
+
+            return Ok(output);
         }
     }
 }

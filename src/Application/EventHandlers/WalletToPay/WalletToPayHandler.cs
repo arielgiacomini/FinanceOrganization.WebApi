@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
-namespace Application.Feature.EventHandlers.WalletToPay
+namespace Application.EventHandlers.WalletToPay
 {
     public class WalletToPayHandler : IWalletToPayHandler
     {
@@ -53,17 +53,16 @@ namespace Application.Feature.EventHandlers.WalletToPay
             }
             else
             {
-                TimeSpan timeSpanLastChangeDate = new(
-                    fixedInvoice.LastChangeDate.Value.Hour,
-                    fixedInvoice.LastChangeDate.Value.Minute,
-                    fixedInvoice.LastChangeDate.Value.Second,
-                    fixedInvoice.LastChangeDate.Value.Millisecond);
+                var lastChangeDate = fixedInvoice.LastChangeDate.Value;
+                var nowDate = DateTime.Now.Date;
+                var backDate = nowDate.AddYears(-_walletToPayOptions.HowManyYearsForward);
 
-                // TODO: Criar a lógica que verifica se está na hora de criar de acordo com a configuração no AppSettings.
+                if (lastChangeDate.Date <= backDate)
+                {
+                    return true;
+                }
 
-                var difference = (timeSpanLastChangeDate - _walletToPayOptions.RoutineWorker.StartTime);
-
-                return true;
+                return false;
             }
         }
     }

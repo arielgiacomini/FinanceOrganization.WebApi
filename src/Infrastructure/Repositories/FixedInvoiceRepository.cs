@@ -16,9 +16,17 @@ namespace Infrastructure.Repositories
 
         public async Task<IList<FixedInvoice>> GetByAll()
         {
-            var result = await _context.FixedInvoices
+            var result = await _context.FixedInvoices!
                    .AsNoTracking()
                    .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<int> Save(FixedInvoice fixedInvoice)
+        {
+            _context.Add(fixedInvoice);
+            var result = await _context.SaveChangesAsync();
 
             return result;
         }

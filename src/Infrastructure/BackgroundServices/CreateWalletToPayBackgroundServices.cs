@@ -1,4 +1,4 @@
-﻿using Application.Feature.EventHandlers.WalletToPay;
+﻿using Application.EventHandlers.WalletToPay;
 using Domain.Options;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

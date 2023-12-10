@@ -3,13 +3,14 @@ using Domain.Options;
 using Infrastructure;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using IHosting = Microsoft.Extensions.Hosting;
 
 namespace WebAPI
 {
     public class Startup
     {
         const string DEFAULT_LOG_DIRECTORY = "C:/Logs/SGM.WebApi";
-        private const string URL_ARIELGIACOMINI = "http://arielgiacomini.com.br";
+        private readonly Uri URL_ARIELGIACOMINI = new("http://teste.com.br");
 
         public IConfiguration Configuration { get; }
 
@@ -54,24 +55,24 @@ namespace WebAPI
                     Version = "7.6",
                     Title = "Exposição do banco de dados das aplicações do SGM",
                     Description = "Nesta versão temos logs na forma de mao de obra controller - gabriel araújo",
-                    TermsOfService = new Uri(URL_ARIELGIACOMINI),
+                    TermsOfService = URL_ARIELGIACOMINI,
                     Contact = new OpenApiContact
                     {
                         Name = "Ariel Giacomini da Silva",
                         Email = "arieltecnologia@outlook.com",
-                        Url = new Uri(URL_ARIELGIACOMINI)
+                        Url = URL_ARIELGIACOMINI
                     },
                     License = new OpenApiLicense
                     {
                         Name = "Não há licença",
-                        Url = new Uri(URL_ARIELGIACOMINI)
+                        Url = URL_ARIELGIACOMINI
                     }
                 });
             });
         }
 
         [Obsolete]
-        public void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHosting.IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
