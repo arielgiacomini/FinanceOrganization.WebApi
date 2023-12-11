@@ -1,6 +1,6 @@
 ﻿namespace Domain.Options
 {
-    public class WalletToPayOptions
+    public class BillToPayOptions
     {
         public int HowManyYearsForward { get; set; }
         public RoutineWorker RoutineWorker { get; set; } = new RoutineWorker();

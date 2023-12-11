@@ -18,11 +18,17 @@ namespace Infrastructure.Database.Context
         /// <summary>
         /// Conta/Fatura fixa.
         /// </summary>
-        public DbSet<FixedInvoice>? FixedInvoices { get; set; }
+        public DbSet<FixedInvoice>? FixedInvoice { get; set; }
+
+        /// <summary>
+        /// Conta a pagar
+        /// </summary>
+        public DbSet<BillToPay> BillToPay { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new FixedInvoiceMapping());
+            modelBuilder.ApplyConfiguration(new BillToPayToPayMapping());
 
             base.OnModelCreating(modelBuilder);
         }

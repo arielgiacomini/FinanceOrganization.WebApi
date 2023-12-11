@@ -2,6 +2,6 @@
 {
     public interface ICreateFixedInvoiceHandler
     {
-        Task<CreateFixedInvoiceOutput> Handler(CreateFixedInvoiceInput input, CancellationToken cancellationToken = default);
+        Task<CreateFixedInvoiceOutput> Handle(CreateFixedInvoiceInput input, CancellationToken cancellationToken = default);
     }
 }

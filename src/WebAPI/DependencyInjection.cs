@@ -6,7 +6,7 @@ namespace WebAPI
     {
         public static IServiceCollection AddHostedServices(this IServiceCollection services)
         {
-            services.AddHostedService<CreateWalletToPayBackgroundServices>();
+            services.AddHostedService<CreateBillToPayBackgroundServices>();
 
             return services;
         }

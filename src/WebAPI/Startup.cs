@@ -24,8 +24,8 @@ namespace WebAPI
             services.AddMvc(options => options.EnableEndpointRouting = false);
             var filePath = Configuration.GetSection("Log:Path") is null ? DEFAULT_LOG_DIRECTORY : Configuration.GetSection("Log:Path").Value;
 
-            services.Configure<WalletToPayOptions>(options =>
-            Configuration.GetSection("WalletToPayOptions").Bind(options));
+            services.Configure<BillToPayOptions>(options =>
+            Configuration.GetSection("BillToPayOptions").Bind(options));
 
             services.AddHostedServices();
             services.AddApplication();

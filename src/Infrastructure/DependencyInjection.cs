@@ -11,6 +11,7 @@ namespace Infrastructure
         {
             services.AddScoped<FinanceOrganizationContext>();
             services.AddScoped<IFixedInvoiceRepository, FixedInvoiceRepository>();
+            services.AddScoped<IWalletToPayRepository, WalletToPayRepository>();
 
             return services;
         }

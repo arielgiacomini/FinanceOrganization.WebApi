@@ -1,5 +1,6 @@
-﻿using Application.EventHandlers.WalletToPay;
+﻿using Application.EventHandlers.CreateBillToPayEvent;
 using Application.Feature.CreateFixedInvoice;
+using Application.Feature.SearchFixedInvoice;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application
@@ -8,8 +9,9 @@ namespace Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddSingleton<IWalletToPayHandler, WalletToPayHandler>();
+            services.AddSingleton<ICreateBillToPayEventHandler, CreateBillToPayEventHandler>();
             services.AddSingleton<ICreateFixedInvoiceHandler, CreateFixedInvoiceHandler>();
+            services.AddSingleton<ISearchFixedInvoiceHandler, SearchFixedInvoiceHandler>();
 
             return services;
         }
