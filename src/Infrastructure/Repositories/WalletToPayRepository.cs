@@ -16,34 +16,20 @@ namespace Infrastructure.Repositories
 
         public async Task<IList<BillToPay>> GetBillToPayByFixedInvoiceId(int fixedInvoiceId)
         {
-            try
-            {
-                var result = await _context.BillToPay
-                        .AsNoTracking()
-                        .Where(pay => pay.IdFixedInvoice == fixedInvoiceId)
-                        .ToListAsync();
+            var result = await _context.BillToPay
+                    .AsNoTracking()
+                    .Where(pay => pay.IdFixedInvoice == fixedInvoiceId)
+                    .ToListAsync();
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return result;
         }
 
         public async Task<int> Save(IList<BillToPay> billsToPay)
         {
-            try
-            {
-                _context.AddRange(billsToPay);
-                var result = await _context.SaveChangesAsync();
+            _context.AddRange(billsToPay);
+            var result = await _context.SaveChangesAsync();
 
-                return result;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            return result;
         }
     }
 }

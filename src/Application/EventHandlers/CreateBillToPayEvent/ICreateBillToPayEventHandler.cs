@@ -2,6 +2,6 @@
 {
     public interface ICreateBillToPayEventHandler
     {
-        Task Handle(CreateBillToPayInput input);
+        Task Handle(CreateBillToPayEventInput input);
     }
 }

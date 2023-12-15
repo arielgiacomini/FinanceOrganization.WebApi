@@ -1,6 +1,6 @@
 ﻿namespace Application.EventHandlers.CreateBillToPayEvent
 {
-    public class CreateBillToPayInput
+    public class CreateBillToPayEventInput
     {
         public DateTime DateExecution { get; set; }
     }

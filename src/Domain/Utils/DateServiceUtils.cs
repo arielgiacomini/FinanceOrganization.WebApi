@@ -2,7 +2,9 @@
 {
     public static class DateServiceUtils
     {
-        private const int DayOne = 1;
+        private const int DAY_ONE = 1;
+        private const int CONSIDER_CURRENT_MONTH = 0;
+        private const int CONSIDER_NEXT_MONTH = 1;
 
         public static string GetYearMonthPortugueseByDateTime(DateTime dateTime)
         {
@@ -12,6 +14,37 @@
             var mesAno = string.Concat(month, "/", year);
 
             return mesAno;
+        }
+
+        public static bool IsCurrentMonth(string? initialYearMonth)
+        {
+            if (initialYearMonth is null)
+            {
+                return false;
+            }
+
+            var currentDateTime = GetDateTimeByYearMonthBrazilian(initialYearMonth);
+
+            var currentNow = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DAY_ONE, 0, 0, 0, kind: DateTimeKind.Utc);
+
+            if (currentDateTime == currentNow)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static double GetMonthsByDateTime(DateTime date)
+        {
+            var difference = (date - DateTime.Now);
+
+            var totalDays = Math.Floor(difference.TotalDays);
+            var totalMonths = Math.Floor((totalDays / 30));
+
+            return totalMonths;
         }
 
         private static string MonthNamePortuguese(int month)
@@ -120,15 +153,15 @@
             var month = Month(split[0]);
             int year = Convert.ToInt32(split[1]);
 
-            var dateTime = new DateTime(year, month, DayOne);
+            var dateTime = new DateTime(year, month, DAY_ONE, 0, 0, 0, kind: DateTimeKind.Utc);
 
             return dateTime;
         }
 
         public static Dictionary<string, DateTime>? GetNextYearMonthAndDateTime(
-            DateTime? dateTime, int qtdMonthAdd, int? bestPayDay)
+            DateTime? dateTime, int qtdMonthAdd, int? bestPayDay, bool currentMonth = false)
         {
-            var newDatetime = new DateTime();
+            var newDatetime = DateTime.MinValue;
             var now = DateTime.Now;
 
             if (dateTime is null && bestPayDay is null)
@@ -136,9 +169,9 @@
                 return null;
             }
 
-            if (!dateTime.HasValue && bestPayDay.HasValue)
+            if (bestPayDay.HasValue)
             {
-                newDatetime = new DateTime(now.Year, now.Month, bestPayDay.Value);
+                newDatetime = new DateTime(now.Year, now.Month, bestPayDay.Value, 0, 0, 0, kind: DateTimeKind.Utc);
             }
 
             if (dateTime.HasValue && !bestPayDay.HasValue)
@@ -148,7 +181,14 @@
 
             var dictionary = new Dictionary<string, DateTime>();
 
-            for (int month = 1; month <= qtdMonthAdd; month++)
+            int initialMonth = CONSIDER_NEXT_MONTH;
+
+            if (currentMonth)
+            {
+                initialMonth = CONSIDER_CURRENT_MONTH;
+            }
+
+            for (int month = initialMonth; month <= qtdMonthAdd; month++)
             {
                 var dateTimeNextMonth = newDatetime.AddMonths(month);
 

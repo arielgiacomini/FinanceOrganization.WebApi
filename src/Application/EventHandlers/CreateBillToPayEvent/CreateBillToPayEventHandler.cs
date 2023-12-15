@@ -28,7 +28,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             _walletToPayRepository = walletToPayRepository;
         }
 
-        public async Task Handle(CreateBillToPayInput input)
+        public async Task Handle(CreateBillToPayEventInput input)
         {
             var fixedInvoices = await _fixedInvoiceRepository.GetByAll();
 
@@ -43,87 +43,6 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         }
 
         /// <summary>
-        /// Contempla a lógica para cadastro de novas contas a pagar de acordo com o tempo que ela se encontra.
-        /// </summary>
-        /// <param name="fixedInvoice"></param>
-        private async Task LogicRegistration(FixedInvoice fixedInvoice)
-        {
-            List<BillToPay> billsToPay = new();
-
-            var listbillToPay = await _walletToPayRepository.GetBillToPayByFixedInvoiceId(fixedInvoice.Id);
-
-            var lastRegistrationBillToPay = GetLastRegistrationBillToPay(listbillToPay);
-
-            var nextMonthYearToRegister = DateServiceUtils
-                .GetNextYearMonthAndDateTime(
-                lastRegistrationBillToPay?.DueDate, GetQtdMonthByConfig(), fixedInvoice.BestPayDay);
-
-            if (nextMonthYearToRegister is null)
-            {
-                return;
-            }
-
-            foreach (var nextMonth in nextMonthYearToRegister!)
-            {
-                if (lastRegistrationBillToPay != null)
-                {
-                    billsToPay.Add(MapBillToPayToBillToPay(lastRegistrationBillToPay, nextMonth.Value, nextMonth.Key));
-                }
-                else
-                {
-                    billsToPay.Add(MapFixedInvoiceToBillToPay(fixedInvoice, nextMonth.Value, nextMonth.Key));
-                }
-            }
-
-            await _walletToPayRepository.Save(billsToPay);
-        }
-
-        private static BillToPay MapBillToPayToBillToPay(BillToPay billToPay, DateTime dueDate, string yearMonth)
-        {
-            return new BillToPay()
-            {
-                Id = Guid.NewGuid(),
-                IdFixedInvoice = billToPay!.IdFixedInvoice,
-                Account = billToPay.Account,
-                Name = billToPay.Name,
-                Category = billToPay.Category,
-                Value = billToPay.Value,
-                DueDate = dueDate,
-                YearMonth = yearMonth,
-                Frequence = billToPay.Frequence,
-                PayDay = null,
-                HasPay = false
-            };
-        }
-
-        private static BillToPay MapFixedInvoiceToBillToPay(FixedInvoice fixedInvoice, DateTime dueDate, string yearMonth)
-        {
-            return new BillToPay()
-            {
-                Id = Guid.NewGuid(),
-                IdFixedInvoice = fixedInvoice.Id,
-                Account = fixedInvoice.Account,
-                Name = fixedInvoice.Name,
-                Category = fixedInvoice.Category,
-                Value = fixedInvoice.Value,
-                DueDate = dueDate,
-                YearMonth = yearMonth,
-                Frequence = fixedInvoice.Frequence,
-                PayDay = null,
-                HasPay = false
-            };
-        }
-
-        private static BillToPay GetLastRegistrationBillToPay(IList<Domain.Entities.BillToPay> billsToPay)
-        {
-            var result = billsToPay
-                .OrderByDescending(billToPay => billToPay.DueDate)
-                .FirstOrDefault()!;
-
-            return result;
-        }
-
-        /// <summary>
         /// Responsável de verificar se o registro no banco de dados está elegível para cadastro agora.
         /// </summary>
         /// <param name="fixedInvoice"></param>
@@ -133,23 +52,90 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             _ = LogicRegistration(fixedInvoice);
         }
 
-        private void StandyBy(FixedInvoice fixedInvoice)
+        /// <summary>
+        /// Contempla a lógica para cadastro de novas contas a pagar de acordo com o tempo que ela se encontra.
+        /// </summary>
+        /// <param name="fixedInvoice"></param>
+        private async Task LogicRegistration(FixedInvoice fixedInvoice)
         {
-            if (!fixedInvoice.LastChangeDate.HasValue)
+            List<BillToPay> listBillToPay = new();
+
+            var billsToPay = await _walletToPayRepository.GetBillToPayByFixedInvoiceId(fixedInvoice.Id);
+
+            var lastBillToPay = GetLastRegistrationBillToPay(billsToPay);
+
+            var currentYearMonth = DateServiceUtils.IsCurrentMonth(fixedInvoice.InitialMonthYear);
+
+            var totalMonths = DateServiceUtils.GetMonthsByDateTime(lastBillToPay.DueDate);
+
+            if (totalMonths > _billToPayOptions.HowManyMonthForward)
             {
-                _ = LogicRegistration(fixedInvoice);
+                return;
+            }
+
+            var nextMonthYearToRegister = DateServiceUtils
+                .GetNextYearMonthAndDateTime(
+                lastBillToPay.DueDate, GetQtdMonthByConfig(), fixedInvoice.BestPayDay, currentYearMonth);
+
+            if (nextMonthYearToRegister is null)
+            {
+                return;
+            }
+
+            foreach (var nextMonth in nextMonthYearToRegister!)
+            {
+
+                listBillToPay.Add(MapBillToPay(lastBillToPay, fixedInvoice, nextMonth.Value, nextMonth.Key));
+            }
+
+            await _walletToPayRepository.Save(listBillToPay);
+        }
+
+        private static BillToPay MapBillToPay(BillToPay? billToPay, FixedInvoice? fixedInvoice, DateTime dueDate, string yearMonth)
+        {
+            if (billToPay is not null)
+            {
+                return new BillToPay()
+                {
+                    Id = Guid.NewGuid(),
+                    IdFixedInvoice = billToPay!.IdFixedInvoice,
+                    Account = billToPay.Account,
+                    Name = billToPay.Name,
+                    Category = billToPay.Category,
+                    Value = billToPay.Value,
+                    DueDate = dueDate,
+                    YearMonth = yearMonth,
+                    Frequence = billToPay.Frequence,
+                    PayDay = null,
+                    HasPay = false
+                };
             }
             else
             {
-                var lastChangeDate = fixedInvoice.LastChangeDate.Value;
-                var nowDate = DateTime.Now.Date;
-                var backDate = nowDate.AddYears(-_billToPayOptions.HowManyYearsForward);
-
-                if (lastChangeDate.Date <= backDate)
+                return new BillToPay()
                 {
-                    _ = LogicRegistration(fixedInvoice);
-                }
+                    Id = Guid.NewGuid(),
+                    IdFixedInvoice = fixedInvoice!.Id,
+                    Account = fixedInvoice.Account,
+                    Name = fixedInvoice.Name,
+                    Category = fixedInvoice.Category,
+                    Value = fixedInvoice.Value,
+                    DueDate = dueDate,
+                    YearMonth = yearMonth,
+                    Frequence = fixedInvoice.Frequence,
+                    PayDay = null,
+                    HasPay = false
+                };
             }
+        }
+
+        private static BillToPay GetLastRegistrationBillToPay(IList<Domain.Entities.BillToPay> billsToPay)
+        {
+            var result = billsToPay
+                .OrderByDescending(billToPay => billToPay.DueDate)
+                .FirstOrDefault()!;
+
+            return result;
         }
 
         private int GetQtdMonthByConfig()

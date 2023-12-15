@@ -40,7 +40,7 @@ namespace Infrastructure.BackgroundServices
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                await _walletToPayHandler.Handle(new CreateBillToPayInput() { DateExecution = DateTime.Now });
+                await _walletToPayHandler.Handle(new CreateBillToPayEventInput() { DateExecution = DateTime.Now });
 
                 await Task.Delay(_options.RoutineWorker.StartTime, cancellationToken);
             }
