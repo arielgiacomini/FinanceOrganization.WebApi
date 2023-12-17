@@ -90,11 +90,6 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 null, qtdMonthAdd, fixedInvoice.BestPayDay,
                 DateServiceUtils.IsCurrentMonth(fixedInvoice.InitialMonthYear));
 
-            if (nextMonthYearToRegister is null)
-            {
-                return;
-            }
-
             foreach (var nextMonth in nextMonthYearToRegister!)
             {
                 listBillToPay.Add(MapBillToPay(null, fixedInvoice, nextMonth.Value, nextMonth.Key));
@@ -120,11 +115,6 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 .GetNextYearMonthAndDateTime(
                 billToPay.DueDate, qtdMonthAdd, null, false);
 
-            if (nextMonthYearToRegister is null)
-            {
-                return;
-            }
-
             foreach (var nextMonth in nextMonthYearToRegister!)
             {
                 listBillToPay.Add(MapBillToPay(billToPay, null, nextMonth.Value, nextMonth.Key));
@@ -133,7 +123,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             await _walletToPayRepository.Save(listBillToPay);
         }
 
-        private static int GetMonthsAdd(int totalMonths, int howManyMonthForward)
+        public static int GetMonthsAdd(int totalMonths, int howManyMonthForward)
         {
             if (totalMonths > howManyMonthForward)
             {
@@ -145,7 +135,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             return result;
         }
 
-        private static BillToPay MapBillToPay(BillToPay? billToPay, FixedInvoice? fixedInvoice, DateTime dueDate, string yearMonth)
+        public BillToPay MapBillToPay(
+            BillToPay? billToPay, FixedInvoice? fixedInvoice, DateTime dueDate, string yearMonth)
         {
             if (billToPay is not null)
             {

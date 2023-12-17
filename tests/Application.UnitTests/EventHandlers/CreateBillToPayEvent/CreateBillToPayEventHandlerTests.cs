@@ -15,7 +15,7 @@ namespace Application.UnitTests.EventHandlers.CreateBillToPayEvent
     public class CreateBillToPayEventHandlerTests
     {
         private readonly ModelFixture _modelFixture;
-        private readonly Mock<CreateBillToPayEventHandler> _mockCreateBillToPayHandler;
+        private readonly Mock<CreateBillToPayEventHandler> _mockCreateBillToPayEventHandler;
         private readonly Mock<ILogger<CreateBillToPayEventHandler>> _dummyLogger;
         private readonly Mock<IOptions<BillToPayOptions>> _mockOptions;
         private readonly Mock<IFixedInvoiceRepository> _mockFixedInvoiceRepository;
@@ -24,7 +24,7 @@ namespace Application.UnitTests.EventHandlers.CreateBillToPayEvent
         public CreateBillToPayEventHandlerTests(ModelFixture modelFixture)
         {
             _modelFixture = modelFixture;
-            _mockCreateBillToPayHandler = new Mock<CreateBillToPayEventHandler>();
+            _mockCreateBillToPayEventHandler = new Mock<CreateBillToPayEventHandler>();
             _dummyLogger = new Mock<ILogger<CreateBillToPayEventHandler>>();
             _mockOptions = new Mock<IOptions<BillToPayOptions>>();
             _mockFixedInvoiceRepository = new Mock<IFixedInvoiceRepository>();
@@ -59,13 +59,74 @@ namespace Application.UnitTests.EventHandlers.CreateBillToPayEvent
                 _mockFixedInvoiceRepository.Object,
                 _mockWalletToPayRepository.Object);
 
-            var input = new CreateBillToPayEventInput { DateExecution = new DateTime() };
+            var input = new CreateBillToPayEventInput
+            {
+                DateExecution = new DateTime(2023, 1, 1, 0, 0, 0, kind: DateTimeKind.Local)
+            };
 
             _ = handler.Handle(input);
 
             // Assert
 
-            Assert.Null(null);
+            _mockWalletToPayRepository
+                .Verify(wallet => wallet.Save(It.IsAny<IList<BillToPay>>()), Times.Once());
+        }
+
+        [Fact]
+        public void Handle_DeveRetornarQuantidadeMesesAddMenorIgualZero_Sucesso()
+        {
+            // Setup
+            _mockFixedInvoiceRepository
+                .Setup(fixedInvoice => fixedInvoice.GetByAll())
+                .ReturnsAsync(_modelFixture.GetListFixedInvoice());
+
+            _mockWalletToPayRepository
+                .Setup(walletToPay => walletToPay.GetBillToPayByFixedInvoiceId(It.IsAny<int>()))
+                .ReturnsAsync(_modelFixture.GetListBillToPay());
+
+            _mockWalletToPayRepository
+                .Setup(walletToPay => walletToPay.Save(It.IsAny<IList<BillToPay>>()))
+                .ReturnsAsync(It.IsAny<int>());
+
+            var options = _modelFixture.GetBillToPayOptions();
+            options.HowManyMonthForward = 0;
+
+            _mockOptions
+                .Setup(options => options.Value)
+                .Returns(options);
+
+            // Action
+
+            var handler = new CreateBillToPayEventHandler(
+                _dummyLogger.Object,
+                _mockOptions.Object,
+                _mockFixedInvoiceRepository.Object,
+                _mockWalletToPayRepository.Object);
+
+            var input = new CreateBillToPayEventInput
+            {
+                DateExecution = new DateTime(2023, 1, 1, 0, 0, 0, kind: DateTimeKind.Local)
+            };
+
+            _ = handler.Handle(input);
+
+            // Assert
+
+            _mockWalletToPayRepository
+                .Verify(wallet => wallet.Save(It.IsAny<IList<BillToPay>>()), Times.Never());
+        }
+
+        [Theory]
+        [InlineData(25, 24, 0)]
+        [InlineData(24, 24, 0)]
+        [InlineData(20, 24, 4)]
+        public void Handle_DeveValidarQuantidadeMesesAdicionar_Sucesso(
+            int totalMonths, int howManyMonthForward, int expected)
+        {
+            var result = CreateBillToPayEventHandler
+                .GetMonthsAdd(totalMonths, howManyMonthForward);
+
+            Assert.Equal(expected, result);
         }
     }
 }

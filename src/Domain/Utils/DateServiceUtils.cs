@@ -163,9 +163,11 @@
             return dateTime;
         }
 
-        public static Dictionary<string, DateTime>? GetNextYearMonthAndDateTime(
+        public static Dictionary<string, DateTime> GetNextYearMonthAndDateTime(
             DateTime? dateTime, int qtdMonthAdd, int? bestPayDay, bool currentMonth = false)
         {
+            Dictionary<string, DateTime> dictionary = new();
+
             DateTime newDatetime;
 
             var now = DateTime.Now;
@@ -178,8 +180,6 @@
             {
                 newDatetime = new DateTime(dateTime.Value.Year, dateTime.Value.Month, dateTime.Value.Day, 0, 0, 0, kind: DateTimeKind.Utc);
             }
-
-            var dictionary = new Dictionary<string, DateTime>();
 
             int initialMonth = CONSIDER_NEXT_MONTH;
 
