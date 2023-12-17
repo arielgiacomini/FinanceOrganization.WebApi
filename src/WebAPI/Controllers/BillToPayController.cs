@@ -28,7 +28,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> CreateFixedInvoice([FromBody] CreateFixedInvoiceInput input,
             CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"[WalletToPayController.CreateFixedInvoice()] - Cadastro de uma nova conta/fatura fixa. Input: {JsonSerializer.Serialize(input)}");
+            _logger.LogInformation($"[BillToPayController.CreateFixedInvoice()] - Cadastro de uma nova conta/fatura fixa. Input: {JsonSerializer.Serialize(input)}");
 
             var output = await _createFixedInvoiceHandler.Handle(input, cancellationToken);
 
@@ -38,7 +38,7 @@ namespace WebAPI.Controllers
         [HttpGet("fixed-invoice")]
         public async Task<IActionResult> GetFixedInvoice(CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"[WalletToPayController.GetFixedInvoice()] - Busca de conta/fatura fixa.");
+            _logger.LogInformation($"[BillToPayController.GetFixedInvoice()] - Busca de conta/fatura fixa.");
 
             var output = await _searchFixedInvoiceHandler.Handle();
 

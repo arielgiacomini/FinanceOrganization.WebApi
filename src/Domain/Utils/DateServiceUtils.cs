@@ -37,12 +37,12 @@
             }
         }
 
-        public static double GetMonthsByDateTime(DateTime date)
+        public static int GetMonthsByDateTime(DateTime date)
         {
             var difference = (date - DateTime.Now);
 
             var totalDays = Math.Floor(difference.TotalDays);
-            var totalMonths = Math.Floor((totalDays / 30));
+            var totalMonths = int.Parse(Math.Floor(totalDays / 30).ToString());
 
             return totalMonths;
         }
@@ -146,8 +146,13 @@
             return mes;
         }
 
-        public static DateTime GetDateTimeByYearMonthBrazilian(string yearMonth)
+        public static DateTime GetDateTimeByYearMonthBrazilian(string? yearMonth)
         {
+            if (yearMonth is null)
+            {
+                return DateTime.MinValue;
+            }
+
             var split = yearMonth.Split("/");
 
             var month = Month(split[0]);
@@ -161,22 +166,17 @@
         public static Dictionary<string, DateTime>? GetNextYearMonthAndDateTime(
             DateTime? dateTime, int qtdMonthAdd, int? bestPayDay, bool currentMonth = false)
         {
-            var newDatetime = DateTime.MinValue;
+            DateTime newDatetime;
+
             var now = DateTime.Now;
 
-            if (dateTime is null && bestPayDay is null)
+            if (dateTime is null)
             {
-                return null;
+                newDatetime = new DateTime(now.Year, now.Month, bestPayDay!.Value, 0, 0, 0, kind: DateTimeKind.Utc);
             }
-
-            if (bestPayDay.HasValue)
+            else
             {
-                newDatetime = new DateTime(now.Year, now.Month, bestPayDay.Value, 0, 0, 0, kind: DateTimeKind.Utc);
-            }
-
-            if (dateTime.HasValue && !bestPayDay.HasValue)
-            {
-                newDatetime = dateTime.Value;
+                newDatetime = new DateTime(dateTime.Value.Year, dateTime.Value.Month, dateTime.Value.Day, 0, 0, 0, kind: DateTimeKind.Utc);
             }
 
             var dictionary = new Dictionary<string, DateTime>();

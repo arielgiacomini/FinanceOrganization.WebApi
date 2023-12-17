@@ -14,7 +14,6 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         private readonly BillToPayOptions _billToPayOptions;
         private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
         private readonly IWalletToPayRepository _walletToPayRepository;
-        private const int QTD_MONTH_YEAR = 12;
 
         public CreateBillToPayEventHandler(
             ILogger<CreateBillToPayEventHandler> logger,
@@ -38,7 +37,11 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
                 _logger.LogInformation("Objeto FixedInvoice que será processado: {@json}", json);
 
-                StartRegistration(fixedInvoice);
+                var billsToPay = await _walletToPayRepository.GetBillToPayByFixedInvoiceId(fixedInvoice.Id);
+
+                var lastBillToPay = GetLastRegistrationBillToPay(billsToPay);
+
+                StartRegistration(fixedInvoice, lastBillToPay);
             }
         }
 
@@ -47,35 +50,45 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         /// </summary>
         /// <param name="fixedInvoice"></param>
         /// <returns></returns>
-        private void StartRegistration(FixedInvoice fixedInvoice)
+        private void StartRegistration(FixedInvoice fixedInvoice, BillToPay? billToPay)
         {
-            _ = LogicRegistration(fixedInvoice);
+            _ = LogicRegistration(fixedInvoice, billToPay);
         }
 
         /// <summary>
         /// Contempla a lógica para cadastro de novas contas a pagar de acordo com o tempo que ela se encontra.
         /// </summary>
         /// <param name="fixedInvoice"></param>
-        private async Task LogicRegistration(FixedInvoice fixedInvoice)
+        private async Task LogicRegistration(FixedInvoice fixedInvoice, BillToPay? billToPay)
+        {
+            if (billToPay != null)
+            {
+                await LogicByBillToPay(billToPay);
+            }
+            else
+            {
+                await LogicByFixedInvoice(fixedInvoice);
+            }
+        }
+
+        private async Task LogicByFixedInvoice(FixedInvoice fixedInvoice)
         {
             List<BillToPay> listBillToPay = new();
 
-            var billsToPay = await _walletToPayRepository.GetBillToPayByFixedInvoiceId(fixedInvoice.Id);
+            var totalMonths = DateServiceUtils.GetMonthsByDateTime(
+                DateServiceUtils.GetDateTimeByYearMonthBrazilian(fixedInvoice.InitialMonthYear));
 
-            var lastBillToPay = GetLastRegistrationBillToPay(billsToPay);
+            var qtdMonthAdd = GetMonthsAdd(totalMonths, _billToPayOptions.HowManyMonthForward);
 
-            var currentYearMonth = DateServiceUtils.IsCurrentMonth(fixedInvoice.InitialMonthYear);
-
-            var totalMonths = DateServiceUtils.GetMonthsByDateTime(lastBillToPay.DueDate);
-
-            if (totalMonths > _billToPayOptions.HowManyMonthForward)
+            if (qtdMonthAdd <= 0 || totalMonths > _billToPayOptions.HowManyMonthForward)
             {
                 return;
             }
 
             var nextMonthYearToRegister = DateServiceUtils
                 .GetNextYearMonthAndDateTime(
-                lastBillToPay.DueDate, GetQtdMonthByConfig(), fixedInvoice.BestPayDay, currentYearMonth);
+                null, qtdMonthAdd, fixedInvoice.BestPayDay,
+                DateServiceUtils.IsCurrentMonth(fixedInvoice.InitialMonthYear));
 
             if (nextMonthYearToRegister is null)
             {
@@ -84,11 +97,52 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             foreach (var nextMonth in nextMonthYearToRegister!)
             {
-
-                listBillToPay.Add(MapBillToPay(lastBillToPay, fixedInvoice, nextMonth.Value, nextMonth.Key));
+                listBillToPay.Add(MapBillToPay(null, fixedInvoice, nextMonth.Value, nextMonth.Key));
             }
 
             await _walletToPayRepository.Save(listBillToPay);
+        }
+
+        private async Task LogicByBillToPay(BillToPay billToPay)
+        {
+            List<BillToPay> listBillToPay = new();
+
+            var totalMonths = DateServiceUtils.GetMonthsByDateTime(billToPay.DueDate);
+
+            var qtdMonthAdd = GetMonthsAdd(totalMonths, _billToPayOptions.HowManyMonthForward);
+
+            if (qtdMonthAdd <= 0 || totalMonths > _billToPayOptions.HowManyMonthForward)
+            {
+                return;
+            }
+
+            var nextMonthYearToRegister = DateServiceUtils
+                .GetNextYearMonthAndDateTime(
+                billToPay.DueDate, qtdMonthAdd, null, false);
+
+            if (nextMonthYearToRegister is null)
+            {
+                return;
+            }
+
+            foreach (var nextMonth in nextMonthYearToRegister!)
+            {
+                listBillToPay.Add(MapBillToPay(billToPay, null, nextMonth.Value, nextMonth.Key));
+            }
+
+            await _walletToPayRepository.Save(listBillToPay);
+        }
+
+        private static int GetMonthsAdd(int totalMonths, int howManyMonthForward)
+        {
+            if (totalMonths > howManyMonthForward)
+            {
+                return 0;
+            }
+
+            var result = Math.Abs(totalMonths - howManyMonthForward);
+
+            return result;
         }
 
         private static BillToPay MapBillToPay(BillToPay? billToPay, FixedInvoice? fixedInvoice, DateTime dueDate, string yearMonth)
@@ -129,18 +183,11 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             }
         }
 
-        private static BillToPay GetLastRegistrationBillToPay(IList<Domain.Entities.BillToPay> billsToPay)
+        public BillToPay GetLastRegistrationBillToPay(IList<BillToPay> billsToPay)
         {
             var result = billsToPay
                 .OrderByDescending(billToPay => billToPay.DueDate)
                 .FirstOrDefault()!;
-
-            return result;
-        }
-
-        private int GetQtdMonthByConfig()
-        {
-            var result = (_billToPayOptions.HowManyYearsForward * QTD_MONTH_YEAR);
 
             return result;
         }

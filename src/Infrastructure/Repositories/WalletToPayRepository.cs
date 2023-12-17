@@ -16,7 +16,7 @@ namespace Infrastructure.Repositories
 
         public async Task<IList<BillToPay>> GetBillToPayByFixedInvoiceId(int fixedInvoiceId)
         {
-            var result = await _context.BillToPay
+            var result = await _context.BillToPay!
                     .AsNoTracking()
                     .Where(pay => pay.IdFixedInvoice == fixedInvoiceId)
                     .ToListAsync();

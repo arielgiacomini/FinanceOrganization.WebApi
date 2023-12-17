@@ -23,7 +23,7 @@ namespace Infrastructure.Database.Context
         /// <summary>
         /// Conta a pagar
         /// </summary>
-        public DbSet<BillToPay> BillToPay { get; set; }
+        public DbSet<BillToPay>? BillToPay { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
