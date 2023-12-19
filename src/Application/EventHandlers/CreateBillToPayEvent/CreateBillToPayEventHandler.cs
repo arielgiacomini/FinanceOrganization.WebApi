@@ -59,7 +59,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         /// Contempla a lógica para cadastro de novas contas a pagar de acordo com o tempo que ela se encontra.
         /// </summary>
         /// <param name="fixedInvoice"></param>
-        private async Task LogicRegistration(FixedInvoice fixedInvoice, BillToPay? billToPay)
+        public async Task LogicRegistration(FixedInvoice fixedInvoice, BillToPay? billToPay)
         {
             if (billToPay != null)
             {
@@ -174,8 +174,13 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             }
         }
 
-        public BillToPay GetLastRegistrationBillToPay(IList<BillToPay> billsToPay)
+        public BillToPay? GetLastRegistrationBillToPay(IList<BillToPay> billsToPay)
         {
+            if (billsToPay == null)
+            {
+                return null;
+            }
+
             var result = billsToPay
                 .OrderByDescending(billToPay => billToPay.DueDate)
                 .FirstOrDefault()!;

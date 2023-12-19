@@ -3,10 +3,12 @@ using Domain.Options;
 using Infrastructure;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using System.Diagnostics.CodeAnalysis;
 using IHosting = Microsoft.Extensions.Hosting;
 
 namespace WebAPI
 {
+    [ExcludeFromCodeCoverage]
     public class Startup
     {
         const string DEFAULT_LOG_DIRECTORY = "C:/Logs/SGM.WebApi";

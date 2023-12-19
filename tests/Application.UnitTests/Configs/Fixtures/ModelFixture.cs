@@ -1,7 +1,8 @@
-﻿using Domain.Entities;
+﻿using Application.Feature.CreateFixedInvoice;
+using Domain.Entities;
 using Domain.Options;
 
-namespace Application.UnitTests.Fixtures
+namespace Application.UnitTests.Configs.Fixtures
 {
     public class ModelFixture
     {
@@ -20,16 +21,16 @@ namespace Application.UnitTests.Fixtures
             return new FixedInvoice()
             {
                 Id = 0,
-                Name = "",
-                Account = "",
-                Frequence = "",
-                InitialMonthYear = "",
-                FynallyMonthYear = "",
-                Category = "",
-                Value = 0,
-                BestPayDay = 0,
-                CreationDate = new DateTime(2023, 10, 10),
-                HasRegistration = true,
+                Name = "Teste",
+                Account = "Teste2",
+                Frequence = "Mensal",
+                InitialMonthYear = "Janeiro/2024",
+                FynallyMonthYear = null,
+                Category = "Teste",
+                Value = 200,
+                BestPayDay = 25,
+                CreationDate = new DateTime(2023, 12, 31, 0, 0, 0, kind: DateTimeKind.Local),
+                HasRegistration = false,
                 LastChangeDate = null
 
             };
@@ -55,7 +56,7 @@ namespace Application.UnitTests.Fixtures
                 Name = "",
                 Category = "",
                 Value = 0,
-                DueDate = new DateTime(2023, 12, 31),
+                DueDate = new DateTime(2023, 12, 31, 0, 0, 0, kind: DateTimeKind.Local),
                 YearMonth = "",
                 Frequence = "",
                 PayDay = "",
@@ -75,6 +76,25 @@ namespace Application.UnitTests.Fixtures
                     StartTime = new TimeSpan(0, 10, 0),
                     AddDays = false
                 }
+            };
+        }
+
+        public CreateFixedInvoiceInput GetCreateFixedInvoiceInput()
+        {
+            var fixedInvoice = GetFixedInvoice();
+
+            return new CreateFixedInvoiceInput()
+            {
+                Id = fixedInvoice.Id,
+                Name = fixedInvoice.Name,
+                Frequence = fixedInvoice.Frequence,
+                InitialMonthYear = fixedInvoice.InitialMonthYear,
+                FynallyMonthYear = fixedInvoice.FynallyMonthYear,
+                Category = fixedInvoice.Category,
+                Value = fixedInvoice.Value,
+                CreationDate = fixedInvoice.CreationDate,
+                HasRegistration = fixedInvoice.HasRegistration,
+                LastChangeDate = fixedInvoice.LastChangeDate
             };
         }
     }
