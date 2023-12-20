@@ -1,4 +1,4 @@
-﻿using Application.Feature.CreateFixedInvoice;
+﻿using Application.Feature.FixedInvoice.CreateFixedInvoice;
 using Domain.Entities;
 using Domain.Options;
 

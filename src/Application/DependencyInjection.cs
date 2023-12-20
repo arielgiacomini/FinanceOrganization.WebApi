@@ -1,6 +1,7 @@
 ﻿using Application.EventHandlers.CreateBillToPayEvent;
-using Application.Feature.CreateFixedInvoice;
-using Application.Feature.SearchFixedInvoice;
+using Application.Feature.BillToPay.UpdateBillToPay;
+using Application.Feature.FixedInvoice.CreateFixedInvoice;
+using Application.Feature.FixedInvoice.SearchFixedInvoice;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 
@@ -14,6 +15,7 @@ namespace Application
             services.AddSingleton<ICreateBillToPayEventHandler, CreateBillToPayEventHandler>();
             services.AddSingleton<ICreateFixedInvoiceHandler, CreateFixedInvoiceHandler>();
             services.AddSingleton<ISearchFixedInvoiceHandler, SearchFixedInvoiceHandler>();
+            services.AddSingleton<IUpdateBillToPayHandler, UpdateBillToPayHandler>();
 
             return services;
         }

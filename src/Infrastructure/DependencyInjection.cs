@@ -11,9 +11,9 @@ namespace Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
-            services.AddScoped<FinanceOrganizationContext>();
-            services.AddScoped<IFixedInvoiceRepository, FixedInvoiceRepository>();
-            services.AddScoped<IWalletToPayRepository, WalletToPayRepository>();
+            services.AddDbContext<FinanceOrganizationContext>();
+            services.AddTransient<IFixedInvoiceRepository, FixedInvoiceRepository>();
+            services.AddTransient<IWalletToPayRepository, WalletToPayRepository>();
 
             return services;
         }

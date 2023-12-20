@@ -1,7 +1,6 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
+﻿using Domain.Interfaces;
 
-namespace Application.Feature.CreateFixedInvoice
+namespace Application.Feature.FixedInvoice.CreateFixedInvoice
 {
     public class CreateFixedInvoiceHandler : ICreateFixedInvoiceHandler
     {
@@ -26,17 +25,19 @@ namespace Application.Feature.CreateFixedInvoice
             return await Task.FromResult(output);
         }
 
-        private static FixedInvoice MapInputFixedInvoiceToDomain(CreateFixedInvoiceInput input)
+        private static Domain.Entities.FixedInvoice MapInputFixedInvoiceToDomain(CreateFixedInvoiceInput input)
         {
-            return new FixedInvoice
+            return new Domain.Entities.FixedInvoice
             {
                 Id = input.Id,
                 Name = input.Name,
-                Frequence = input.Frequence,
+                Category = input.Category,
+                Account = input.Account,
+                Value = input.Value,
+                BestPayDay = input.BestPayDay,
                 InitialMonthYear = input.InitialMonthYear,
                 FynallyMonthYear = input.FynallyMonthYear,
-                Category = input.Category,
-                Value = input.Value,
+                Frequence = input.Frequence,
                 CreationDate = input.CreationDate,
                 HasRegistration = input.HasRegistration,
                 LastChangeDate = input.LastChangeDate

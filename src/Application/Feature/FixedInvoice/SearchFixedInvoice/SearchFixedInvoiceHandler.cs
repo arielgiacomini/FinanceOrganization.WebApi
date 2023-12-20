@@ -1,6 +1,6 @@
 ﻿using Domain.Interfaces;
 
-namespace Application.Feature.SearchFixedInvoice
+namespace Application.Feature.FixedInvoice.SearchFixedInvoice
 {
     public class SearchFixedInvoiceHandler : ISearchFixedInvoiceHandler
     {

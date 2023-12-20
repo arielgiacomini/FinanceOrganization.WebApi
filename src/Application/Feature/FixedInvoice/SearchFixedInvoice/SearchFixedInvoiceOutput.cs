@@ -1,4 +1,4 @@
-﻿namespace Application.Feature.SearchFixedInvoice
+﻿namespace Application.Feature.FixedInvoice.SearchFixedInvoice
 {
     public class SearchFixedInvoiceOutput
     {

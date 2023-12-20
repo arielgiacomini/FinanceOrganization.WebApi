@@ -1,4 +1,4 @@
-﻿namespace Application.Feature.CreateFixedInvoice
+﻿namespace Application.Feature.FixedInvoice.CreateFixedInvoice
 {
     public class CreateFixedInvoiceOutput
     {

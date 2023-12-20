@@ -1,5 +1,5 @@
 ﻿using Application.Feature;
-using Application.Feature.SearchFixedInvoice;
+using Application.Feature.FixedInvoice.SearchFixedInvoice;
 using Application.UnitTests.Configs.Collections;
 using Application.UnitTests.Configs.Fixtures;
 using Domain.Interfaces;
