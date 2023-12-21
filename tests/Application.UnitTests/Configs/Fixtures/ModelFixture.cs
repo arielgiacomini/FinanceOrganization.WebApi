@@ -30,7 +30,6 @@ namespace Application.UnitTests.Configs.Fixtures
                 Value = 200,
                 BestPayDay = 25,
                 CreationDate = new DateTime(2023, 12, 31, 0, 0, 0, kind: DateTimeKind.Local),
-                HasRegistration = false,
                 LastChangeDate = null
 
             };
@@ -93,7 +92,6 @@ namespace Application.UnitTests.Configs.Fixtures
                 Category = fixedInvoice.Category,
                 Value = fixedInvoice.Value,
                 CreationDate = fixedInvoice.CreationDate,
-                HasRegistration = fixedInvoice.HasRegistration,
                 LastChangeDate = fixedInvoice.LastChangeDate
             };
         }

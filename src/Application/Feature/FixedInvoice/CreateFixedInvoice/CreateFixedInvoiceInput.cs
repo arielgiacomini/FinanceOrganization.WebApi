@@ -12,7 +12,6 @@
         public decimal Value { get; set; }
         public int BestPayDay { get; set; }
         public DateTime CreationDate { get; set; }
-        public bool? HasRegistration { get; set; }
         public DateTime? LastChangeDate { get; set; }
     }
 }

@@ -16,5 +16,7 @@
         public string? Frequence { get; set; }
         public string? PayDay { get; set; }
         public bool HasPay { get; set; }
+        public DateTime CreationDate { get; set; }
+        public DateTime? LastChangeDate { get; set; }
     }
 }

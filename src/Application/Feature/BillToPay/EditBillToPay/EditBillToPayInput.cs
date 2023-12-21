@@ -1,6 +1,6 @@
-﻿namespace Application.Feature.BillToPay.UpdateBillToPay
+﻿namespace Application.Feature.BillToPay.EditBillToPay
 {
-    public class UpdateBillToPayInput
+    public class EditBillToPayInput
     {
         public Guid Id { get; set; }
         public int IdFixedInvoice { get; set; }
@@ -13,5 +13,6 @@
         public string? Frequence { get; set; }
         public string? PayDay { get; set; }
         public bool HasPay { get; set; }
+        public DateTime LastChangeDate { get; set; }
     }
 }

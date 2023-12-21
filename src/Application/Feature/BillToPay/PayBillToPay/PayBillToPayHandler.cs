@@ -1,0 +1,58 @@
+﻿using Domain.Interfaces;
+using Microsoft.Extensions.Logging;
+
+namespace Application.Feature.BillToPay.PayBillToPay
+{
+    public class PayBillToPayHandler : IPayBillToPayHandler
+    {
+        private readonly ILogger<PayBillToPayHandler> _logger;
+        private readonly IWalletToPayRepository _walletToPayRepository;
+
+        public PayBillToPayHandler(ILogger<PayBillToPayHandler> logger, IWalletToPayRepository walletToPayRepository)
+        {
+            _logger = logger;
+            _walletToPayRepository = walletToPayRepository;
+        }
+
+        public async Task<PayBillToPayOutput> Handle(PayBillToPayInput input, CancellationToken cancellationToken)
+        {
+            var validate = await PayBillToPayValidator.ValidateInput(input, _walletToPayRepository);
+
+            if (validate.Any())
+            {
+                var outputValidator = new PayBillToPayOutput
+                {
+                    Output = OutputBaseDetails.Validation("Houve erro de validação", validate)
+                };
+
+                return outputValidator;
+            }
+
+            var result = await _walletToPayRepository.Edit(MapInputToDomain(input));
+
+            PayBillToPayOutput output = new();
+
+            if (result != 1)
+            {
+                output.Output = OutputBaseDetails.Error("Houve erro ao efetuar o pagamento.", new Dictionary<string, string>());
+
+                return output;
+            }
+
+            output.Output = OutputBaseDetails.Success($"{result} - Pagamento realizado com sucesso.", new object());
+
+            return output;
+        }
+
+        private Domain.Entities.BillToPay MapInputToDomain(PayBillToPayInput input)
+        {
+            return new Domain.Entities.BillToPay()
+            {
+                Id = input.Id,
+                PayDay = input.PayDay,
+                HasPay = input.HasPay,
+                LastChangeDate = input.LastChangeDate
+            };
+        }
+    }
+}

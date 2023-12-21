@@ -135,7 +135,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             return result;
         }
 
-        public BillToPay MapBillToPay(
+        public static BillToPay MapBillToPay(
             BillToPay? billToPay, FixedInvoice? fixedInvoice, DateTime dueDate, string yearMonth)
         {
             if (billToPay is not null)
@@ -152,7 +152,9 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     YearMonth = yearMonth,
                     Frequence = billToPay.Frequence,
                     PayDay = null,
-                    HasPay = false
+                    HasPay = false,
+                    CreationDate = DateTime.Now,
+                    LastChangeDate = null
                 };
             }
             else
@@ -169,7 +171,9 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     YearMonth = yearMonth,
                     Frequence = fixedInvoice.Frequence,
                     PayDay = null,
-                    HasPay = false
+                    HasPay = false,
+                    CreationDate = DateTime.Now,
+                    LastChangeDate = null
                 };
             }
         }

@@ -39,7 +39,6 @@ namespace Application.Feature.FixedInvoice.CreateFixedInvoice
                 FynallyMonthYear = input.FynallyMonthYear,
                 Frequence = input.Frequence,
                 CreationDate = input.CreationDate,
-                HasRegistration = input.HasRegistration,
                 LastChangeDate = input.LastChangeDate
             };
         }

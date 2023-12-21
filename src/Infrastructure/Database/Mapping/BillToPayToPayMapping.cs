@@ -21,6 +21,8 @@ namespace Infrastructure.Database.Mapping
             builder.Property(x => x.Frequence).HasColumnName("IND_FREQUENCIA");
             builder.Property(x => x.PayDay).HasColumnName("DAT_PAGAMENTO");
             builder.Property(x => x.HasPay).HasColumnName("IND_PAGO");
+            builder.Property(x => x.CreationDate).HasColumnName("DAT_CRIACAO_REGISTRO");
+            builder.Property(x => x.LastChangeDate).HasColumnName("DAT_ULTIMA_ALTERACAO");
         }
     }
 }
