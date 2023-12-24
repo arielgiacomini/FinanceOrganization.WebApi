@@ -13,11 +13,11 @@ namespace Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
-            services.AddSingleton<ICreateBillToPayEventHandler, CreateBillToPayEventHandler>();
-            services.AddSingleton<ICreateFixedInvoiceHandler, CreateFixedInvoiceHandler>();
-            services.AddSingleton<ISearchFixedInvoiceHandler, SearchFixedInvoiceHandler>();
-            services.AddSingleton<IEditBillToPayHandler, EditBillToPayHandler>();
-            services.AddSingleton<IPayBillToPayHandler, PayBillToPayHandler>();
+            services.AddScoped<ICreateBillToPayEventHandler, CreateBillToPayEventHandler>();
+            services.AddScoped<ICreateFixedInvoiceHandler, CreateFixedInvoiceHandler>();
+            services.AddScoped<ISearchFixedInvoiceHandler, SearchFixedInvoiceHandler>();
+            services.AddScoped<IEditBillToPayHandler, EditBillToPayHandler>();
+            services.AddScoped<IPayBillToPayHandler, PayBillToPayHandler>();
 
             return services;
         }
