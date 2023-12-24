@@ -53,7 +53,6 @@ namespace Infrastructure.Repositories
         {
             try
             {
-                EditOnlyToPay(billToPay);
                 _context.BillToPay!.Update(billToPay);
                 var result = _context.SaveChanges();
 

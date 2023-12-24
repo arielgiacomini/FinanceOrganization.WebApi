@@ -28,7 +28,9 @@ namespace Application.Feature.BillToPay.PayBillToPay
                 return outputValidator;
             }
 
-            var result = await _walletToPayRepository.Edit(MapInputToDomain(input));
+            var billToPay = await MapInputToDomain(input);
+
+            var result = await _walletToPayRepository.Edit(billToPay);
 
             PayBillToPayOutput output = new();
 
@@ -44,13 +46,29 @@ namespace Application.Feature.BillToPay.PayBillToPay
             return output;
         }
 
-        private Domain.Entities.BillToPay MapInputToDomain(PayBillToPayInput input)
+        private async Task<Domain.Entities.BillToPay> MapInputToDomain(PayBillToPayInput input)
         {
+            var billToPay = await _walletToPayRepository.GetBillToPayById(input.Id);
+
+            if (billToPay == null)
+            {
+                return await Task.FromResult(new Domain.Entities.BillToPay());
+            }
+
             return new Domain.Entities.BillToPay()
             {
                 Id = input.Id,
+                IdFixedInvoice = billToPay.IdFixedInvoice,
+                Account = billToPay.Account,
+                Name = billToPay.Name,
+                Category = billToPay.Category,
+                Value = billToPay.Value,
+                DueDate = billToPay.DueDate,
+                YearMonth = billToPay.YearMonth,
+                Frequence = billToPay.Frequence,
                 PayDay = input.PayDay,
                 HasPay = input.HasPay,
+                CreationDate = billToPay.CreationDate,
                 LastChangeDate = input.LastChangeDate
             };
         }
