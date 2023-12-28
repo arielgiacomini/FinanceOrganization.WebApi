@@ -1,20 +1,37 @@
 ﻿using Domain.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Feature.FixedInvoice.CreateFixedInvoice
 {
     public class CreateFixedInvoiceHandler : ICreateFixedInvoiceHandler
     {
+        private readonly ILogger<CreateFixedInvoiceHandler> _logger;
         private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
 
-        public CreateFixedInvoiceHandler(
+        public CreateFixedInvoiceHandler(ILogger<CreateFixedInvoiceHandler> logger,
             IFixedInvoiceRepository fixedInvoiceRepository)
         {
+            _logger = logger;
             _fixedInvoiceRepository = fixedInvoiceRepository;
         }
 
         public async Task<CreateFixedInvoiceOutput> Handle(CreateFixedInvoiceInput input,
             CancellationToken cancellationToken = default)
         {
+            var validate = await CreateFixedInvoiceValidator.ValidateInput(input, _fixedInvoiceRepository);
+
+            if (validate.Any())
+            {
+                _logger.LogWarning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
+
+                var outputValidator = new CreateFixedInvoiceOutput
+                {
+                    Output = OutputBaseDetails.Validation("Houve erro de validação", validate)
+                };
+
+                return outputValidator;
+            }
+
             var IdFixedInvoice = await _fixedInvoiceRepository.Save(MapInputFixedInvoiceToDomain(input));
 
             var output = new CreateFixedInvoiceOutput
@@ -29,7 +46,6 @@ namespace Application.Feature.FixedInvoice.CreateFixedInvoice
         {
             return new Domain.Entities.FixedInvoice
             {
-                Id = input.Id,
                 Name = input.Name,
                 Category = input.Category,
                 Account = input.Account,

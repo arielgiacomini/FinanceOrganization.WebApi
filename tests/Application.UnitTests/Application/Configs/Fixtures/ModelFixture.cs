@@ -84,7 +84,6 @@ namespace FinanceOrganization.UnitTests.Application.Configs.Fixtures
 
             return new CreateFixedInvoiceInput()
             {
-                Id = fixedInvoice.Id,
                 Name = fixedInvoice.Name,
                 Frequence = fixedInvoice.Frequence,
                 InitialMonthYear = fixedInvoice.InitialMonthYear,

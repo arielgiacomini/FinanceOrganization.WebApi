@@ -37,12 +37,35 @@
             }
         }
 
-        public static int GetMonthsByDateTime(DateTime date)
+        public static int GetMonthsByDateTime(DateTime? initialDate, DateTime? finallyDate = null)
         {
-            var difference = (date - DateTime.Now);
+            if (initialDate == null)
+            {
+                return 0;
+            }
+
+            TimeSpan difference;
+            DateTime finallyDateConsider;
+
+            if (initialDate == finallyDate)
+            {
+                finallyDate = finallyDate.Value.AddDays(1);
+            }
+
+            if (finallyDate != null)
+            {
+                finallyDateConsider = finallyDate.Value;
+                difference = (finallyDateConsider - initialDate.Value);
+            }
+            else
+            {
+                finallyDateConsider = DateTime.Now;
+                difference = (initialDate.Value - finallyDateConsider);
+            }
 
             var totalDays = Math.Floor(difference.TotalDays);
-            var totalMonths = int.Parse(Math.Floor(totalDays / 30).ToString());
+            var months = (totalDays / 30);
+            var totalMonths = int.Parse(Math.Ceiling(months).ToString());
 
             return totalMonths;
         }
@@ -146,11 +169,11 @@
             return mes;
         }
 
-        public static DateTime GetDateTimeByYearMonthBrazilian(string? yearMonth)
+        public static DateTime? GetDateTimeByYearMonthBrazilian(string? yearMonth)
         {
             if (yearMonth is null)
             {
-                return DateTime.MinValue;
+                return null;
             }
 
             var split = yearMonth.Split("/");

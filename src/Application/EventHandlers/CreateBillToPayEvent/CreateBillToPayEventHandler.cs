@@ -42,6 +42,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 var lastBillToPay = GetLastRegistrationBillToPay(billsToPay);
 
                 StartRegistration(fixedInvoice, lastBillToPay);
+
+                Thread.Sleep(1000);
             }
         }
 
@@ -76,9 +78,19 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             List<BillToPay> listBillToPay = new();
 
             var totalMonths = DateServiceUtils.GetMonthsByDateTime(
-                DateServiceUtils.GetDateTimeByYearMonthBrazilian(fixedInvoice.InitialMonthYear));
+                DateServiceUtils.GetDateTimeByYearMonthBrazilian(fixedInvoice.InitialMonthYear),
+                DateServiceUtils.GetDateTimeByYearMonthBrazilian(fixedInvoice.FynallyMonthYear));
 
-            var qtdMonthAdd = GetMonthsAdd(totalMonths, _billToPayOptions.HowManyMonthForward);
+            int qtdMonthAdd;
+
+            if (fixedInvoice.FynallyMonthYear == null)
+            {
+                qtdMonthAdd = GetMonthsAdd(totalMonths, _billToPayOptions.HowManyMonthForward);
+            }
+            else
+            {
+                qtdMonthAdd = totalMonths;
+            }
 
             if (qtdMonthAdd <= 0 || totalMonths > _billToPayOptions.HowManyMonthForward)
             {
@@ -100,9 +112,16 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
         private async Task LogicByBillToPay(BillToPay billToPay)
         {
+            var result = await _fixedInvoiceRepository.GetById(billToPay.IdFixedInvoice);
+
+            if (result?.FynallyMonthYear?.Length > 0)
+            {
+                return;
+            }
+
             List<BillToPay> listBillToPay = new();
 
-            var totalMonths = DateServiceUtils.GetMonthsByDateTime(billToPay.DueDate);
+            var totalMonths = DateServiceUtils.GetMonthsByDateTime(billToPay.DueDate, null);
 
             var qtdMonthAdd = GetMonthsAdd(totalMonths, _billToPayOptions.HowManyMonthForward);
 

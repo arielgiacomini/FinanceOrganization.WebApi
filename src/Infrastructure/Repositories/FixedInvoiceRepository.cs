@@ -23,6 +23,31 @@ namespace Infrastructure.Repositories
             return result;
         }
 
+        public async Task<bool?> GetFixedInvoiceByName(string? name)
+        {
+            var result = await _context.FixedInvoice!
+                .AsNoTracking()
+                .AnyAsync(x => x.Name == name);
+
+            return result;
+        }
+
+        public async Task<FixedInvoice?> GetById(int iD)
+        {
+            try
+            {
+                var result = await _context.FixedInvoice!
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(fixedInvoice => fixedInvoice.Id == iD);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<int> Save(FixedInvoice fixedInvoice)
         {
             _context.Add(fixedInvoice);
