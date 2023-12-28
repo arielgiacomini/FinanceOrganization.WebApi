@@ -2,6 +2,6 @@
 {
     public class PayBillToPayOutput
     {
-        public OutputBaseDetails Output { get; set; }
+        public OutputBaseDetails? Output { get; set; }
     }
 }

@@ -1,14 +1,13 @@
 ﻿using Application.Feature;
 using Application.Feature.FixedInvoice.CreateFixedInvoice;
-using Application.UnitTests.Configs.Collections;
-using Application.UnitTests.Configs.Fixtures;
 using Domain.Interfaces;
+using FinanceOrganization.UnitTests.Configs.Collections;
+using FinanceOrganization.UnitTests.Configs.Fixtures;
 using Microsoft.VisualBasic;
 using Moq;
 using Xunit;
-using static Application.Feature.OutputBaseDetails;
 
-namespace Application.UnitTests.Feature.CreateFixedInvoice
+namespace FinanceOrganization.UnitTests.Feature.CreateFixedInvoice
 {
     [Collection(nameof(UnitTestCollection))]
     public class CreateFixedInvoiceHandlerTests
@@ -42,8 +41,7 @@ namespace Application.UnitTests.Feature.CreateFixedInvoice
 
             // Assert
 
-            Assert.Equal<OutputStatus>(result.Output.Status,
-                OutputBaseDetails.OutputStatus.Success);
+            Assert.Equal(OutputBaseDetails.OutputStatus.Success, result.Output.Status);
         }
     }
 }

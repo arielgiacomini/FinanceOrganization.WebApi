@@ -20,6 +20,8 @@ namespace Application.Feature.BillToPay.PayBillToPay
 
             if (validate.Any())
             {
+                _logger.LogWarning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
+                
                 var outputValidator = new PayBillToPayOutput
                 {
                     Output = OutputBaseDetails.Validation("Houve erro de validação", validate)

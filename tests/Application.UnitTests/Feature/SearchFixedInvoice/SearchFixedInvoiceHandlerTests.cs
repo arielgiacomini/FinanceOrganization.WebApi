@@ -1,25 +1,23 @@
 ﻿using Application.Feature;
 using Application.Feature.FixedInvoice.SearchFixedInvoice;
-using Application.UnitTests.Configs.Collections;
-using Application.UnitTests.Configs.Fixtures;
 using Domain.Interfaces;
+using FinanceOrganization.UnitTests.Configs.Collections;
+using FinanceOrganization.UnitTests.Configs.Fixtures;
 using Moq;
 using Xunit;
 
-namespace Application.UnitTests.Feature.SearchFixedInvoice
+namespace FinanceOrganization.UnitTests.Feature.SearchFixedInvoice
 {
     [Collection(nameof(UnitTestCollection))]
     public class SearchFixedInvoiceHandlerTests
     {
         private readonly ModelFixture _modelFixture;
         private readonly Mock<IFixedInvoiceRepository> _mockFixedInvoiceRepository;
-        private readonly Mock<OutputBaseDetails> _mockOutputBaseDetails;
 
         public SearchFixedInvoiceHandlerTests(ModelFixture modelFixture)
         {
             _modelFixture = modelFixture;
             _mockFixedInvoiceRepository = new Mock<IFixedInvoiceRepository>();
-            _mockOutputBaseDetails = new Mock<OutputBaseDetails>();
         }
 
         [Fact]

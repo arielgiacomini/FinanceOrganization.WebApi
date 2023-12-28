@@ -16,13 +16,13 @@ namespace Infrastructure.Database.Mapping
             builder.Property(x => x.Name).HasColumnName("DSC_DESCRICAO");
             builder.Property(x => x.Category).HasColumnName("DSC_CATEGORIA");
             builder.Property(x => x.Value).HasColumnName("VAL_VALOR");
-            builder.Property(x => x.DueDate).HasColumnName("DAT_VENCIMENTO");
+            builder.Property(x => x.DueDate).HasColumnName("DAT_VENCIMENTO").HasColumnType("datetime");
             builder.Property(x => x.YearMonth).HasColumnName("IND_MES_ANO");
             builder.Property(x => x.Frequence).HasColumnName("IND_FREQUENCIA");
             builder.Property(x => x.PayDay).HasColumnName("DAT_PAGAMENTO");
             builder.Property(x => x.HasPay).HasColumnName("IND_PAGO");
-            builder.Property(x => x.CreationDate).HasColumnName("DAT_CRIACAO_REGISTRO");
-            builder.Property(x => x.LastChangeDate).HasColumnName("DAT_ULTIMA_ALTERACAO");
+            builder.Property(x => x.CreationDate).HasColumnName("DAT_CRIACAO_REGISTRO").HasColumnType("datetime");
+            builder.Property(x => x.LastChangeDate).HasColumnName("DAT_ULTIMA_ALTERACAO").HasColumnType("datetime");
         }
     }
 }

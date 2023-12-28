@@ -2,7 +2,7 @@
 using Domain.Entities;
 using Domain.Options;
 
-namespace Application.UnitTests.Configs.Fixtures
+namespace FinanceOrganization.UnitTests.Configs.Fixtures
 {
     public class ModelFixture
     {

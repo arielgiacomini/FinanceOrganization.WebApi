@@ -51,34 +51,10 @@ namespace Infrastructure.Repositories
 
         public async Task<int> Edit(BillToPay billToPay)
         {
-            try
-            {
-                _context.BillToPay!.Update(billToPay);
-                var result = _context.SaveChanges();
+            _context.BillToPay!.Update(billToPay);
+            var result = _context.SaveChanges();
 
-                return await Task.FromResult(result);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        private void EditOnlyToPay(BillToPay billToPay)
-        {
-            if (billToPay.HasPay)
-            {
-                _context.Entry(billToPay).Property(p => p.Id).IsModified = false;
-                _context.Entry(billToPay).Property(p => p.IdFixedInvoice).IsModified = false;
-                _context.Entry(billToPay).Property(p => p.Account).IsModified = false;
-                _context.Entry(billToPay).Property(p => p.Name).IsModified = false;
-                _context.Entry(billToPay).Property(p => p.Category).IsModified = false;
-                _context.Entry(billToPay).Property(p => p.Value).IsModified = false;
-                _context.Entry(billToPay).Property(p => p.DueDate).IsModified = false;
-                _context.Entry(billToPay).Property(p => p.YearMonth).IsModified = false;
-                _context.Entry(billToPay).Property(p => p.Frequence).IsModified = false;
-                _context.Entry(billToPay).Property(p => p.CreationDate).IsModified = false;
-            }
+            return await Task.FromResult(result);
         }
     }
 }

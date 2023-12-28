@@ -1,15 +1,15 @@
 ﻿using Application.EventHandlers.CreateBillToPayEvent;
-using Application.UnitTests.Configs.Collections;
-using Application.UnitTests.Configs.Fixtures;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Options;
+using FinanceOrganization.UnitTests.Configs.Collections;
+using FinanceOrganization.UnitTests.Configs.Fixtures;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace Application.UnitTests.EventHandlers.CreateBillToPayEvent
+namespace FinanceOrganization.UnitTests.EventHandlers.CreateBillToPayEvent
 {
     [Collection(nameof(UnitTestCollection))]
     public class CreateBillToPayEventHandlerTests
@@ -137,7 +137,7 @@ namespace Application.UnitTests.EventHandlers.CreateBillToPayEvent
 
             _mockWalletToPayRepository
                 .Setup(walletToPay => walletToPay.GetBillToPayByFixedInvoiceId(It.IsAny<int>()))
-                .ReturnsAsync(() => null);
+                .ReturnsAsync(() => null!);
 
             _mockWalletToPayRepository
                 .Setup(walletToPay => walletToPay.Save(It.IsAny<IList<BillToPay>>()))
@@ -174,7 +174,7 @@ namespace Application.UnitTests.EventHandlers.CreateBillToPayEvent
 
             _mockWalletToPayRepository
                 .Setup(walletToPay => walletToPay.GetBillToPayByFixedInvoiceId(It.IsAny<int>()))
-                .ReturnsAsync(() => null);
+                .ReturnsAsync(() => null!);
 
             _mockWalletToPayRepository
                 .Setup(walletToPay => walletToPay.Save(It.IsAny<IList<BillToPay>>()))
