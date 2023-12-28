@@ -2,14 +2,14 @@
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Options;
-using FinanceOrganization.UnitTests.Configs.Collections;
-using FinanceOrganization.UnitTests.Configs.Fixtures;
+using FinanceOrganization.UnitTests.Application.Configs.Collections;
+using FinanceOrganization.UnitTests.Application.Configs.Fixtures;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace FinanceOrganization.UnitTests.EventHandlers.CreateBillToPayEvent
+namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPayEvent
 {
     [Collection(nameof(UnitTestCollection))]
     public class CreateBillToPayEventHandlerTests

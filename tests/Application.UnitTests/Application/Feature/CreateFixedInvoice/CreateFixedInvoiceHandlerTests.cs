@@ -1,13 +1,13 @@
 ﻿using Application.Feature;
 using Application.Feature.FixedInvoice.CreateFixedInvoice;
 using Domain.Interfaces;
-using FinanceOrganization.UnitTests.Configs.Collections;
-using FinanceOrganization.UnitTests.Configs.Fixtures;
+using FinanceOrganization.UnitTests.Application.Configs.Collections;
+using FinanceOrganization.UnitTests.Application.Configs.Fixtures;
 using Microsoft.VisualBasic;
 using Moq;
 using Xunit;
 
-namespace FinanceOrganization.UnitTests.Feature.CreateFixedInvoice
+namespace FinanceOrganization.UnitTests.Application.Feature.CreateFixedInvoice
 {
     [Collection(nameof(UnitTestCollection))]
     public class CreateFixedInvoiceHandlerTests

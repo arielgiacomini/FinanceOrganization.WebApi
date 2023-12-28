@@ -1,12 +1,12 @@
 ﻿using Application.Feature;
 using Application.Feature.FixedInvoice.SearchFixedInvoice;
 using Domain.Interfaces;
-using FinanceOrganization.UnitTests.Configs.Collections;
-using FinanceOrganization.UnitTests.Configs.Fixtures;
+using FinanceOrganization.UnitTests.Application.Configs.Collections;
+using FinanceOrganization.UnitTests.Application.Configs.Fixtures;
 using Moq;
 using Xunit;
 
-namespace FinanceOrganization.UnitTests.Feature.SearchFixedInvoice
+namespace FinanceOrganization.UnitTests.Application.Feature.SearchFixedInvoice
 {
     [Collection(nameof(UnitTestCollection))]
     public class SearchFixedInvoiceHandlerTests
