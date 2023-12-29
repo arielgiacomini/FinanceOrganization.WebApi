@@ -60,7 +60,7 @@ namespace WebAPI.Controllers
             return Ok(output);
         }
 
-        [HttpPost("create-fixed-invoice")]
+        [HttpPost("register")]
         public async Task<IActionResult> CreateFixedInvoice([FromBody] CreateFixedInvoiceInput input,
             CancellationToken cancellationToken)
         {
@@ -71,7 +71,7 @@ namespace WebAPI.Controllers
             return Ok(output);
         }
 
-        [HttpPost("create-basket-fixed-invoice")]
+        [HttpPost("register-basket")]
         public async Task<IActionResult> CreateBasketFixedInvoice([FromBody] IList<CreateFixedInvoiceInput> input,
             CancellationToken cancellationToken)
         {
@@ -87,7 +87,7 @@ namespace WebAPI.Controllers
             return Ok(output);
         }
 
-        [HttpGet("search-fixed-invoice")]
+        [HttpGet("register-search")]
         public async Task<IActionResult> GetFixedInvoice(CancellationToken cancellationToken)
         {
             _logger.LogInformation($"[BillToPayController.GetFixedInvoice()] - Busca de conta/fatura fixa.");

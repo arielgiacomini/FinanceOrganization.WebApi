@@ -50,6 +50,7 @@ namespace Application.Feature.FixedInvoice.CreateFixedInvoice
                 Category = input.Category,
                 Account = input.Account,
                 Value = input.Value,
+                PurchaseDate = input.PurchaseDate,
                 BestPayDay = input.BestPayDay,
                 InitialMonthYear = input.InitialMonthYear,
                 FynallyMonthYear = input.FynallyMonthYear,

@@ -9,6 +9,7 @@
         public string? FynallyMonthYear { get; set; }
         public string? Category { get; set; }
         public decimal Value { get; set; }
+        public DateTime? PurchaseDate { get; set; }
         public int BestPayDay { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime? LastChangeDate { get; set; }

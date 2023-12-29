@@ -16,6 +16,7 @@ namespace Infrastructure.Database.Mapping
             builder.Property(x => x.Name).HasColumnName("DSC_DESCRICAO");
             builder.Property(x => x.Category).HasColumnName("DSC_CATEGORIA");
             builder.Property(x => x.Value).HasColumnName("VAL_VALOR");
+            builder.Property(x => x.PurchaseDate).HasColumnName("DAT_COMPRA").HasColumnType("datetime");
             builder.Property(x => x.DueDate).HasColumnName("DAT_VENCIMENTO").HasColumnType("datetime");
             builder.Property(x => x.YearMonth).HasColumnName("IND_MES_ANO");
             builder.Property(x => x.Frequence).HasColumnName("IND_FREQUENCIA");

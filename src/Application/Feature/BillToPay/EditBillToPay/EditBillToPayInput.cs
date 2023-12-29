@@ -8,6 +8,7 @@
         public string? Name { get; set; }
         public string? Category { get; set; }
         public decimal Value { get; set; }
+        public DateTime? PurchaseDate { get; set; }
         public DateTime DueDate { get; set; }
         public string? YearMonth { get; set; }
         public string? Frequence { get; set; }

@@ -4,6 +4,8 @@ namespace Application.Feature.FixedInvoice.CreateFixedInvoice
 {
     public class CreateFixedInvoiceValidator
     {
+        private const string CARTAO_CREDITO = "Cartão de Crédito";
+
         public static async Task<Dictionary<string, string>> ValidateInput(
             CreateFixedInvoiceInput input,
             IFixedInvoiceRepository fixedInvoiceRepository)
@@ -16,11 +18,11 @@ namespace Application.Feature.FixedInvoice.CreateFixedInvoice
         {
             Dictionary<string, string> validatorBase = new();
 
-            var result = await fixedInvoiceRepository.GetFixedInvoiceByName(input.Name);
+            var fixedInvoice = await fixedInvoiceRepository.GetFixedInvoiceByName(input.Name);
 
-            if (result.Value)
+            if (fixedInvoice != null && fixedInvoice.Account != CARTAO_CREDITO)
             {
-                validatorBase.Add("[32]", $"Já existe uma conta a pagar cadastada com este nome {input.Name} você deve editar para prosseguir.");
+                validatorBase.Add("[32]", $"Já existe uma conta a pagar cadastada com este nome {input.Name} verifique se está correto.");
             }
 
             return validatorBase;

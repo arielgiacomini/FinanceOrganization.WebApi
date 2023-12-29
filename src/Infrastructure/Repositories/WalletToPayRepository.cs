@@ -42,11 +42,18 @@ namespace Infrastructure.Repositories
 
         public async Task<int> Save(IList<BillToPay> billsToPay)
         {
-            _context.AddRange(billsToPay);
+            try
+            {
+                _context.AddRange(billsToPay);
 
-            var result = _context.SaveChanges();
+                var result = _context.SaveChanges();
 
-            return await Task.FromResult(result);
+                return await Task.FromResult(result);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task<int> Edit(BillToPay billToPay)

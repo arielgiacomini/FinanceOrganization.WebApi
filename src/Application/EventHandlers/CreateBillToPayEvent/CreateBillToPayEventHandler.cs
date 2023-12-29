@@ -14,7 +14,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         private readonly BillToPayOptions _billToPayOptions;
         private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
         private readonly IWalletToPayRepository _walletToPayRepository;
-        private const string ENABLED_ADD_MONTH_DUEDATE = "Cartão de Crédito";
+        private const string CARTAO_CREDITO = "Cartão de Crédito";
+        private const string FREQUENCIA_MENSAL_RECORRENTE = "Mensal:Recorrente";
 
         public CreateBillToPayEventHandler(
             ILogger<CreateBillToPayEventHandler> logger,
@@ -100,9 +101,19 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             bool addMonthForDueDate = false;
 
-            if (fixedInvoice.Account == ENABLED_ADD_MONTH_DUEDATE)
+            if (fixedInvoice.Account == CARTAO_CREDITO)
             {
                 addMonthForDueDate = true;
+            }
+
+            Dictionary<string, DateTime> purchasesDate = new();
+            bool considerPurchase = false;
+
+            if (fixedInvoice.Account == CARTAO_CREDITO && fixedInvoice.Frequence == FREQUENCIA_MENSAL_RECORRENTE)
+            {
+                // Crédito Recorrente.
+                considerPurchase = true;
+                purchasesDate = DateServiceUtils.GetNextYearMonthAndDateTime(fixedInvoice.PurchaseDate, qtdMonthAdd, null, true);
             }
 
             var nextMonthYearToRegister = DateServiceUtils
@@ -112,7 +123,17 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             foreach (var nextMonth in nextMonthYearToRegister!)
             {
-                listBillToPay.Add(MapBillToPay(null, fixedInvoice, nextMonth.Value, nextMonth.Key));
+                DateTime? purchase;
+                if (considerPurchase)
+                {
+                    purchase = purchasesDate.GetValueOrDefault(nextMonth.Key);
+                }
+                else
+                {
+                    purchase = fixedInvoice.PurchaseDate;
+                }
+
+                listBillToPay.Add(MapBillToPay(null, fixedInvoice, nextMonth.Value, nextMonth.Key, purchase));
             }
 
             await _walletToPayRepository.Save(listBillToPay);
@@ -163,7 +184,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         }
 
         public static BillToPay MapBillToPay(
-            BillToPay? billToPay, FixedInvoice? fixedInvoice, DateTime dueDate, string yearMonth)
+            BillToPay? billToPay, FixedInvoice? fixedInvoice, DateTime dueDate, string yearMonth, DateTime? purchaseDate = null)
         {
             if (billToPay is not null)
             {
@@ -175,6 +196,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     Name = billToPay.Name,
                     Category = billToPay.Category,
                     Value = billToPay.Value,
+                    PurchaseDate = purchaseDate,
                     DueDate = dueDate,
                     YearMonth = yearMonth,
                     Frequence = billToPay.Frequence,
@@ -194,6 +216,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     Name = fixedInvoice.Name,
                     Category = fixedInvoice.Category,
                     Value = fixedInvoice.Value,
+                    PurchaseDate = purchaseDate,
                     DueDate = dueDate,
                     YearMonth = yearMonth,
                     Frequence = fixedInvoice.Frequence,

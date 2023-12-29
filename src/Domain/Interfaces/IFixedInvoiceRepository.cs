@@ -6,7 +6,7 @@ namespace Domain.Interfaces
     {
         Task<IList<FixedInvoice>> GetByAll();
         Task<FixedInvoice?> GetById(int iD);
-        Task<bool?> GetFixedInvoiceByName(string? name);
+        Task<FixedInvoice?> GetFixedInvoiceByName(string? name);
         Task<int> Save(FixedInvoice fixedInvoice);
     }
 }
