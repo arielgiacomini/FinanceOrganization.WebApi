@@ -14,6 +14,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         private readonly BillToPayOptions _billToPayOptions;
         private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
         private readonly IWalletToPayRepository _walletToPayRepository;
+        private const string ENABLED_ADD_MONTH_DUEDATE = "Cartão de Crédito";
 
         public CreateBillToPayEventHandler(
             ILogger<CreateBillToPayEventHandler> logger,
@@ -97,10 +98,17 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 return;
             }
 
+            bool addMonthForDueDate = false;
+
+            if (fixedInvoice.Account == ENABLED_ADD_MONTH_DUEDATE)
+            {
+                addMonthForDueDate = true;
+            }
+
             var nextMonthYearToRegister = DateServiceUtils
                 .GetNextYearMonthAndDateTime(
                 null, qtdMonthAdd, fixedInvoice.BestPayDay,
-                DateServiceUtils.IsCurrentMonth(fixedInvoice.InitialMonthYear));
+                DateServiceUtils.IsCurrentMonth(fixedInvoice.InitialMonthYear), addMonthForDueDate);
 
             foreach (var nextMonth in nextMonthYearToRegister!)
             {

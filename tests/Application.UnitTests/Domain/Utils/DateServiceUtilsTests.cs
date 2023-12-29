@@ -26,5 +26,18 @@ namespace FinanceOrganization.UnitTests.Domain.Utils
 
             Assert.Equal(1, result);
         }
+
+        [Fact]
+        public void Utils_GetNextYearMonthAndDateTime_GarantirQueSeraAddMesParaDataPoremMesAnoContinuaMesmo_Success()
+        {
+            var result = DateServiceUtils.GetNextYearMonthAndDateTime(null, 1, 9, false, true);
+
+            var firstKey = result.Keys.FirstOrDefault();
+            var firstValue = result.Values.FirstOrDefault();
+
+            var dataKey = DateServiceUtils.GetDateTimeByYearMonthBrazilian(firstKey);
+
+            Assert.True(dataKey < firstValue);
+        }
     }
 }

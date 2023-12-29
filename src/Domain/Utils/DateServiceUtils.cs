@@ -187,7 +187,7 @@
         }
 
         public static Dictionary<string, DateTime> GetNextYearMonthAndDateTime(
-            DateTime? dateTime, int qtdMonthAdd, int? bestPayDay, bool currentMonth = false)
+            DateTime? dateTime, int qtdMonthAdd, int? bestPayDay, bool currentMonth = false, bool addFirstNextMonth = false)
         {
             Dictionary<string, DateTime> dictionary = new();
 
@@ -213,11 +213,23 @@
 
             for (int month = initialMonth; month <= qtdMonthAdd; month++)
             {
+                DateTime dateTimeNext;
+
+                if (addFirstNextMonth)
+                {
+                    dateTimeNext = newDatetime.AddMonths(month + 1);
+                }
+                else
+                {
+                    dateTimeNext = newDatetime.AddMonths(month);
+                }
+
                 var dateTimeNextMonth = newDatetime.AddMonths(month);
+                string yearMonth;
 
-                var yearMonth = GetYearMonthPortugueseByDateTime(dateTimeNextMonth);
+                yearMonth = GetYearMonthPortugueseByDateTime(dateTimeNextMonth);
 
-                dictionary.Add(yearMonth, dateTimeNextMonth);
+                dictionary.Add(yearMonth, dateTimeNext);
             }
 
             return dictionary;
