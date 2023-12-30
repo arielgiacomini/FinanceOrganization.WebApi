@@ -2,15 +2,15 @@
 using Domain.Interfaces;
 using Domain.Options;
 using Domain.Utils;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Serilog;
 using System.Text.Json;
 
 namespace Application.EventHandlers.CreateBillToPayEvent
 {
     public class CreateBillToPayEventHandler : ICreateBillToPayEventHandler
     {
-        private readonly ILogger<CreateBillToPayEventHandler> _logger;
+        private readonly ILogger _logger;
         private readonly BillToPayOptions _billToPayOptions;
         private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
         private readonly IWalletToPayRepository _walletToPayRepository;
@@ -18,7 +18,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         private const string FREQUENCIA_MENSAL_RECORRENTE = "Mensal:Recorrente";
 
         public CreateBillToPayEventHandler(
-            ILogger<CreateBillToPayEventHandler> logger,
+            ILogger logger,
             IOptions<BillToPayOptions> options,
             IFixedInvoiceRepository fixedInvoiceRepository,
             IWalletToPayRepository walletToPayRepository)
@@ -37,7 +37,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             {
                 var json = JsonSerializer.Serialize(fixedInvoice);
 
-                _logger.LogInformation("Objeto FixedInvoice que será processado: {@json}", json);
+                _logger.Information("Objeto FixedInvoice que será processado: {@json}", json);
 
                 var billsToPay = await _walletToPayRepository.GetBillToPayByFixedInvoiceId(fixedInvoice.Id);
 

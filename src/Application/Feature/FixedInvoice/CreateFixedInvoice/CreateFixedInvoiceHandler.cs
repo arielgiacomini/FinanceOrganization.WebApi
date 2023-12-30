@@ -1,14 +1,14 @@
 ﻿using Domain.Interfaces;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Application.Feature.FixedInvoice.CreateFixedInvoice
 {
     public class CreateFixedInvoiceHandler : ICreateFixedInvoiceHandler
     {
-        private readonly ILogger<CreateFixedInvoiceHandler> _logger;
+        private readonly ILogger _logger;
         private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
 
-        public CreateFixedInvoiceHandler(ILogger<CreateFixedInvoiceHandler> logger,
+        public CreateFixedInvoiceHandler(ILogger logger,
             IFixedInvoiceRepository fixedInvoiceRepository)
         {
             _logger = logger;
@@ -18,13 +18,13 @@ namespace Application.Feature.FixedInvoice.CreateFixedInvoice
         public async Task<CreateFixedInvoiceOutput> Handle(CreateFixedInvoiceInput input,
             CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation("Está sendo criado a conta a pagar de nome: {Name}", input.Name);
+            _logger.Information("Está sendo criado a conta a pagar de nome: {Name}", input.Name);
 
             var validate = await CreateFixedInvoiceValidator.ValidateInput(input, _fixedInvoiceRepository);
 
             if (validate.Any())
             {
-                _logger.LogWarning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
+                _logger.Warning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
 
                 var outputValidator = new CreateFixedInvoiceOutput
                 {

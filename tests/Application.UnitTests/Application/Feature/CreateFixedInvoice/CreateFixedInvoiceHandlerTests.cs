@@ -3,9 +3,9 @@ using Application.Feature.FixedInvoice.CreateFixedInvoice;
 using Domain.Interfaces;
 using FinanceOrganization.UnitTests.Application.Configs.Collections;
 using FinanceOrganization.UnitTests.Application.Configs.Fixtures;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 using Moq;
+using Serilog;
 using Xunit;
 
 namespace FinanceOrganization.UnitTests.Application.Feature.CreateFixedInvoice
@@ -15,13 +15,13 @@ namespace FinanceOrganization.UnitTests.Application.Feature.CreateFixedInvoice
     {
         private readonly ModelFixture _modelFixture;
         private readonly Mock<IFixedInvoiceRepository> _mockFixedInvoiceRepository;
-        private readonly Mock<ILogger<CreateFixedInvoiceHandler>> _mockLogger;
+        private readonly Mock<ILogger> _mockLogger;
 
         public CreateFixedInvoiceHandlerTests(ModelFixture modelFixture)
         {
             _modelFixture = modelFixture;
             _mockFixedInvoiceRepository = new Mock<IFixedInvoiceRepository>();
-            _mockLogger = new Mock<ILogger<CreateFixedInvoiceHandler>>();
+            _mockLogger = new Mock<ILogger>();
         }
 
         [Fact]

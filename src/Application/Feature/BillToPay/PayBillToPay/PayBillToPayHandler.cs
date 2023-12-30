@@ -1,14 +1,14 @@
 ﻿using Domain.Interfaces;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Application.Feature.BillToPay.PayBillToPay
 {
     public class PayBillToPayHandler : IPayBillToPayHandler
     {
-        private readonly ILogger<PayBillToPayHandler> _logger;
+        private readonly ILogger _logger;
         private readonly IWalletToPayRepository _walletToPayRepository;
 
-        public PayBillToPayHandler(ILogger<PayBillToPayHandler> logger, IWalletToPayRepository walletToPayRepository)
+        public PayBillToPayHandler(ILogger logger, IWalletToPayRepository walletToPayRepository)
         {
             _logger = logger;
             _walletToPayRepository = walletToPayRepository;
@@ -20,8 +20,8 @@ namespace Application.Feature.BillToPay.PayBillToPay
 
             if (validate.Any())
             {
-                _logger.LogWarning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
-                
+                _logger.Warning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
+
                 var outputValidator = new PayBillToPayOutput
                 {
                     Output = OutputBaseDetails.Validation("Houve erro de validação", validate)

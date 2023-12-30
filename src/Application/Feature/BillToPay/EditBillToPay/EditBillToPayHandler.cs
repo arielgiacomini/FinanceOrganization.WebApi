@@ -1,14 +1,14 @@
 ﻿using Domain.Interfaces;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Application.Feature.BillToPay.EditBillToPay
 {
     public class EditBillToPayHandler : IEditBillToPayHandler
     {
-        private readonly ILogger<EditBillToPayHandler> _logger;
+        private readonly ILogger _logger;
         private readonly IWalletToPayRepository _walletToPayRepository;
 
-        public EditBillToPayHandler(ILogger<EditBillToPayHandler> logger, IWalletToPayRepository walletToPayRepository)
+        public EditBillToPayHandler(ILogger logger, IWalletToPayRepository walletToPayRepository)
         {
             _logger = logger;
             _walletToPayRepository = walletToPayRepository;

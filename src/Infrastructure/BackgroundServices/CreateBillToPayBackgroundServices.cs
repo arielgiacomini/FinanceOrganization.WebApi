@@ -1,19 +1,19 @@
 ﻿using Application.EventHandlers.CreateBillToPayEvent;
 using Domain.Options;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace Infrastructure.BackgroundServices
 {
     public class CreateBillToPayBackgroundServices : BackgroundService
     {
-        private readonly ILogger<CreateBillToPayBackgroundServices> _logger;
+        private readonly ILogger _logger;
         private readonly BillToPayOptions _options;
         private readonly ICreateBillToPayEventHandler _walletToPayHandler;
 
         public CreateBillToPayBackgroundServices(
-            ILogger<CreateBillToPayBackgroundServices> logger,
+            ILogger logger,
             IOptions<BillToPayOptions> options,
             ICreateBillToPayEventHandler walletToPayHandler)
         {
@@ -32,7 +32,7 @@ namespace Infrastructure.BackgroundServices
             }
             else
             {
-                _logger.LogInformation("[CreateWalletToPayBackgroundServices] - Rotina está desabilitada para efetuar o processo em background.");
+                _logger.Information("[CreateWalletToPayBackgroundServices] - Rotina está desabilitada para efetuar o processo em background.");
             }
         }
 
@@ -53,14 +53,14 @@ namespace Infrastructure.BackgroundServices
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CreateWalletToPayBackgroundServices] - Iniciando o BackgoundServices responsável por criação da carteira de pagamentos.");
+            _logger.Information("[CreateWalletToPayBackgroundServices] - Iniciando o BackgoundServices responsável por criação da carteira de pagamentos.");
 
             return base.StartAsync(cancellationToken);
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CreateWalletToPayBackgroundServices] - Finalizando o BackgoundServices responsável por criação da carteira de pagamentos.");
+            _logger.Information("[CreateWalletToPayBackgroundServices] - Finalizando o BackgoundServices responsável por criação da carteira de pagamentos.");
 
             return base.StopAsync(cancellationToken);
         }

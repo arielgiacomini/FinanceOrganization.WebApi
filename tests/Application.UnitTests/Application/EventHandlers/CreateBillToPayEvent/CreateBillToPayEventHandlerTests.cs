@@ -4,9 +4,9 @@ using Domain.Interfaces;
 using Domain.Options;
 using FinanceOrganization.UnitTests.Application.Configs.Collections;
 using FinanceOrganization.UnitTests.Application.Configs.Fixtures;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using Serilog;
 using Xunit;
 
 namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPayEvent
@@ -15,7 +15,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
     public class CreateBillToPayEventHandlerTests
     {
         private readonly ModelFixture _modelFixture;
-        private readonly Mock<ILogger<CreateBillToPayEventHandler>> _dummyLogger;
+        private readonly Mock<ILogger> _dummyLogger;
         private readonly Mock<IOptions<BillToPayOptions>> _mockOptions;
         private readonly Mock<IFixedInvoiceRepository> _mockFixedInvoiceRepository;
         private readonly Mock<IWalletToPayRepository> _mockWalletToPayRepository;
@@ -23,7 +23,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
         public CreateBillToPayEventHandlerTests(ModelFixture modelFixture)
         {
             _modelFixture = modelFixture;
-            _dummyLogger = new Mock<ILogger<CreateBillToPayEventHandler>>();
+            _dummyLogger = new Mock<ILogger>();
             _mockOptions = new Mock<IOptions<BillToPayOptions>>();
             _mockFixedInvoiceRepository = new Mock<IFixedInvoiceRepository>();
             _mockWalletToPayRepository = new Mock<IWalletToPayRepository>();

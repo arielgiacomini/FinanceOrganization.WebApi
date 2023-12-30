@@ -11,7 +11,7 @@ namespace WebAPI
     [ExcludeFromCodeCoverage]
     public class Startup
     {
-        const string DEFAULT_LOG_DIRECTORY = "C:/Logs/SGM.WebApi";
+        const string DEFAULT_LOG_DIRECTORY = "C:/Logs/LogFinanceOrganization_.log";
         private readonly Uri URL_ARIELGIACOMINI = new("http://teste.com.br");
 
         public IConfiguration Configuration { get; }
@@ -24,7 +24,8 @@ namespace WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc(options => options.EnableEndpointRouting = false);
-            var filePath = Configuration.GetSection("Log:Path") is null ? DEFAULT_LOG_DIRECTORY : Configuration.GetSection("Log:Path").Value;
+            var logPathAppSettings = Configuration.GetSection("Log:Path").Value;
+            var filePath = logPathAppSettings is null ? DEFAULT_LOG_DIRECTORY : logPathAppSettings;
 
             services.Configure<BillToPayOptions>(options =>
             Configuration.GetSection("BillToPayOptions").Bind(options));
@@ -73,7 +74,6 @@ namespace WebAPI
             });
         }
 
-        [Obsolete]
         public void Configure(IApplicationBuilder app, IHosting.IHostingEnvironment env)
         {
             if (env.IsDevelopment())
