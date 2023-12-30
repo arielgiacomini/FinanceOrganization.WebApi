@@ -2,6 +2,7 @@
 using Application.Feature.BillToPay.PayBillToPay;
 using Application.Feature.FixedInvoice.CreateFixedInvoice;
 using Application.Feature.FixedInvoice.SearchFixedInvoice;
+using Domain.Utils;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -36,7 +37,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Edit([FromBody] EditBillToPayInput input,
             CancellationToken cancellationToken)
         {
-            _logger.Information($"[BillToPayController.Edit()] - Alteração de uma conta à pagar já cadastrada. Input: {JsonSerializer.Serialize(input)}");
+            _logger.Information($"[BillToPayController.Edit()] - Alteração de uma conta à pagar já cadastrada. Input: {JsonSerializeUtils.Serialize(input)}");
 
             var output = await _editBillToPayHandler.Handle(input, cancellationToken);
 
@@ -53,7 +54,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Pay([FromBody] PayBillToPayInput input,
             CancellationToken cancellationToken)
         {
-            _logger.Information($"[BillToPayController.Pay()] - Efetuar pagamento. Input: {JsonSerializer.Serialize(input)}");
+            _logger.Information($"[BillToPayController.Pay()] - Efetuar pagamento. Input: {JsonSerializeUtils..Serialize(input)}");
 
             var output = await _payBillToPayHandler.Handle(input, cancellationToken);
 
@@ -64,7 +65,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> CreateFixedInvoice([FromBody] CreateFixedInvoiceInput input,
             CancellationToken cancellationToken)
         {
-            _logger.Information($"[BillToPayController.CreateFixedInvoice()] - Cadastro de uma nova conta/fatura fixa. Input: {JsonSerializer.Serialize(input)}");
+            _logger.Information($"[BillToPayController.CreateFixedInvoice()] - Cadastro de uma nova conta/fatura fixa. Input: {JsonSerializeUtils..Serialize(input)}");
 
             var output = await _createFixedInvoiceHandler.Handle(input, cancellationToken);
 
@@ -75,7 +76,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> CreateBasketFixedInvoice([FromBody] IList<CreateFixedInvoiceInput> input,
             CancellationToken cancellationToken)
         {
-            _logger.Information("[BillToPayController.CreateBasketFixedInvoice()] - Cadastro de uma nova conta/fatura fixa via basket. Input: {@Input}", JsonSerializer.Serialize(input));
+            _logger.Information("[BillToPayController.CreateBasketFixedInvoice()] - Cadastro de uma nova conta/fatura fixa via basket. Input: {@Input}", JsonSerializeUtils..Serialize(input));
 
             List<CreateFixedInvoiceOutput> output = new();
 

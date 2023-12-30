@@ -35,7 +35,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             foreach (var fixedInvoice in fixedInvoices)
             {
-                var json = JsonSerializer.Serialize(fixedInvoice);
+                var json = JsonSerializeUtils.Serialize(fixedInvoice);
 
                 _logger.Information("Objeto FixedInvoice que será processado: {@json}", json);
 
