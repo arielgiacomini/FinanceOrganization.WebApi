@@ -54,9 +54,9 @@ namespace WebAPI
             {
                 x.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Version = "7.6",
-                    Title = "Exposição do banco de dados das aplicações do SGM",
-                    Description = "Nesta versão temos logs na forma de mao de obra controller - gabriel araújo",
+                    Version = "1.0",
+                    Title = "Resposável por criar organizar financeiramente",
+                    Description = "Já está preparado para criar as contas a pagar - Ariel Giacomini",
                     TermsOfService = URL_ARIELGIACOMINI,
                     Contact = new OpenApiContact
                     {
