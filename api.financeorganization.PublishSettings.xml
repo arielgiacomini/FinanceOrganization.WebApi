@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile
+    profileName="arielgiacomini-003-subsite5 - Web Deploy"
+    publishMethod="MSDeploy"
+    publishUrl="https://win8043.site4now.net:8172/msdeploy.axd?site=arielgiacomini-003-subsite5"
+    msdeploySite="arielgiacomini-003-subsite5"
+    userName="arielgiacomini-003"
+    userPWD=""
+    destinationAppUrl="http://api.financeorganization.arielgiacomini.com.br/"
+    SQLServerDBConnectionString=""
+    mySQLDBConnectionString=""
+    />
+  <publishProfile
+    profileName="arielgiacomini-003-subsite5 - FTP"
+    publishMethod="FTP"
+    publishUrl="ftp://win8043.site4now.net:21/financeorganizatio"
+    ftpPassiveMode="True"
+    userName="arielgiacomini-003"
+    userPWD=""
+    destinationAppUrl="http://api.financeorganization.arielgiacomini.com.br/"
+    SQLServerDBConnectionString=""
+    mySQLDBConnectionString=""
+    />
+</publishData>

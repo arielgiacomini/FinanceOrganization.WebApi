@@ -44,7 +44,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                throw ex;
+                throw new Exception(ex.Message);
             }
         }
 

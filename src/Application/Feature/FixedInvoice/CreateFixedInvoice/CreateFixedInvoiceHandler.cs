@@ -18,6 +18,8 @@ namespace Application.Feature.FixedInvoice.CreateFixedInvoice
         public async Task<CreateFixedInvoiceOutput> Handle(CreateFixedInvoiceInput input,
             CancellationToken cancellationToken = default)
         {
+            _logger.LogInformation("Está sendo criado a conta a pagar de nome: {Name}", input.Name);
+
             var validate = await CreateFixedInvoiceValidator.ValidateInput(input, _fixedInvoiceRepository);
 
             if (validate.Any())
@@ -32,11 +34,11 @@ namespace Application.Feature.FixedInvoice.CreateFixedInvoice
                 return outputValidator;
             }
 
-            var IdFixedInvoice = await _fixedInvoiceRepository.Save(MapInputFixedInvoiceToDomain(input));
+            var isSaved = await _fixedInvoiceRepository.Save(MapInputFixedInvoiceToDomain(input));
 
             var output = new CreateFixedInvoiceOutput
             {
-                Output = OutputBaseDetails.Success($"[{IdFixedInvoice}] - Cadastro realizado com sucesso.", new object())
+                Output = OutputBaseDetails.Success($"[{isSaved}] - Cadastro realizado com sucesso.", new object())
             };
 
             return await Task.FromResult(output);
