@@ -2,7 +2,7 @@
 
 namespace Application.Feature.FixedInvoice.CreateFixedInvoice
 {
-    public class CreateFixedInvoiceValidator
+    public static class CreateFixedInvoiceValidator
     {
         private const string CARTAO_CREDITO = "Cartão de Crédito";
 

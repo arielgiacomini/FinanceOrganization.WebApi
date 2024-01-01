@@ -1,6 +1,5 @@
 ﻿using Domain.Utils;
 using FinanceOrganization.UnitTests.Application.Configs.Collections;
-using FinanceOrganization.UnitTests.Application.Configs.Fixtures;
 using Xunit;
 
 namespace FinanceOrganization.UnitTests.Domain.Utils
@@ -8,11 +7,8 @@ namespace FinanceOrganization.UnitTests.Domain.Utils
     [Collection(nameof(UnitTestCollection))]
     public class DateServiceUtilsTests
     {
-        private readonly ModelFixture _modelFixture;
-
-        public DateServiceUtilsTests(ModelFixture modelFixture)
+        public DateServiceUtilsTests()
         {
-            _modelFixture = modelFixture;
         }
 
         [Fact]

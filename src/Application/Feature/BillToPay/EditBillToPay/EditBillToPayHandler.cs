@@ -20,6 +20,7 @@ namespace Application.Feature.BillToPay.EditBillToPay
 
             if (validate.Any())
             {
+                _logger.Warning("");
                 var outputValidator = new EditBillToPayOutput
                 {
                     Output = OutputBaseDetails.Validation("Houve erro de validação", validate)

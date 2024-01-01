@@ -4,7 +4,6 @@ using Application.Feature.FixedInvoice.CreateFixedInvoice;
 using Application.Feature.FixedInvoice.SearchFixedInvoice;
 using Domain.Utils;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace WebAPI.Controllers
 {

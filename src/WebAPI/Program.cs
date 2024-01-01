@@ -10,6 +10,7 @@ namespace FinanceOrganization.WebAPI
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args)
+                .UseEnvironment("")
                 .Build()
                 .Run();
         }

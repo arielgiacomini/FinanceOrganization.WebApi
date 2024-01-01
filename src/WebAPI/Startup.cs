@@ -74,6 +74,7 @@ namespace WebAPI
             });
         }
 
+        [Obsolete("Usando este teste")]
         public void Configure(IApplicationBuilder app, IHosting.IHostingEnvironment env)
         {
             if (env.IsDevelopment())

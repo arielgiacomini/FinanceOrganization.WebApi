@@ -2,7 +2,6 @@
 using Infrastructure.Database.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Database.Context
 {

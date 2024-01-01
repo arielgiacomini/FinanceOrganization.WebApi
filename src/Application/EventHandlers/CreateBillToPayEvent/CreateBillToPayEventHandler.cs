@@ -4,7 +4,6 @@ using Domain.Options;
 using Domain.Utils;
 using Microsoft.Extensions.Options;
 using Serilog;
-using System.Text.Json;
 
 namespace Application.EventHandlers.CreateBillToPayEvent
 {

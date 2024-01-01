@@ -2,7 +2,7 @@
 
 namespace Application.Feature.BillToPay.EditBillToPay
 {
-    public class EditBillToPayValidator
+    public static class EditBillToPayValidator
     {
         public static async Task<Dictionary<string, string>> ValidateInput(
             EditBillToPayInput input,
