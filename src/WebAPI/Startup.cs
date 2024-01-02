@@ -1,10 +1,10 @@
 ﻿using Application;
 using Domain.Options;
 using Infrastructure;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
-using IHosting = Microsoft.Extensions.Hosting;
 
 namespace WebAPI
 {
@@ -74,8 +74,7 @@ namespace WebAPI
             });
         }
 
-        [Obsolete("Usando este teste")]
-        public void Configure(IApplicationBuilder app, IHosting.IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
