@@ -7,12 +7,15 @@ namespace Application.Feature.FixedInvoice.CreateFixedInvoice
     {
         private readonly ILogger _logger;
         private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
+        private readonly IBillToPayRepository _billToPayRepository;
 
         public CreateFixedInvoiceHandler(ILogger logger,
-            IFixedInvoiceRepository fixedInvoiceRepository)
+            IFixedInvoiceRepository fixedInvoiceRepository,
+            IBillToPayRepository billToPayRepository)
         {
             _logger = logger;
             _fixedInvoiceRepository = fixedInvoiceRepository;
+            _billToPayRepository = billToPayRepository;
         }
 
         public async Task<CreateFixedInvoiceOutput> Handle(CreateFixedInvoiceInput input,
@@ -20,7 +23,7 @@ namespace Application.Feature.FixedInvoice.CreateFixedInvoice
         {
             _logger.Information("Está sendo criado a conta a pagar de nome: {Name}", input.Name);
 
-            var validate = await CreateFixedInvoiceValidator.ValidateInput(input, _fixedInvoiceRepository);
+            var validate = await CreateFixedInvoiceValidator.ValidateInput(input, _fixedInvoiceRepository, _billToPayRepository);
 
             if (validate.Any())
             {

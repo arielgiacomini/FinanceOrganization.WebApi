@@ -16,7 +16,7 @@
             return mesAno;
         }
 
-        public static bool IsCurrentMonth(string? initialYearMonth)
+        public static bool IsCurrentMonth(string? initialYearMonth, string? finallyYearMonth)
         {
             if (initialYearMonth is null)
             {

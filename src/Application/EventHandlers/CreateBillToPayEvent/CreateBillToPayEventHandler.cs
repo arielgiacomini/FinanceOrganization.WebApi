@@ -4,7 +4,6 @@ using Domain.Options;
 using Domain.Utils;
 using Microsoft.Extensions.Options;
 using Serilog;
-using System.Text.Json;
 
 namespace Application.EventHandlers.CreateBillToPayEvent
 {
@@ -13,7 +12,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         private readonly ILogger _logger;
         private readonly BillToPayOptions _billToPayOptions;
         private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
-        private readonly IWalletToPayRepository _walletToPayRepository;
+        private readonly IBillToPayRepository _walletToPayRepository;
         private const string CARTAO_CREDITO = "Cartão de Crédito";
         private const string FREQUENCIA_MENSAL_RECORRENTE = "Mensal:Recorrente";
 
@@ -21,7 +20,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             ILogger logger,
             IOptions<BillToPayOptions> options,
             IFixedInvoiceRepository fixedInvoiceRepository,
-            IWalletToPayRepository walletToPayRepository)
+            IBillToPayRepository walletToPayRepository)
         {
             _logger = logger;
             _fixedInvoiceRepository = fixedInvoiceRepository;
@@ -116,10 +115,15 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 purchasesDate = DateServiceUtils.GetNextYearMonthAndDateTime(fixedInvoice.PurchaseDate, qtdMonthAdd, null, true);
             }
 
+            if (fixedInvoice.InitialMonthYear == fixedInvoice.FynallyMonthYear)
+            {
+                qtdMonthAdd = 0;
+            }
+
             var nextMonthYearToRegister = DateServiceUtils
                 .GetNextYearMonthAndDateTime(
                 null, qtdMonthAdd, fixedInvoice.BestPayDay,
-                DateServiceUtils.IsCurrentMonth(fixedInvoice.InitialMonthYear), addMonthForDueDate);
+                DateServiceUtils.IsCurrentMonth(fixedInvoice.InitialMonthYear, fixedInvoice.FynallyMonthYear), addMonthForDueDate);
 
             foreach (var nextMonth in nextMonthYearToRegister!)
             {

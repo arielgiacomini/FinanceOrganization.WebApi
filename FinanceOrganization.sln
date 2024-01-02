@@ -11,10 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "src\Infra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9334F648-9825-4304-8168-53B408A8EDF1}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		api.financeorganization.PublishSettings.xml = api.financeorganization.PublishSettings.xml
-		subsite5.PublishSettings = subsite5.PublishSettings
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPI", "src\WebAPI\WebAPI.csproj", "{3CEAF74D-1C5E-4E00-9694-E2BD97E51A43}"

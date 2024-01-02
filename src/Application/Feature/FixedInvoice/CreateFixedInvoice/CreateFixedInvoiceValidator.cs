@@ -2,27 +2,28 @@
 
 namespace Application.Feature.FixedInvoice.CreateFixedInvoice
 {
-    public class CreateFixedInvoiceValidator
+    public static class CreateFixedInvoiceValidator
     {
         private const string CARTAO_CREDITO = "Cartão de Crédito";
 
         public static async Task<Dictionary<string, string>> ValidateInput(
             CreateFixedInvoiceInput input,
-            IFixedInvoiceRepository fixedInvoiceRepository)
+            IFixedInvoiceRepository fixedInvoiceRepository,
+            IBillToPayRepository billToPayRepository)
         {
-            return await CreateValidateBaseInput(input, fixedInvoiceRepository);
+            return await CreateValidateBaseInput(input, fixedInvoiceRepository, billToPayRepository);
         }
 
         public static async Task<Dictionary<string, string>> CreateValidateBaseInput(CreateFixedInvoiceInput input,
-            IFixedInvoiceRepository fixedInvoiceRepository)
+            IFixedInvoiceRepository fixedInvoiceRepository, IBillToPayRepository billToPayRepository)
         {
             Dictionary<string, string> validatorBase = new();
 
-            var fixedInvoice = await fixedInvoiceRepository.GetFixedInvoiceByName(input.Name);
+            var billToPay = await billToPayRepository.GetBillToPayByNameAndDueDate(input.Name!, input.InitialMonthYear!, input.Frequence!);
 
-            if (fixedInvoice != null && fixedInvoice.Account != CARTAO_CREDITO)
+            if (billToPay != null && billToPay.Account != CARTAO_CREDITO)
             {
-                validatorBase.Add("[32]", $"Já existe uma conta a pagar cadastada com este nome {input.Name} verifique se está correto.");
+                validatorBase.Add("[32]", $"Já existe uma conta a pagar para este mesmo nome: {input.Name}, neste mesmo Ano/Mes: {input.InitialMonthYear} e nesta frequência: {input.Frequence}");
             }
 
             return validatorBase;

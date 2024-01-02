@@ -6,12 +6,12 @@ namespace Domain.Utils
 {
     public static class JsonSerializeUtils
     {
-        public static string Serialize<TValue>(TValue value)
+        public static string Serialize<TValue>(TValue value, bool useIdentityJsonInFile = false)
         {
             var options = new JsonSerializerOptions
             {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
+                WriteIndented = useIdentityJsonInFile
             };
 
             var jsonString = JsonSerializer.Serialize(value, options);
