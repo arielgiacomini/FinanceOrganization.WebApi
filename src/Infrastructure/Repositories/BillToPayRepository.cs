@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class WalletToPayRepository : IWalletToPayRepository
+    public class BillToPayRepository : IBillToPayRepository
     {
         private readonly FinanceOrganizationContext _context;
 
-        public WalletToPayRepository(FinanceOrganizationContext context)
+        public BillToPayRepository(FinanceOrganizationContext context)
         {
             _context = context;
         }
@@ -38,6 +38,14 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(b => b.Id == id);
 
             return billToPayOrigin;
+        }
+
+        public async Task<BillToPay?> GetBillToPayByNameAndDueDate(string name, string yearMonth, string frequence)
+        {
+            var billToPay = await _context.BillToPay!
+                .FirstOrDefaultAsync(bill => bill.Name == name && bill.YearMonth == yearMonth && bill.Frequence == frequence);
+
+            return billToPay;
         }
 
         public async Task<int> Save(IList<BillToPay> billsToPay)

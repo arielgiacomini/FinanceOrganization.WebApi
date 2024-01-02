@@ -2,11 +2,12 @@
 
 namespace Domain.Interfaces
 {
-    public interface IWalletToPayRepository
+    public interface IBillToPayRepository
     {
         Task<int> Edit(BillToPay billToPay);
         Task<IList<BillToPay>> GetBillToPayByFixedInvoiceId(int fixedInvoiceId);
         Task<BillToPay?> GetBillToPayById(Guid id);
+        Task<BillToPay?> GetBillToPayByNameAndDueDate(string name, string yearMonth, string frequence);
         Task<int> Save(IList<BillToPay> billsToPay);
     }
 }

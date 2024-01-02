@@ -6,13 +6,13 @@ namespace Application.Feature.BillToPay.PayBillToPay
     {
         public static async Task<Dictionary<string, string>> ValidateInput(
             PayBillToPayInput input,
-            IWalletToPayRepository walletToPayRepository)
+            IBillToPayRepository walletToPayRepository)
         {
             return await CreateValidateBaseInput(input, walletToPayRepository);
         }
 
         private static async Task<Dictionary<string, string>> CreateValidateBaseInput(PayBillToPayInput input,
-            IWalletToPayRepository walletToPayRepository)
+            IBillToPayRepository walletToPayRepository)
         {
             Dictionary<string, string> validatorBase = new();
 

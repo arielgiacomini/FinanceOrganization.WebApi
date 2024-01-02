@@ -13,7 +13,7 @@ namespace Infrastructure
         {
             services.AddDbContext<FinanceOrganizationContext>();
             services.AddScoped<IFixedInvoiceRepository, FixedInvoiceRepository>();
-            services.AddScoped<IWalletToPayRepository, WalletToPayRepository>();
+            services.AddScoped<IBillToPayRepository, BillToPayRepository>();
 
             return services;
         }

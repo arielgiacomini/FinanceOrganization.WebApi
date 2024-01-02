@@ -6,9 +6,9 @@ namespace Application.Feature.BillToPay.EditBillToPay
     public class EditBillToPayHandler : IEditBillToPayHandler
     {
         private readonly ILogger _logger;
-        private readonly IWalletToPayRepository _walletToPayRepository;
+        private readonly IBillToPayRepository _walletToPayRepository;
 
-        public EditBillToPayHandler(ILogger logger, IWalletToPayRepository walletToPayRepository)
+        public EditBillToPayHandler(ILogger logger, IBillToPayRepository walletToPayRepository)
         {
             _logger = logger;
             _walletToPayRepository = walletToPayRepository;
