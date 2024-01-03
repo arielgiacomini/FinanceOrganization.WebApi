@@ -76,8 +76,9 @@ namespace WebAPI.Controllers
         /// <param name="input"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        [HttpGet("search")]
-        public async Task<IActionResult> GetBillToPay([FromBody] SearchBillToPayInput input, CancellationToken cancellationToken)
+        [HttpPost("search")]
+        public async Task<IActionResult> GetBillToPay([FromBody] SearchBillToPayInput input,
+            CancellationToken cancellationToken)
         {
             _logger.Information($"[BillToPayController.GetBillToPay()] - Buscas de contas a pagar");
 

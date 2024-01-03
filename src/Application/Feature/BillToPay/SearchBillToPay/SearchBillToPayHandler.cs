@@ -1,14 +1,17 @@
-﻿using Serilog;
+﻿using Domain.Interfaces;
+using Serilog;
 
 namespace Application.Feature.BillToPay.SearchBillToPay
 {
     public class SearchBillToPayHandler : ISearchBillToPayHandler
     {
         private readonly ILogger _logger;
+        private readonly IBillToPayRepository _billToPayRepository;
 
-        public SearchBillToPayHandler(ILogger logger)
+        public SearchBillToPayHandler(ILogger logger, IBillToPayRepository billToPayRepository)
         {
             _logger = logger;
+            _billToPayRepository = billToPayRepository;
         }
 
         public async Task<SearchBillToPayOutput> Handle(SearchBillToPayInput input, CancellationToken cancellationToken = default)
@@ -29,9 +32,22 @@ namespace Application.Feature.BillToPay.SearchBillToPay
                 return outputValidator;
             }
 
+            var output = new SearchBillToPayOutput()
+            {
+                Output = new OutputBaseDetails()
+            };
 
+            if (input.YearMonth != null)
+            {
+                var billToPayByYearMonth = await _billToPayRepository.GetBillToPayByYearMonth(input.YearMonth);
 
-            return await Task.FromResult(new SearchBillToPayOutput());
+                if (billToPayByYearMonth != null)
+                {
+                    output.Output = OutputBaseDetails.Success("", billToPayByYearMonth, billToPayByYearMonth.Count);
+                }
+            }
+
+            return output;
         }
     }
 }

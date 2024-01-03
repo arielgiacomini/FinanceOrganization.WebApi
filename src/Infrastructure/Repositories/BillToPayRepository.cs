@@ -48,9 +48,13 @@ namespace Infrastructure.Repositories
             return billToPay;
         }
 
-        public async Task<BillToPay?> GetBillToPayByYearMonth()
+        public async Task<IList<BillToPay>?> GetBillToPayByYearMonth(string yearMonth)
         {
+            var billsToPay = await _context.BillToPay!
+                .Where(x => x.YearMonth == yearMonth)
+                .ToListAsync();
 
+            return billsToPay;
         }
 
         public async Task<int> Save(IList<BillToPay> billsToPay)

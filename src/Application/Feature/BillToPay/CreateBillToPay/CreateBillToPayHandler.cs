@@ -56,7 +56,7 @@ namespace Application.Feature.BillToPay.CreateBillToPay
                 Account = input.Account,
                 Value = input.Value,
                 PurchaseDate = input.PurchaseDate,
-                BestPayDay = input.BestPayDay,
+                BestPayDay = input.BestPayDay ?? input.PurchaseDate!.Value.Day,
                 InitialMonthYear = input.InitialMonthYear,
                 FynallyMonthYear = input.FynallyMonthYear,
                 Frequence = input.Frequence,

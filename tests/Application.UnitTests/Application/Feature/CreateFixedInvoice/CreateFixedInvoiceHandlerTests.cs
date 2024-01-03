@@ -1,5 +1,5 @@
 ﻿using Application.Feature;
-using Application.Feature.FixedInvoice.CreateFixedInvoice;
+using Application.Feature.BillToPay.CreateBillToPay;
 using Domain.Interfaces;
 using FinanceOrganization.UnitTests.Application.Configs.Collections;
 using FinanceOrganization.UnitTests.Application.Configs.Fixtures;
@@ -15,12 +15,14 @@ namespace FinanceOrganization.UnitTests.Application.Feature.CreateFixedInvoice
     {
         private readonly ModelFixture _modelFixture;
         private readonly Mock<IFixedInvoiceRepository> _mockFixedInvoiceRepository;
+        private readonly Mock<IBillToPayRepository> _mockBillToPayRepository;
         private readonly Mock<ILogger> _mockLogger;
 
         public CreateFixedInvoiceHandlerTests(ModelFixture modelFixture)
         {
             _modelFixture = modelFixture;
             _mockFixedInvoiceRepository = new Mock<IFixedInvoiceRepository>();
+            _mockBillToPayRepository = new Mock<IBillToPayRepository>();
             _mockLogger = new Mock<ILogger>();
         }
 
@@ -36,7 +38,7 @@ namespace FinanceOrganization.UnitTests.Application.Feature.CreateFixedInvoice
             // Action
 
             var handle =
-                new CreateFixedInvoiceHandler(_mockLogger.Object, _mockFixedInvoiceRepository.Object);
+                new CreateBillToPayHandler(_mockLogger.Object, _mockFixedInvoiceRepository.Object, _mockBillToPayRepository.Object);
 
             var input = _modelFixture.GetCreateFixedInvoiceInput();
 

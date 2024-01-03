@@ -2,6 +2,7 @@
 using Application.Feature.BillToPay.CreateBillToPay;
 using Application.Feature.BillToPay.EditBillToPay;
 using Application.Feature.BillToPay.PayBillToPay;
+using Application.Feature.BillToPay.SearchBillToPay;
 using Application.Feature.FixedInvoice.SearchFixedInvoice;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
@@ -18,6 +19,7 @@ namespace Application
             services.AddScoped<ISearchFixedInvoiceHandler, SearchFixedInvoiceHandler>();
             services.AddScoped<IEditBillToPayHandler, EditBillToPayHandler>();
             services.AddScoped<IPayBillToPayHandler, PayBillToPayHandler>();
+            services.AddScoped<ISearchBillToPayHandler, SearchBillToPayHandler>();
 
             return services;
         }

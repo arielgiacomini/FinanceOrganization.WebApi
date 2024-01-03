@@ -14,7 +14,11 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
         private readonly IBillToPayRepository _walletToPayRepository;
         private const string CARTAO_CREDITO = "Cartão de Crédito";
+        private const string CARTAO_VALE_ALIMENTACAO = "Cartão VA";
+        private const string CARTAO_VALE_REFEICAO = "Cartão VR";
         private const string FREQUENCIA_MENSAL_RECORRENTE = "Mensal:Recorrente";
+        private const int DIA_MAXIMO_CONTA_MES_SUBSEQUENTE = 24;
+        private const int DIA_VENCIMENTO_CARTAO_CREDITO = 9;
 
         public CreateBillToPayEventHandler(
             ILogger logger,
@@ -100,7 +104,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             bool addMonthForDueDate = false;
 
-            if (fixedInvoice.Account == CARTAO_CREDITO)
+            if (fixedInvoice.Account == CARTAO_CREDITO || (fixedInvoice.BestPayDay <= DIA_MAXIMO_CONTA_MES_SUBSEQUENTE
+                && (fixedInvoice.Account != CARTAO_CREDITO && fixedInvoice.Account != CARTAO_VALE_REFEICAO && fixedInvoice.Account != CARTAO_VALE_ALIMENTACAO)))
             {
                 addMonthForDueDate = true;
             }
@@ -108,11 +113,18 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             Dictionary<string, DateTime> purchasesDate = new();
             bool considerPurchase = false;
 
-            if (fixedInvoice.Account == CARTAO_CREDITO && fixedInvoice.Frequence == FREQUENCIA_MENSAL_RECORRENTE)
+            if (fixedInvoice.Account == CARTAO_CREDITO)
             {
-                // Crédito Recorrente.
-                considerPurchase = true;
-                purchasesDate = DateServiceUtils.GetNextYearMonthAndDateTime(fixedInvoice.PurchaseDate, qtdMonthAdd, null, true);
+                // Cartão de Crédito
+
+                fixedInvoice.BestPayDay = DIA_VENCIMENTO_CARTAO_CREDITO;
+
+                if (fixedInvoice.Frequence == FREQUENCIA_MENSAL_RECORRENTE)
+                {
+                    // Crédito Recorrente.
+                    considerPurchase = true;
+                    purchasesDate = DateServiceUtils.GetNextYearMonthAndDateTime(fixedInvoice.PurchaseDate, qtdMonthAdd, null, true);
+                }
             }
 
             if (fixedInvoice.InitialMonthYear == fixedInvoice.FynallyMonthYear)

@@ -21,6 +21,11 @@ namespace Application.Feature.BillToPay.CreateBillToPay
         {
             Dictionary<string, string> validatorBase = new();
 
+            if (input.BestPayDay == null && input.PurchaseDate == null)
+            {
+                validatorBase.Add("[58]", $"Caso o BestPayDay (Melhor dia de Pagamento) não for informado é necessário ter um PurchaseDate (Data de Compra) pois ele será considerado.");
+            }
+
             var billToPay = await billToPayRepository.GetBillToPayByNameDueDateAndFrequence(input.Name!, input.InitialMonthYear!, input.Frequence!);
 
             if (billToPay != null && AccountIsValidRule(billToPay.Account))
