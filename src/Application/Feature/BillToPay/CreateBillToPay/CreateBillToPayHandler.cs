@@ -1,15 +1,15 @@
 ﻿using Domain.Interfaces;
 using Serilog;
 
-namespace Application.Feature.FixedInvoice.CreateFixedInvoice
+namespace Application.Feature.BillToPay.CreateBillToPay
 {
-    public class CreateFixedInvoiceHandler : ICreateFixedInvoiceHandler
+    public class CreateBillToPayHandler : ICreateBillToPayHandler
     {
         private readonly ILogger _logger;
         private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
         private readonly IBillToPayRepository _billToPayRepository;
 
-        public CreateFixedInvoiceHandler(ILogger logger,
+        public CreateBillToPayHandler(ILogger logger,
             IFixedInvoiceRepository fixedInvoiceRepository,
             IBillToPayRepository billToPayRepository)
         {
@@ -18,18 +18,18 @@ namespace Application.Feature.FixedInvoice.CreateFixedInvoice
             _billToPayRepository = billToPayRepository;
         }
 
-        public async Task<CreateFixedInvoiceOutput> Handle(CreateFixedInvoiceInput input,
+        public async Task<CreateBillToPayOutput> Handle(CreateBillToPayInput input,
             CancellationToken cancellationToken = default)
         {
             _logger.Information("Está sendo criado a conta a pagar de nome: {Name}", input.Name);
 
-            var validate = await CreateFixedInvoiceValidator.ValidateInput(input, _fixedInvoiceRepository, _billToPayRepository);
+            var validate = await CreateBillToPayValidator.ValidateInput(input, _fixedInvoiceRepository, _billToPayRepository);
 
             if (validate.Any())
             {
                 _logger.Warning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
 
-                var outputValidator = new CreateFixedInvoiceOutput
+                var outputValidator = new CreateBillToPayOutput
                 {
                     Output = OutputBaseDetails.Validation("Houve erro de validação", validate)
                 };
@@ -39,7 +39,7 @@ namespace Application.Feature.FixedInvoice.CreateFixedInvoice
 
             var isSaved = await _fixedInvoiceRepository.Save(MapInputFixedInvoiceToDomain(input));
 
-            var output = new CreateFixedInvoiceOutput
+            var output = new CreateBillToPayOutput
             {
                 Output = OutputBaseDetails.Success($"[{isSaved}] - Cadastro realizado com sucesso.", new object())
             };
@@ -47,7 +47,7 @@ namespace Application.Feature.FixedInvoice.CreateFixedInvoice
             return await Task.FromResult(output);
         }
 
-        private static Domain.Entities.FixedInvoice MapInputFixedInvoiceToDomain(CreateFixedInvoiceInput input)
+        private static Domain.Entities.FixedInvoice MapInputFixedInvoiceToDomain(CreateBillToPayInput input)
         {
             return new Domain.Entities.FixedInvoice
             {

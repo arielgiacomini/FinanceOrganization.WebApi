@@ -1,27 +1,27 @@
 ﻿using Domain.Interfaces;
 
-namespace Application.Feature.FixedInvoice.CreateFixedInvoice
+namespace Application.Feature.BillToPay.CreateBillToPay
 {
-    public static class CreateFixedInvoiceValidator
+    public static class CreateBillToPayValidator
     {
         private const string CARTAO_CREDITO = "Cartão de Crédito";
         private const string CARTAO_VALE_ALIMENTACAO = "Cartão VA";
         private const string CARTAO_VALE_REFEICAO = "Cartão VR";
 
         public static async Task<Dictionary<string, string>> ValidateInput(
-            CreateFixedInvoiceInput input,
+            CreateBillToPayInput input,
             IFixedInvoiceRepository fixedInvoiceRepository,
             IBillToPayRepository billToPayRepository)
         {
             return await CreateValidateBaseInput(input, fixedInvoiceRepository, billToPayRepository);
         }
 
-        public static async Task<Dictionary<string, string>> CreateValidateBaseInput(CreateFixedInvoiceInput input,
+        public static async Task<Dictionary<string, string>> CreateValidateBaseInput(CreateBillToPayInput input,
             IFixedInvoiceRepository fixedInvoiceRepository, IBillToPayRepository billToPayRepository)
         {
             Dictionary<string, string> validatorBase = new();
 
-            var billToPay = await billToPayRepository.GetBillToPayByNameAndDueDate(input.Name!, input.InitialMonthYear!, input.Frequence!);
+            var billToPay = await billToPayRepository.GetBillToPayByNameDueDateAndFrequence(input.Name!, input.InitialMonthYear!, input.Frequence!);
 
             if (billToPay != null && AccountIsValidRule(billToPay.Account))
             {

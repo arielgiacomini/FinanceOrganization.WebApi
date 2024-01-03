@@ -1,6 +1,7 @@
-﻿using Application.Feature.BillToPay.EditBillToPay;
+﻿using Application.Feature.BillToPay.CreateBillToPay;
+using Application.Feature.BillToPay.EditBillToPay;
 using Application.Feature.BillToPay.PayBillToPay;
-using Application.Feature.FixedInvoice.CreateFixedInvoice;
+using Application.Feature.BillToPay.SearchBillToPay;
 using Application.Feature.FixedInvoice.SearchFixedInvoice;
 using Domain.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -13,25 +14,34 @@ namespace WebAPI.Controllers
     public class BillToPayController : ControllerBase
     {
         private readonly Serilog.ILogger _logger;
-        private readonly ICreateFixedInvoiceHandler _createFixedInvoiceHandler;
+        private readonly ICreateBillToPayHandler _createFixedInvoiceHandler;
         private readonly ISearchFixedInvoiceHandler _searchFixedInvoiceHandler;
         private readonly IEditBillToPayHandler _editBillToPayHandler;
         private readonly IPayBillToPayHandler _payBillToPayHandler;
+        private readonly ISearchBillToPayHandler _searchBillToPayHandler;
 
         public BillToPayController(
             Serilog.ILogger logger,
-            ICreateFixedInvoiceHandler createFixedInvoiceHandler,
+            ICreateBillToPayHandler createFixedInvoiceHandler,
             ISearchFixedInvoiceHandler searchFixedInvoiceHandler,
             IEditBillToPayHandler editBillToPayHandler,
-            IPayBillToPayHandler payBillToPayHandler)
+            IPayBillToPayHandler payBillToPayHandler,
+            ISearchBillToPayHandler searchBillToPayHandler)
         {
             _logger = logger;
             _createFixedInvoiceHandler = createFixedInvoiceHandler;
             _searchFixedInvoiceHandler = searchFixedInvoiceHandler;
             _editBillToPayHandler = editBillToPayHandler;
             _payBillToPayHandler = payBillToPayHandler;
+            _searchBillToPayHandler = searchBillToPayHandler;
         }
 
+        /// <summary>
+        /// Edita uma conta a pagar
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpPut("edit")]
         public async Task<IActionResult> Edit([FromBody] EditBillToPayInput input,
             CancellationToken cancellationToken)
@@ -60,8 +70,30 @@ namespace WebAPI.Controllers
             return Ok(output);
         }
 
+        /// <summary>
+        /// Busca de contas a pagar
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet("search")]
+        public async Task<IActionResult> GetBillToPay([FromBody] SearchBillToPayInput input, CancellationToken cancellationToken)
+        {
+            _logger.Information($"[BillToPayController.GetBillToPay()] - Buscas de contas a pagar");
+
+            var output = await _searchBillToPayHandler.Handle(input, cancellationToken);
+
+            return Ok(output);
+        }
+
+        /// <summary>
+        /// Registrar uma conta a pagar
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpPost("register")]
-        public async Task<IActionResult> CreateFixedInvoice([FromBody] CreateFixedInvoiceInput input,
+        public async Task<IActionResult> CreateFixedInvoice([FromBody] CreateBillToPayInput input,
             CancellationToken cancellationToken)
         {
             _logger.Information($"[BillToPayController.CreateFixedInvoice()] - Cadastro de uma nova conta/fatura fixa. Input: {JsonSerializeUtils.Serialize(input)}");
@@ -71,13 +103,19 @@ namespace WebAPI.Controllers
             return Ok(output);
         }
 
+        /// <summary>
+        /// Registrar uma lista de contas a pagar
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpPost("register-basket")]
-        public async Task<IActionResult> CreateBasketFixedInvoice([FromBody] IList<CreateFixedInvoiceInput> input,
+        public async Task<IActionResult> CreateBasketFixedInvoice([FromBody] IList<CreateBillToPayInput> input,
             CancellationToken cancellationToken)
         {
             _logger.Information("[BillToPayController.CreateBasketFixedInvoice()] - Cadastro de uma nova conta/fatura fixa via basket. Input: {@Input}", JsonSerializeUtils.Serialize(input));
 
-            List<CreateFixedInvoiceOutput> output = new();
+            List<CreateBillToPayOutput> output = new();
 
             foreach (var fixedInvoice in input)
             {
@@ -86,7 +124,12 @@ namespace WebAPI.Controllers
 
             return Ok(output);
         }
-
+        
+        /// <summary>
+        /// Busca do registro de uma conta a pagar
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpGet("register-search")]
         public async Task<IActionResult> GetFixedInvoice(CancellationToken cancellationToken)
         {

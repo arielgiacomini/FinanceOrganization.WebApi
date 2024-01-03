@@ -1,6 +1,6 @@
-﻿namespace Application.Feature.FixedInvoice.CreateFixedInvoice
+﻿namespace Application.Feature.BillToPay.CreateBillToPay
 {
-    public class CreateFixedInvoiceInput
+    public class CreateBillToPayInput
     {
         public string? Name { get; set; }
         public string? Account { get; set; }

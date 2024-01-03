@@ -40,12 +40,17 @@ namespace Infrastructure.Repositories
             return billToPayOrigin;
         }
 
-        public async Task<BillToPay?> GetBillToPayByNameAndDueDate(string name, string yearMonth, string frequence)
+        public async Task<BillToPay?> GetBillToPayByNameDueDateAndFrequence(string name, string yearMonth, string frequence)
         {
             var billToPay = await _context.BillToPay!
                 .FirstOrDefaultAsync(bill => bill.Name == name && bill.YearMonth == yearMonth && bill.Frequence == frequence);
 
             return billToPay;
+        }
+
+        public async Task<BillToPay?> GetBillToPayByYearMonth()
+        {
+
         }
 
         public async Task<int> Save(IList<BillToPay> billsToPay)
