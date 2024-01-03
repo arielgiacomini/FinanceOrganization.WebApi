@@ -1,4 +1,4 @@
-﻿using Application.Feature.FixedInvoice.CreateFixedInvoice;
+﻿using Application.Feature.BillToPay.CreateBillToPay;
 using Domain.Entities;
 using Domain.Options;
 
@@ -78,11 +78,11 @@ namespace FinanceOrganization.UnitTests.Application.Configs.Fixtures
             };
         }
 
-        public CreateFixedInvoiceInput GetCreateFixedInvoiceInput()
+        public CreateBillToPayInput GetCreateFixedInvoiceInput()
         {
             var fixedInvoice = GetFixedInvoice();
 
-            return new CreateFixedInvoiceInput()
+            return new CreateBillToPayInput()
             {
                 Name = fixedInvoice.Name,
                 Frequence = fixedInvoice.Frequence,
