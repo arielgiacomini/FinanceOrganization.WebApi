@@ -13,7 +13,7 @@ namespace Application.Feature.FixedInvoice.SearchFixedInvoice
 
         public async Task<SearchFixedInvoiceOutput> Handle(CancellationToken cancellationToken = default)
         {
-            var getByAll = await _fixedInvoiceRepository.GetByAll();
+            var getByAll = await _fixedInvoiceRepository.GetAll();
 
             var output = new SearchFixedInvoiceOutput
             {

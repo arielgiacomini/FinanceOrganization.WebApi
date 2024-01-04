@@ -48,6 +48,19 @@ namespace Infrastructure.Repositories
             return billToPay;
         }
 
+        public async Task<BillToPay?> GetByYearMonthCategoryAndRegistrationType(
+            string yearMonth, string category, string registrationType)
+        {
+            var billToPay = await _context.BillToPay!
+                .AsNoTracking()
+                .FirstOrDefaultAsync(bill =>
+                   bill.YearMonth == yearMonth
+                && bill.Category == category
+                && bill.RegistrationType == registrationType);
+
+            return billToPay;
+        }
+
         public async Task<IList<BillToPay>?> GetBillToPayByYearMonth(string yearMonth)
         {
             var billsToPay = await _context.BillToPay!
@@ -59,16 +72,25 @@ namespace Infrastructure.Repositories
 
         public async Task<int> Save(IList<BillToPay> billsToPay)
         {
-            _context.AddRange(billsToPay);
+            try
+            {
+                _context.AddRange(billsToPay);
 
-            var result = _context.SaveChanges();
+                var result = _context.SaveChanges();
 
-            return await Task.FromResult(result);
+                return await Task.FromResult(result);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         public async Task<int> Edit(BillToPay billToPay)
         {
             _context.BillToPay!.Update(billToPay);
+
             var result = _context.SaveChanges();
 
             return await Task.FromResult(result);

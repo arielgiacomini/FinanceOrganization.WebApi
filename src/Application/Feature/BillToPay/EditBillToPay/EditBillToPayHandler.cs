@@ -6,17 +6,17 @@ namespace Application.Feature.BillToPay.EditBillToPay
     public class EditBillToPayHandler : IEditBillToPayHandler
     {
         private readonly ILogger _logger;
-        private readonly IBillToPayRepository _walletToPayRepository;
+        private readonly IBillToPayRepository _billToPayRepository;
 
-        public EditBillToPayHandler(ILogger logger, IBillToPayRepository walletToPayRepository)
+        public EditBillToPayHandler(ILogger logger, IBillToPayRepository billToPayRepository)
         {
             _logger = logger;
-            _walletToPayRepository = walletToPayRepository;
+            _billToPayRepository = billToPayRepository;
         }
 
         public async Task<EditBillToPayOutput> Handle(EditBillToPayInput input, CancellationToken cancellationToken)
         {
-            var validate = await EditBillToPayValidator.ValidateInput(input, _walletToPayRepository);
+            var validate = await EditBillToPayValidator.ValidateInput(input, _billToPayRepository);
 
             if (validate.Any())
             {
@@ -29,9 +29,21 @@ namespace Application.Feature.BillToPay.EditBillToPay
                 return outputValidator;
             }
 
-            var billToPay = MapInputToDomain(input);
+            var billToPayDatabase = await _billToPayRepository.GetBillToPayById(input.Id);
 
-            var result = await _walletToPayRepository.Edit(billToPay);
+            if (billToPayDatabase is null)
+            {
+                var outputError = new EditBillToPayOutput
+                {
+                    Output = OutputBaseDetails.Error($"[56] - Erro ao buscar o BillToPay do Banco de Dados.", new Dictionary<string, string>(), 0)
+                };
+
+                return outputError;
+            }
+
+            var billToPay = MapInputToDomain(input, billToPayDatabase);
+
+            var result = await _billToPayRepository.Edit(billToPay);
 
             var output = new EditBillToPayOutput
             {
@@ -41,7 +53,8 @@ namespace Application.Feature.BillToPay.EditBillToPay
             return output;
         }
 
-        private static Domain.Entities.BillToPay MapInputToDomain(EditBillToPayInput updateBillToPayInput)
+        private static Domain.Entities.BillToPay MapInputToDomain(EditBillToPayInput updateBillToPayInput,
+            Domain.Entities.BillToPay? billToPayDatabase)
         {
             return new Domain.Entities.BillToPay()
             {
@@ -50,12 +63,15 @@ namespace Application.Feature.BillToPay.EditBillToPay
                 Account = updateBillToPayInput.Account,
                 Name = updateBillToPayInput.Name,
                 Category = updateBillToPayInput.Category,
+                RegistrationType = updateBillToPayInput.RegistrationType,
                 Value = updateBillToPayInput.Value,
                 DueDate = updateBillToPayInput.DueDate,
                 YearMonth = updateBillToPayInput.YearMonth,
                 Frequence = updateBillToPayInput.Frequence,
                 PayDay = updateBillToPayInput.PayDay,
                 HasPay = updateBillToPayInput.HasPay,
+                AdditionalMessage = updateBillToPayInput.AdditionalMessage,
+                CreationDate = billToPayDatabase!.CreationDate,
                 LastChangeDate = updateBillToPayInput.LastChangeDate
             };
         }

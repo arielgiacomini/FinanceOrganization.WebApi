@@ -14,11 +14,34 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IList<FixedInvoice>> GetByAll()
+        public async Task<IList<FixedInvoice>> GetAll()
         {
             var result = await _context.FixedInvoice!
                    .AsNoTracking()
                    .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<IList<FixedInvoice>> GetOnlyOldRecordsAndParticipants(int daysLater, string registrationType)
+        {
+            var result = await _context.FixedInvoice!
+                   .AsNoTracking()
+                   .Where(fixedInvoice =>
+                            (fixedInvoice.LastChangeDate == null
+                         || (fixedInvoice.LastChangeDate <= DateTime.Now.AddDays(daysLater)
+                         && fixedInvoice.RegistrationType == registrationType)))
+                   .ToListAsync();
+
+            return result;
+        }
+
+        public async Task<IList<FixedInvoice>> GetAutomationParticipantsOnly(string registrationType)
+        {
+            var result = await _context.FixedInvoice!
+                .AsNoTracking()
+                .Where(fixedInvoice => fixedInvoice.RegistrationType == registrationType)
+                .ToListAsync();
 
             return result;
         }
@@ -55,6 +78,15 @@ namespace Infrastructure.Repositories
             var qtdEntry = await _context.SaveChangesAsync();
 
             return qtdEntry;
+        }
+
+        public async Task<int> Edit(FixedInvoice fixedInvoice)
+        {
+            _context.FixedInvoice!.Update(fixedInvoice);
+
+            var result = _context.SaveChanges();
+
+            return await Task.FromResult(result);
         }
     }
 }

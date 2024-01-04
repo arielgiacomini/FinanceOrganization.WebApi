@@ -38,7 +38,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
         {
             // Setup
             _mockFixedInvoiceRepository
-                .Setup(fixedInvoice => fixedInvoice.GetByAll())
+                .Setup(fixedInvoice => fixedInvoice.GetAll())
                 .ReturnsAsync(_modelFixture.GetListFixedInvoice());
 
             _mockWalletToPayRepository
@@ -75,7 +75,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
         {
             // Setup
             _mockFixedInvoiceRepository
-                .Setup(fixedInvoice => fixedInvoice.GetByAll())
+                .Setup(fixedInvoice => fixedInvoice.GetAll())
                 .ReturnsAsync(_modelFixture.GetListFixedInvoice());
 
             _mockWalletToPayRepository
@@ -132,7 +132,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
         {
             // Setup
             _mockFixedInvoiceRepository
-                .Setup(fixedInvoice => fixedInvoice.GetByAll())
+                .Setup(fixedInvoice => fixedInvoice.GetAll())
                 .ReturnsAsync(_modelFixture.GetListFixedInvoice());
 
             _mockWalletToPayRepository
@@ -169,7 +169,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
         {
             // Setup
             _mockFixedInvoiceRepository
-                .Setup(fixedInvoice => fixedInvoice.GetByAll())
+                .Setup(fixedInvoice => fixedInvoice.GetAll())
                 .ReturnsAsync(_modelFixture.GetListFixedInvoice());
 
             _mockWalletToPayRepository
