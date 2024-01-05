@@ -82,6 +82,8 @@ namespace Infrastructure.Repositories
 
         public async Task<int> Edit(FixedInvoice fixedInvoice)
         {
+            _context.ChangeTracker.Clear();
+
             _context.FixedInvoice!.Update(fixedInvoice);
 
             var result = _context.SaveChanges();

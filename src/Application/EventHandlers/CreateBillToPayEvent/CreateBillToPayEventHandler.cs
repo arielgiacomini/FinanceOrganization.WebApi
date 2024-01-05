@@ -42,21 +42,24 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             foreach (var toProcess in participants)
             {
-                var json = JsonSerializeUtils.Serialize(toProcess);
+                try
+                {
+                    var json = JsonSerializeUtils.Serialize(toProcess);
 
-                _logger.Information("Objeto FixedInvoice que será processado: {@json}", json);
+                    _logger.Information("Objeto FixedInvoice que será processado: {@json}", json);
 
-                var billsToPay = await _billToPayRepository.GetBillToPayByFixedInvoiceId(toProcess.Id);
+                    var billsToPay = await _billToPayRepository.GetBillToPayByFixedInvoiceId(toProcess.Id);
 
-                var lastBillToPay = GetLastRegistrationBillToPay(billsToPay);
+                    var lastBillToPay = GetLastRegistrationBillToPay(billsToPay);
 
-                StartRegistration(toProcess, lastBillToPay);
+                    await StartRegistration(toProcess, lastBillToPay);
 
-                EditFixedInvoice(toProcess);
-
-                await _fixedInvoiceRepository.Edit(toProcess);
-
-                Thread.Sleep(100);
+                    Thread.Sleep(100);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error($"Erro ao efetuar o processo para cada item participante. Erro: {ex.Message}", ex);
+                }
             }
         }
 
@@ -65,9 +68,9 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         /// </summary>
         /// <param name="fixedInvoice"></param>
         /// <returns></returns>
-        private void StartRegistration(FixedInvoice fixedInvoice, BillToPay? billToPay)
+        private async Task StartRegistration(FixedInvoice fixedInvoice, BillToPay? billToPay)
         {
-            _ = LogicRegistration(fixedInvoice, billToPay);
+            await LogicRegistration(fixedInvoice, billToPay);
         }
 
         /// <summary>
@@ -171,7 +174,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     var valueOld = descontar.Value;
 
                     descontar.Value -= fixedInvoice.Value;
-                    descontar.AdditionalMessage += $"Retirado: R$ {fixedInvoice.Value} em {DateTime.Now} do valor que estava: R$ {valueOld}";
+                    descontar.AdditionalMessage += $" | Retirado: [R$ {fixedInvoice.Value}] em [{DateTime.Now}] do valor que estava: [R$ {valueOld}]";
 
                     var edited = await _billToPayRepository.Edit(descontar);
 
@@ -182,7 +185,18 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 }
             }
 
-            await _billToPayRepository.Save(listBillToPay);
+            try
+            {
+                EditFixedInvoice(fixedInvoice);
+
+                await _fixedInvoiceRepository.Edit(fixedInvoice);
+
+                await _billToPayRepository.Save(listBillToPay);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         private async Task LogicByBillToPay(BillToPay billToPay)
