@@ -26,7 +26,7 @@ namespace FinanceOrganization.UnitTests.Application.Feature.SearchFixedInvoice
             // Setup
 
             _mockFixedInvoiceRepository
-                .Setup(repo => repo.GetByAll())
+                .Setup(repo => repo.GetAll())
                 .ReturnsAsync(_modelFixture.GetListFixedInvoice());
 
             // Action

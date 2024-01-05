@@ -60,6 +60,8 @@ namespace Application.Feature.BillToPay.CreateBillToPay
                 InitialMonthYear = input.InitialMonthYear,
                 FynallyMonthYear = input.FynallyMonthYear,
                 Frequence = input.Frequence,
+                RegistrationType = input.RegistrationType,
+                AdditionalMessage = input.AdditionalMessage,
                 CreationDate = input.CreationDate,
                 LastChangeDate = input.LastChangeDate
             };

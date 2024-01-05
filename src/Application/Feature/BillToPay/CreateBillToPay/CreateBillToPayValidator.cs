@@ -5,6 +5,7 @@ namespace Application.Feature.BillToPay.CreateBillToPay
     public static class CreateBillToPayValidator
     {
         private const string CARTAO_CREDITO = "Cartão de Crédito";
+        private const string CARTAO_DEBITO = "Cartão de Débito";
         private const string CARTAO_VALE_ALIMENTACAO = "Cartão VA";
         private const string CARTAO_VALE_REFEICAO = "Cartão VR";
 
@@ -48,6 +49,9 @@ namespace Application.Feature.BillToPay.CreateBillToPay
                     isAccountValidRule = false;
                     break;
                 case CARTAO_VALE_REFEICAO:
+                    isAccountValidRule = false;
+                    break;
+                case CARTAO_DEBITO:
                     isAccountValidRule = false;
                     break;
                 default:
