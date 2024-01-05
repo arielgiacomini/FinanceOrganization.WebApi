@@ -35,6 +35,7 @@ namespace Infrastructure.Repositories
         public async Task<BillToPay?> GetBillToPayById(Guid id)
         {
             var billToPayOrigin = await _context.BillToPay!
+                .AsNoTracking()
                 .FirstOrDefaultAsync(b => b.Id == id);
 
             return billToPayOrigin;
@@ -43,6 +44,7 @@ namespace Infrastructure.Repositories
         public async Task<BillToPay?> GetBillToPayByNameDueDateAndFrequence(string name, string yearMonth, string frequence)
         {
             var billToPay = await _context.BillToPay!
+                .AsNoTracking()
                 .FirstOrDefaultAsync(bill => bill.Name == name && bill.YearMonth == yearMonth && bill.Frequence == frequence);
 
             return billToPay;
@@ -64,6 +66,7 @@ namespace Infrastructure.Repositories
         public async Task<IList<BillToPay>?> GetBillToPayByYearMonth(string yearMonth)
         {
             var billsToPay = await _context.BillToPay!
+                .AsNoTracking()
                 .Where(x => x.YearMonth == yearMonth)
                 .ToListAsync();
 
@@ -72,23 +75,18 @@ namespace Infrastructure.Repositories
 
         public async Task<int> Save(IList<BillToPay> billsToPay)
         {
-            try
-            {
-                _context.AddRange(billsToPay);
 
-                var result = _context.SaveChanges();
+            _context.AddRange(billsToPay);
 
-                return await Task.FromResult(result);
-            }
-            catch (Exception ex)
-            {
+            var result = _context.SaveChanges();
 
-                throw;
-            }
+            return await Task.FromResult(result);
         }
 
         public async Task<int> Edit(BillToPay billToPay)
         {
+            _context.ChangeTracker.Clear();
+
             _context.BillToPay!.Update(billToPay);
 
             var result = _context.SaveChanges();
