@@ -13,9 +13,6 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         private readonly BillToPayOptions _billToPayOptions;
         private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
         private readonly IBillToPayRepository _billToPayRepository;
-        private const string CARTAO_CREDITO = "Cartão de Crédito";
-        private const string CARTAO_VALE_ALIMENTACAO = "Cartão VA";
-        private const string CARTAO_VALE_REFEICAO = "Cartão VR";
         private const string FREQUENCIA_MENSAL_RECORRENTE = "Mensal:Recorrente";
         private const int DIA_MAXIMO_CONTA_MES_SUBSEQUENTE = 24;
         private const int DIA_VENCIMENTO_CARTAO_CREDITO = 9;
@@ -115,8 +112,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             bool addMonthForDueDate = false;
 
-            if (fixedInvoice.Account == CARTAO_CREDITO || (fixedInvoice.BestPayDay <= DIA_MAXIMO_CONTA_MES_SUBSEQUENTE
-                && (fixedInvoice.Account != CARTAO_CREDITO && fixedInvoice.Account != CARTAO_VALE_REFEICAO && fixedInvoice.Account != CARTAO_VALE_ALIMENTACAO)))
+            if (fixedInvoice.Account == Account.CARTAO_CREDITO || (fixedInvoice.BestPayDay <= DIA_MAXIMO_CONTA_MES_SUBSEQUENTE
+                && (fixedInvoice.Account != Account.CARTAO_CREDITO && fixedInvoice.Account != Account.CARTAO_VALE_REFEICAO && fixedInvoice.Account != Account.CARTAO_VALE_ALIMENTACAO)))
             {
                 addMonthForDueDate = true;
             }
@@ -124,7 +121,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             Dictionary<string, DateTime> purchasesDate = new();
             bool considerPurchase = false;
 
-            if (fixedInvoice.Account == CARTAO_CREDITO)
+            if (fixedInvoice.Account == Account.CARTAO_CREDITO)
             {
                 // Cartão de Crédito
 
@@ -163,6 +160,17 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 listBillToPay.Add(MapBillToPay(null, fixedInvoice, nextMonth.Value, nextMonth.Key, purchase));
             }
 
+            await DebitFixedAccount(fixedInvoice, qtdMonthAdd);
+
+            EditFixedInvoice(fixedInvoice);
+
+            await _fixedInvoiceRepository.Edit(fixedInvoice);
+
+            await _billToPayRepository.Save(listBillToPay);
+        }
+
+        private async Task DebitFixedAccount(FixedInvoice fixedInvoice, int qtdMonthAdd)
+        {
             if (fixedInvoice.RegistrationType == TIPO_REGISTRO_COMPRA_LIVRE && qtdMonthAdd == 0)
             {
                 var descontar = await _billToPayRepository
@@ -184,19 +192,27 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     }
                 }
             }
+        }
 
-            try
+        public static bool EnterPaid(FixedInvoice? fixedInvoice)
+        {
+            bool considerPaid = false;
+
+            if (fixedInvoice == null)
             {
-                EditFixedInvoice(fixedInvoice);
-
-                await _fixedInvoiceRepository.Edit(fixedInvoice);
-
-                await _billToPayRepository.Save(listBillToPay);
+                return considerPaid;
             }
-            catch (Exception ex)
+
+            switch (fixedInvoice.Account)
             {
-                throw new Exception(ex.Message);
+                case Account.CARTAO_VALE_ALIMENTACAO:
+                case Account.CARTAO_VALE_REFEICAO:
+                case Account.CARTAO_DEBITO:
+                    considerPaid = true;
+                    break;
             }
+
+            return considerPaid;
         }
 
         private async Task LogicByBillToPay(BillToPay billToPay)
@@ -270,7 +286,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             }
             else
             {
-                return new BillToPay()
+                var newBillToPay = new BillToPay()
                 {
                     Id = Guid.NewGuid(),
                     IdFixedInvoice = fixedInvoice!.Id,
@@ -289,16 +305,24 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     CreationDate = DateTime.Now,
                     LastChangeDate = null
                 };
+
+                if (EnterPaid(fixedInvoice))
+                {
+                    newBillToPay.HasPay = true;
+                    newBillToPay.PayDay = purchaseDate.ToString();
+                    newBillToPay.LastChangeDate = DateTime.Now;
+                }
+
+                return newBillToPay;
             }
         }
 
-
-        public void EditFixedInvoice(FixedInvoice fixedInvoice)
+        private static void EditFixedInvoice(FixedInvoice fixedInvoice)
         {
             fixedInvoice.LastChangeDate = DateTime.Now;
         }
 
-        public BillToPay? GetLastRegistrationBillToPay(IList<BillToPay> billsToPay)
+        private static BillToPay? GetLastRegistrationBillToPay(IList<BillToPay> billsToPay)
         {
             if (billsToPay == null)
             {
