@@ -1,4 +1,5 @@
-﻿using Application.Feature.BillToPay.CreateBillToPay;
+﻿using Application.Feature;
+using Application.Feature.BillToPay.CreateBillToPay;
 using Application.Feature.BillToPay.EditBillToPay;
 using Application.Feature.BillToPay.PayBillToPay;
 using Application.Feature.BillToPay.SearchBillToPay;
@@ -34,6 +35,48 @@ namespace WebAPI.Controllers
             _editBillToPayHandler = editBillToPayHandler;
             _payBillToPayHandler = payBillToPayHandler;
             _searchBillToPayHandler = searchBillToPayHandler;
+        }
+
+        /// <summary>
+        /// Registrar uma conta a pagar
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost("register")]
+        public async Task<IActionResult> CreateFixedInvoice([FromBody] CreateBillToPayInput input,
+            CancellationToken cancellationToken)
+        {
+            _logger.Information($"[BillToPayController.CreateFixedInvoice()] - Cadastro de uma nova conta/fatura fixa. Input: {JsonSerializeUtils.Serialize(input)}");
+
+            var output = await _createFixedInvoiceHandler.Handle(input, cancellationToken);
+
+            return Ok(output);
+        }
+
+        /// <summary>
+        /// Registrar uma lista de contas a pagar
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost("register-basket")]
+        public async Task<IActionResult> CreateBasketFixedInvoice([FromBody] IList<CreateBillToPayInput> input,
+            CancellationToken cancellationToken)
+        {
+            _logger.Information("[BillToPayController.CreateBasketFixedInvoice()] - Cadastro de uma nova conta/fatura fixa via basket. Input: {@Input}", JsonSerializeUtils.Serialize(input));
+
+            List<CreateBillToPayOutput> outputList = new();
+            CreateBillToPayOutput output = new();
+
+            foreach (var fixedInvoice in input)
+            {
+                outputList.Add(await _createFixedInvoiceHandler.Handle(fixedInvoice, cancellationToken));
+            }
+
+            output.Output = OutputBaseDetails.Success("A lista de contas a pagar para cadastro teve exito.", outputList, outputList.Count);
+
+            return Ok(output);
         }
 
         /// <summary>
@@ -87,45 +130,6 @@ namespace WebAPI.Controllers
             return Ok(output);
         }
 
-        /// <summary>
-        /// Registrar uma conta a pagar
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpPost("register")]
-        public async Task<IActionResult> CreateFixedInvoice([FromBody] CreateBillToPayInput input,
-            CancellationToken cancellationToken)
-        {
-            _logger.Information($"[BillToPayController.CreateFixedInvoice()] - Cadastro de uma nova conta/fatura fixa. Input: {JsonSerializeUtils.Serialize(input)}");
-
-            var output = await _createFixedInvoiceHandler.Handle(input, cancellationToken);
-
-            return Ok(output);
-        }
-
-        /// <summary>
-        /// Registrar uma lista de contas a pagar
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpPost("register-basket")]
-        public async Task<IActionResult> CreateBasketFixedInvoice([FromBody] IList<CreateBillToPayInput> input,
-            CancellationToken cancellationToken)
-        {
-            _logger.Information("[BillToPayController.CreateBasketFixedInvoice()] - Cadastro de uma nova conta/fatura fixa via basket. Input: {@Input}", JsonSerializeUtils.Serialize(input));
-
-            List<CreateBillToPayOutput> output = new();
-
-            foreach (var fixedInvoice in input)
-            {
-                output.Add(await _createFixedInvoiceHandler.Handle(fixedInvoice, cancellationToken));
-            }
-
-            return Ok(output);
-        }
-        
         /// <summary>
         /// Busca do registro de uma conta a pagar
         /// </summary>
