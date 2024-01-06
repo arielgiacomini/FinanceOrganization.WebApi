@@ -6,17 +6,18 @@ namespace Application.Feature.BillToPay.PayBillToPay
     public class PayBillToPayHandler : IPayBillToPayHandler
     {
         private readonly ILogger _logger;
-        private readonly IBillToPayRepository _walletToPayRepository;
+        private readonly IBillToPayRepository _billToPayRepository;
 
-        public PayBillToPayHandler(ILogger logger, IBillToPayRepository walletToPayRepository)
+        public PayBillToPayHandler(ILogger logger, IBillToPayRepository billToPayRepository)
         {
             _logger = logger;
-            _walletToPayRepository = walletToPayRepository;
+            _billToPayRepository = billToPayRepository;
         }
 
         public async Task<PayBillToPayOutput> Handle(PayBillToPayInput input, CancellationToken cancellationToken)
         {
-            var validate = await PayBillToPayValidator.ValidateInput(input, _walletToPayRepository);
+            PayBillToPayOutput output = new();
+            var validate = await PayBillToPayValidator.ValidateInput(input, _billToPayRepository);
 
             if (validate.Any())
             {
@@ -32,9 +33,14 @@ namespace Application.Feature.BillToPay.PayBillToPay
 
             var billToPay = await MapInputToDomain(input);
 
-            var result = await _walletToPayRepository.Edit(billToPay);
+            if (billToPay == null)
+            {
+                output.Output = OutputBaseDetails.Error("Não foi possível encontrar a conta para pagamento.", new Dictionary<string, string>(), 1);
 
-            PayBillToPayOutput output = new();
+                return output;
+            }
+
+            var result = await _billToPayRepository.Edit(billToPay);
 
             if (result != 1)
             {
@@ -48,13 +54,13 @@ namespace Application.Feature.BillToPay.PayBillToPay
             return output;
         }
 
-        private async Task<Domain.Entities.BillToPay> MapInputToDomain(PayBillToPayInput input)
+        private async Task<Domain.Entities.BillToPay?> MapInputToDomain(PayBillToPayInput input)
         {
-            var billToPay = await _walletToPayRepository.GetBillToPayById(input.Id);
+            var billToPay = await _billToPayRepository.GetBillToPayById(input.Id);
 
             if (billToPay == null)
             {
-                return await Task.FromResult(new Domain.Entities.BillToPay());
+                return null;
             }
 
             return new Domain.Entities.BillToPay()
