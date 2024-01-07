@@ -58,9 +58,22 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(bill =>
                    bill.YearMonth == yearMonth
                 && bill.Category == category
-                && bill.RegistrationType == registrationType);
+                && bill.RegistrationType == registrationType
+                && !bill.HasPay
+                && string.IsNullOrWhiteSpace(bill.PayDay));
 
             return billToPay;
+        }
+
+        public async Task<IList<BillToPay>?> GetBillToPayByYearMonthAndAccount(string yearMonth, string account)
+        {
+            var creditCardBill = await _context.BillToPay!
+                .AsNoTracking()
+                .Where(creditCard => creditCard.Account == account
+                    && creditCard.YearMonth == yearMonth)
+                .ToListAsync();
+
+            return creditCardBill;
         }
 
         public async Task<IList<BillToPay>?> GetBillToPayByYearMonth(string yearMonth)
@@ -73,9 +86,8 @@ namespace Infrastructure.Repositories
             return billsToPay;
         }
 
-        public async Task<int> Save(IList<BillToPay> billsToPay)
+        public async Task<int> SaveRange(IList<BillToPay> billsToPay)
         {
-
             _context.AddRange(billsToPay);
 
             var result = _context.SaveChanges();
@@ -88,6 +100,17 @@ namespace Infrastructure.Repositories
             _context.ChangeTracker.Clear();
 
             _context.BillToPay!.Update(billToPay);
+
+            var result = _context.SaveChanges();
+
+            return await Task.FromResult(result);
+        }
+
+        public async Task<int> EditRange(IList<BillToPay> billToPays)
+        {
+            _context.ChangeTracker.Clear();
+
+            _context.BillToPay!.UpdateRange(billToPays);
 
             var result = _context.SaveChanges();
 

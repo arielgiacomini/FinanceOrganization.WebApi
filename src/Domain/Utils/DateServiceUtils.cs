@@ -169,7 +169,7 @@
             return mes;
         }
 
-        public static DateTime? GetDateTimeByYearMonthBrazilian(string? yearMonth)
+        public static DateTime? GetDateTimeByYearMonthBrazilian(string? yearMonth, int addDays = 0, int addMonths = 0)
         {
             if (yearMonth is null)
             {
@@ -181,7 +181,9 @@
             var month = Month(split[0]);
             int year = Convert.ToInt32(split[1]);
 
-            var dateTime = new DateTime(year, month, DAY_ONE, 0, 0, 0, kind: DateTimeKind.Utc);
+            var dateTime = new DateTime(year, month, DAY_ONE, 0, 0, 0, kind: DateTimeKind.Utc)
+                .AddDays(addDays)
+                .AddMonths(addMonths);
 
             return dateTime;
         }
