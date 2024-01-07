@@ -10,7 +10,7 @@ namespace Domain.Interfaces
         Task<BillToPay?> GetBillToPayById(Guid id);
         Task<BillToPay?> GetBillToPayByNameDueDateAndFrequence(string name, string yearMonth, string frequence);
         Task<IList<BillToPay>?> GetBillToPayByYearMonth(string yearMonth);
-        Task<IList<BillToPay>?> GetBillToPayByYearMonthAndAccount(string yearMonth, string account);
+        Task<IList<BillToPay>?> GetNotPaidYetByYearMonthAndAccount(string yearMonth, string account);
         Task<BillToPay?> GetByYearMonthCategoryAndRegistrationType(string yearMonth, string category, string registrationType);
         Task<int> SaveRange(IList<BillToPay> billsToPay);
     }

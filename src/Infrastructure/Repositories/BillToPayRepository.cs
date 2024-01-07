@@ -58,19 +58,19 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(bill =>
                    bill.YearMonth == yearMonth
                 && bill.Category == category
-                && bill.RegistrationType == registrationType
-                && !bill.HasPay
-                && string.IsNullOrWhiteSpace(bill.PayDay));
+                && bill.RegistrationType == registrationType);
 
             return billToPay;
         }
 
-        public async Task<IList<BillToPay>?> GetBillToPayByYearMonthAndAccount(string yearMonth, string account)
+        public async Task<IList<BillToPay>?> GetNotPaidYetByYearMonthAndAccount(string yearMonth, string account)
         {
             var creditCardBill = await _context.BillToPay!
                 .AsNoTracking()
                 .Where(creditCard => creditCard.Account == account
-                    && creditCard.YearMonth == yearMonth)
+                    && creditCard.YearMonth == yearMonth
+                    && !creditCard.HasPay
+                    && string.IsNullOrWhiteSpace(creditCard.PayDay))
                 .ToListAsync();
 
             return creditCardBill;
