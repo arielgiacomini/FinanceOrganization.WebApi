@@ -1,5 +1,6 @@
 ﻿using Domain.Interfaces;
 using Serilog;
+using D = Domain.Entities;
 
 namespace Application.Feature.BillToPay.PayBillToPay
 {
@@ -31,54 +32,86 @@ namespace Application.Feature.BillToPay.PayBillToPay
                 return outputValidator;
             }
 
-            var billToPay = await MapInputToDomain(input);
+            var listToPay = await SearchToPay(input);
 
-            if (billToPay == null)
+            if (listToPay == null || listToPay!.Count == 0)
             {
-                output.Output = OutputBaseDetails.Error("Não foi possível encontrar a conta para pagamento.", new Dictionary<string, string>(), 1);
+                output.Output = OutputBaseDetails.Error("Não foram encontradas nenhuma conta a pagar no período e/ou ID informado.", new Dictionary<string, string>());
 
                 return output;
             }
 
-            var result = await _billToPayRepository.Edit(billToPay);
+            var billsToPay = MapInputToDomain(listToPay, input);
 
-            if (result != 1)
+            var result = await _billToPayRepository.EditRange(billsToPay!);
+
+            if (result <= 0)
             {
-                output.Output = OutputBaseDetails.Error("Houve erro ao efetuar o pagamento.", new Dictionary<string, string>());
+                output.Output = OutputBaseDetails.Error("Houve erro ao efetuar o pagamento.", new Dictionary<string, string>(), billsToPay.Count);
 
                 return output;
             }
 
-            output.Output = OutputBaseDetails.Success($"{result} - Pagamento realizado com sucesso.", new object());
+            output.Output = OutputBaseDetails.Success($"{result} - Pagamento realizado com sucesso.", new object(), billsToPay.Count);
 
             return output;
         }
 
-        private async Task<Domain.Entities.BillToPay?> MapInputToDomain(PayBillToPayInput input)
+        private static IList<D.BillToPay>? MapInputToDomain(IList<D.BillToPay>? billsToPay, PayBillToPayInput input)
         {
-            var billToPay = await _billToPayRepository.GetBillToPayById(input.Id);
+            List<D.BillToPay>? mapBillsToPay = new();
 
-            if (billToPay == null)
+            if (billsToPay != null)
             {
-                return null;
+                foreach (var bill in billsToPay)
+                {
+                    mapBillsToPay.Add(new D.BillToPay()
+                    {
+                        Id = bill.Id,
+                        IdFixedInvoice = bill.IdFixedInvoice,
+                        Account = bill.Account,
+                        Name = bill.Name,
+                        Category = bill.Category,
+                        Value = bill.Value,
+                        DueDate = bill.DueDate,
+                        YearMonth = bill.YearMonth,
+                        Frequence = bill.Frequence,
+                        PayDay = input.PayDay,
+                        HasPay = input.HasPay,
+                        CreationDate = bill.CreationDate,
+                        LastChangeDate = input.LastChangeDate
+                    });
+                }
             }
 
-            return new Domain.Entities.BillToPay()
+            return mapBillsToPay;
+        }
+
+        private async Task<IList<D.BillToPay>?> SearchToPay(PayBillToPayInput input)
+        {
+            List<D.BillToPay>? listPay = new();
+
+            if (input.Id != null)
             {
-                Id = input.Id,
-                IdFixedInvoice = billToPay.IdFixedInvoice,
-                Account = billToPay.Account,
-                Name = billToPay.Name,
-                Category = billToPay.Category,
-                Value = billToPay.Value,
-                DueDate = billToPay.DueDate,
-                YearMonth = billToPay.YearMonth,
-                Frequence = billToPay.Frequence,
-                PayDay = input.PayDay,
-                HasPay = input.HasPay,
-                CreationDate = billToPay.CreationDate,
-                LastChangeDate = input.LastChangeDate
-            };
+                var bill = await _billToPayRepository.GetBillToPayById(input.Id.Value);
+
+                if (bill != null)
+                {
+                    listPay.Add(bill);
+                }
+            }
+
+            if (input.Account != null && input.YearMonth != null)
+            {
+                var listNotPaidYet = await _billToPayRepository.GetNotPaidYetByYearMonthAndAccount(input.YearMonth, input.Account);
+
+                if (listNotPaidYet != null)
+                {
+                    listPay.AddRange(listNotPaidYet);
+                }
+            }
+
+            return listPay;
         }
     }
 }

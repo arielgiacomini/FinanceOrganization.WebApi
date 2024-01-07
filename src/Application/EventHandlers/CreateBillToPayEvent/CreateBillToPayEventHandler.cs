@@ -166,7 +166,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             await _fixedInvoiceRepository.Edit(fixedInvoice);
 
-            await _billToPayRepository.Save(listBillToPay);
+            await _billToPayRepository.SaveRange(listBillToPay);
         }
 
         private async Task DebitFixedAccount(FixedInvoice fixedInvoice, int qtdMonthAdd)
@@ -244,7 +244,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 listBillToPay.Add(MapBillToPay(billToPay, null, nextMonth.Value, nextMonth.Key));
             }
 
-            await _billToPayRepository.Save(listBillToPay);
+            await _billToPayRepository.SaveRange(listBillToPay);
         }
 
         public static int GetMonthsAdd(int totalMonths, int howManyMonthForward)

@@ -46,7 +46,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
                 .ReturnsAsync(_modelFixture.GetListBillToPay());
 
             _mockWalletToPayRepository
-                .Setup(walletToPay => walletToPay.Save(It.IsAny<IList<BillToPay>>()))
+                .Setup(walletToPay => walletToPay.SaveRange(It.IsAny<IList<BillToPay>>()))
                 .ReturnsAsync(It.IsAny<int>());
 
             // Action
@@ -67,7 +67,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
             // Assert
 
             _mockWalletToPayRepository
-                .Verify(wallet => wallet.Save(It.IsAny<IList<BillToPay>>()), Times.Once());
+                .Verify(wallet => wallet.SaveRange(It.IsAny<IList<BillToPay>>()), Times.Once());
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
                 .ReturnsAsync(_modelFixture.GetListBillToPay());
 
             _mockWalletToPayRepository
-                .Setup(walletToPay => walletToPay.Save(It.IsAny<IList<BillToPay>>()))
+                .Setup(walletToPay => walletToPay.SaveRange(It.IsAny<IList<BillToPay>>()))
                 .ReturnsAsync(It.IsAny<int>());
 
             var options = _modelFixture.GetBillToPayOptions();
@@ -111,7 +111,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
             // Assert
 
             _mockWalletToPayRepository
-                .Verify(wallet => wallet.Save(It.IsAny<IList<BillToPay>>()), Times.Never());
+                .Verify(wallet => wallet.SaveRange(It.IsAny<IList<BillToPay>>()), Times.Never());
         }
 
         [Theory]
@@ -140,7 +140,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
                 .ReturnsAsync(() => null!);
 
             _mockWalletToPayRepository
-                .Setup(walletToPay => walletToPay.Save(It.IsAny<IList<BillToPay>>()))
+                .Setup(walletToPay => walletToPay.SaveRange(It.IsAny<IList<BillToPay>>()))
                 .ReturnsAsync(It.IsAny<int>());
 
             // Action
@@ -161,7 +161,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
             // Assert
 
             _mockWalletToPayRepository
-                .Verify(wallet => wallet.Save(It.IsAny<IList<BillToPay>>()), Times.Once());
+                .Verify(wallet => wallet.SaveRange(It.IsAny<IList<BillToPay>>()), Times.Once());
         }
 
         [Fact]
@@ -177,7 +177,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
                 .ReturnsAsync(() => null!);
 
             _mockWalletToPayRepository
-                .Setup(walletToPay => walletToPay.Save(It.IsAny<IList<BillToPay>>()))
+                .Setup(walletToPay => walletToPay.SaveRange(It.IsAny<IList<BillToPay>>()))
                 .ReturnsAsync(It.IsAny<int>());
 
             var options = _modelFixture.GetBillToPayOptions();
@@ -205,7 +205,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
             // Assert
 
             _mockWalletToPayRepository
-                .Verify(wallet => wallet.Save(It.IsAny<IList<BillToPay>>()), Times.Never());
+                .Verify(wallet => wallet.SaveRange(It.IsAny<IList<BillToPay>>()), Times.Never());
         }
     }
 }
