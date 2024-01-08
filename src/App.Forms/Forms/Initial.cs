@@ -4,6 +4,8 @@ namespace App.Forms.Forms
 {
     public partial class Initial : Form
     {
+        private const string TAB_PAGE_LIVRE = "tbpLivre";
+
         public Initial()
         {
             InitializeComponent();
@@ -15,9 +17,11 @@ namespace App.Forms.Forms
             PreencherComboBoxContaPagarTipoConta();
             PreencherComboBoxAnoMes();
             RegraCamposAnoMes();
+            CampoValor();
+            TabPageIndexOne();
         }
 
-        private void PreencherComboBoxContaPagarCategory()
+        private void PreencherComboBoxContaPagarCategory(string tabPageName = null, string categorySelected = null)
         {
             Dictionary<int, string> categoriasContaPagar = new()
             {
@@ -52,12 +56,26 @@ namespace App.Forms.Forms
                 cboContaPagarCategory.Items.Add(item.Value);
             }
 
-            var positionOne = categoriasContaPagar.FirstOrDefault();
+            if (categorySelected == null)
+            {
+                cboContaPagarCategory.SelectedItem = categoriasContaPagar.FirstOrDefault().Value;
+            }
+            else
+            {
+                var theChoise = categoriasContaPagar.FirstOrDefault(x => x.Value == categorySelected);
 
-            cboContaPagarCategory.SelectedItem = positionOne.Value;
+                if (theChoise.Value.Length > 0)
+                {
+                    cboContaPagarCategory.SelectedItem = theChoise.Value;
+                }
+                else
+                {
+                    cboContaPagarCategory.SelectedItem = categoriasContaPagar.FirstOrDefault().Value;
+                }
+            }
         }
 
-        private void PreencherComboBoxContaPagarTipoConta()
+        private void PreencherComboBoxContaPagarTipoConta(string tabPageName = null, string accountSelected = null)
         {
             Dictionary<int, string> tipoConta = new()
             {
@@ -73,9 +91,23 @@ namespace App.Forms.Forms
                 cboContaPagarTipoConta.Items.Add(item.Value);
             }
 
-            var positionOne = tipoConta.FirstOrDefault();
+            if (accountSelected == null)
+            {
+                cboContaPagarTipoConta.SelectedItem = tipoConta.FirstOrDefault().Value;
+            }
+            else
+            {
+                var theChoise = tipoConta.FirstOrDefault(x => x.Value == accountSelected);
 
-            cboContaPagarTipoConta.SelectedItem = positionOne.Value;
+                if (theChoise.Value.Length > 0)
+                {
+                    cboContaPagarTipoConta.SelectedItem = theChoise.Value;
+                }
+                else
+                {
+                    cboContaPagarTipoConta.SelectedItem = tipoConta.FirstOrDefault().Value;
+                }
+            }
         }
 
         private void PreencherComboBoxAnoMes()
@@ -104,7 +136,7 @@ namespace App.Forms.Forms
             cboContaPagarAnoMesFinal.SelectedItem = currentYearMont;
         }
 
-        private void ckbContaPagarConsideraMesmoMes_CheckedChanged(object sender, EventArgs e)
+        private void CkbContaPagarConsideraMesmoMes_CheckedChanged(object sender, EventArgs e)
         {
             RegraCamposAnoMes();
         }
@@ -120,6 +152,51 @@ namespace App.Forms.Forms
             {
                 cboContaPagarAnoMesFinal.Enabled = true;
             }
+        }
+
+        private void CampoValor()
+        {
+            txtContaPagarValor.Text = Convert.ToDecimal("0").ToString("C");
+        }
+
+        private void CboContaPagarAnoMesInicial_Leave_1(object sender, EventArgs e)
+        {
+            RegraCamposAnoMes();
+        }
+
+        private void CboContaPagarAnoMesInicial_SelectedValueChanged_1(object sender, EventArgs e)
+        {
+            RegraCamposAnoMes();
+        }
+
+        private void TbcInitial_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var tabPageCurrent = tbcInitial.SelectedTab;
+            var tabPageCurrentText = tabPageCurrent.Text;
+            switch (tabPageCurrent.Name)
+            {
+                case TAB_PAGE_LIVRE:
+                    SetParametersDefaultPorTipoDeContaECategoria(tabPageCurrentText, "Dizimo", "Cartão de Débito");
+                    break;
+                case "tbpCartaoCredito":
+                    SetParametersDefaultPorTipoDeContaECategoria(tabPageCurrentText, "Alimentação:Café da Manhã", "Cartão de Crédito");
+                    break;
+                default:
+                    break;
+            }
+
+            tbcInitial.TabPages[tbcInitial.SelectedIndex].Controls.Add(grbTemplateContaPagar);
+        }
+
+        private void TabPageIndexOne()
+        {
+            tbcInitial.TabPages[tbcInitial.SelectedIndex].Controls.Add(grbTemplateContaPagar);
+        }
+
+        private void SetParametersDefaultPorTipoDeContaECategoria(string tabPageName, string category, string account)
+        {
+            PreencherComboBoxContaPagarCategory(tabPageName, category);
+            PreencherComboBoxContaPagarTipoConta(tabPageName, account);
         }
     }
 }
