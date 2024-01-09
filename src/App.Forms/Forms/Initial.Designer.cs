@@ -58,7 +58,7 @@
             tbcInitial.Location = new Point(12, 12);
             tbcInitial.Name = "tbcInitial";
             tbcInitial.SelectedIndex = 0;
-            tbcInitial.Size = new Size(541, 303);
+            tbcInitial.Size = new Size(548, 489);
             tbcInitial.TabIndex = 14;
             tbcInitial.SelectedIndexChanged += TbcInitial_SelectedIndexChanged;
             // 
@@ -68,7 +68,7 @@
             tbpLivre.Location = new Point(4, 24);
             tbpLivre.Name = "tbpLivre";
             tbpLivre.Padding = new Padding(3);
-            tbpLivre.Size = new Size(533, 275);
+            tbpLivre.Size = new Size(540, 461);
             tbpLivre.TabIndex = 0;
             tbpLivre.Text = "Livre";
             tbpLivre.UseVisualStyleBackColor = true;
@@ -90,7 +90,7 @@
             grbTemplateContaPagar.Controls.Add(cboContaPagarTipoConta);
             grbTemplateContaPagar.Location = new Point(18, 10);
             grbTemplateContaPagar.Name = "grbTemplateContaPagar";
-            grbTemplateContaPagar.Size = new Size(497, 254);
+            grbTemplateContaPagar.Size = new Size(497, 445);
             grbTemplateContaPagar.TabIndex = 15;
             grbTemplateContaPagar.TabStop = false;
             grbTemplateContaPagar.Text = "Cadastro de Conta a Pagar - Livre";

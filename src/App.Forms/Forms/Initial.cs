@@ -5,6 +5,7 @@ namespace App.Forms.Forms
     public partial class Initial : Form
     {
         private const string TAB_PAGE_LIVRE = "tbpLivre";
+        private const string DESCRICAO_GROUP_BOX = "Cadastro de Conta a Pagar";
 
         public Initial()
         {
@@ -177,9 +178,11 @@ namespace App.Forms.Forms
             {
                 case TAB_PAGE_LIVRE:
                     SetParametersDefaultPorTipoDeContaECategoria(tabPageCurrentText, "Dizimo", "Cartão de Débito");
+                    grbTemplateContaPagar.Text = string.Concat(DESCRICAO_GROUP_BOX, " - ", tabPageCurrentText);
                     break;
                 case "tbpCartaoCredito":
                     SetParametersDefaultPorTipoDeContaECategoria(tabPageCurrentText, "Alimentação:Café da Manhã", "Cartão de Crédito");
+                    grbTemplateContaPagar.Text = string.Concat(DESCRICAO_GROUP_BOX, " - ", tabPageCurrentText);
                     break;
                 default:
                     break;
@@ -195,6 +198,8 @@ namespace App.Forms.Forms
 
         private void SetParametersDefaultPorTipoDeContaECategoria(string tabPageName, string category, string account)
         {
+            cboContaPagarCategory.Items.Clear();
+            cboContaPagarTipoConta.Items.Clear();
             PreencherComboBoxContaPagarCategory(tabPageName, category);
             PreencherComboBoxContaPagarTipoConta(tabPageName, account);
         }
