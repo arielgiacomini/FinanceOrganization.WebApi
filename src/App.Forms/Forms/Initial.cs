@@ -1,4 +1,5 @@
-﻿using Domain.Utils;
+﻿using App.Forms.ViewModel;
+using Domain.Utils;
 
 namespace App.Forms.Forms
 {
@@ -14,12 +15,39 @@ namespace App.Forms.Forms
 
         private void Initial_Load(object sender, EventArgs e)
         {
+            PreencherLabelDataCriacao();
             PreencherComboBoxContaPagarCategory();
             PreencherComboBoxContaPagarTipoConta();
             PreencherComboBoxAnoMes();
             RegraCamposAnoMes();
             CampoValor();
             TabPageIndexOne();
+            PreencherContaPagarMelhorDiaPagamento();
+            PreencherContaPagarFrequencia();
+        }
+
+        private void BtnContaPagarCadastrar_Click(object sender, EventArgs e)
+        {
+            BillToPayViewModel billToPayViewModel = new();
+            billToPayViewModel.Name = txtContaPagarNameDescription.Text;
+            billToPayViewModel.Account = cboContaPagarTipoConta.Text;
+            billToPayViewModel.Frequence = cboContaPagarFrequencia.Text;
+            billToPayViewModel.RegistrationType = cboContaPagarTipoCadastro.Text;
+            billToPayViewModel.InitialMonthYear = cboContaPagarAnoMesInicial.Text;
+            billToPayViewModel.FynallyMonthYear = cboContaPagarAnoMesFinal.Text;
+            billToPayViewModel.Category = cboContaPagarCategory.Text;
+            billToPayViewModel.Value = Convert.ToDecimal(txtContaPagarValor.Text.Replace("R$ ", ""));
+            billToPayViewModel.PurchaseDate = Convert.ToDateTime(dtpContaPagarDataCompra.Text);
+            billToPayViewModel.BestPayDay = Convert.ToInt32(cboContaPagarMelhorDiaPagamento.Text);
+            billToPayViewModel.AdditionalMessage = rtbContaPagarMensagemAdicional.Text;
+            billToPayViewModel.CreationDate = DateTime.Now;
+            billToPayViewModel.LastChangeDate = null;
+        }
+
+        private void PreencherLabelDataCriacao()
+        {
+            string texto = "Data de Criação: ";
+            lblContaPagarDataCriacao.Text = string.Concat(texto, DateTime.Now);
         }
 
         private void PreencherComboBoxContaPagarCategory(string tabPageName = null, string categorySelected = null)
@@ -137,6 +165,52 @@ namespace App.Forms.Forms
             cboContaPagarAnoMesFinal.SelectedItem = currentYearMont;
         }
 
+        private void PreencherContaPagarMelhorDiaPagamento()
+        {
+            IList<int> bestPayDay = new List<int>();
+
+            for (int day = 1; day <= 31; day++)
+            {
+                bestPayDay.Add(day);
+                cboContaPagarMelhorDiaPagamento.Items.Add(day);
+            }
+
+            cboContaPagarMelhorDiaPagamento.SelectedItem = DateTime.Now.Day;
+        }
+
+        private void PreencherContaPagarFrequencia(string tabPageName = null, string frequenciaSelected = null)
+        {
+            Dictionary<int, string> frequencia = new()
+            {
+                { 1, "Livre" },
+                { 2, "Mensal" },
+                { 3, "Mensal:Recorrente" }
+            };
+
+            foreach (var item in frequencia)
+            {
+                cboContaPagarFrequencia.Items.Add(item.Value);
+            }
+
+            if (frequenciaSelected == null)
+            {
+                cboContaPagarFrequencia.SelectedItem = frequencia.FirstOrDefault().Value;
+            }
+            else
+            {
+                var theChoise = frequencia.FirstOrDefault(x => x.Value == frequenciaSelected);
+
+                if (theChoise.Value.Length > 0)
+                {
+                    cboContaPagarFrequencia.SelectedItem = theChoise.Value;
+                }
+                else
+                {
+                    cboContaPagarFrequencia.SelectedItem = frequencia.FirstOrDefault().Value;
+                }
+            }
+        }
+
         private void CkbContaPagarConsideraMesmoMes_CheckedChanged(object sender, EventArgs e)
         {
             RegraCamposAnoMes();
@@ -177,17 +251,18 @@ namespace App.Forms.Forms
             switch (tabPageCurrent.Name)
             {
                 case TAB_PAGE_LIVRE:
-                    SetParametersDefaultPorTipoDeContaECategoria(tabPageCurrentText, "Dizimo", "Cartão de Débito");
+                    SetParameters(tabPageCurrentText, "Dizimo", "Cartão de Débito", "Livre");
                     grbTemplateContaPagar.Text = string.Concat(DESCRICAO_GROUP_BOX, " - ", tabPageCurrentText);
                     break;
                 case "tbpCartaoCredito":
-                    SetParametersDefaultPorTipoDeContaECategoria(tabPageCurrentText, "Alimentação:Café da Manhã", "Cartão de Crédito");
+                    SetParameters(tabPageCurrentText, "Alimentação:Café da Manhã", "Cartão de Crédito", "Mensal");
                     grbTemplateContaPagar.Text = string.Concat(DESCRICAO_GROUP_BOX, " - ", tabPageCurrentText);
                     break;
                 default:
                     break;
             }
 
+            PreencherLabelDataCriacao();
             tbcInitial.TabPages[tbcInitial.SelectedIndex].Controls.Add(grbTemplateContaPagar);
         }
 
@@ -196,12 +271,13 @@ namespace App.Forms.Forms
             tbcInitial.TabPages[tbcInitial.SelectedIndex].Controls.Add(grbTemplateContaPagar);
         }
 
-        private void SetParametersDefaultPorTipoDeContaECategoria(string tabPageName, string category, string account)
+        private void SetParameters(string tabPageName, string category, string account, string frequencia)
         {
             cboContaPagarCategory.Items.Clear();
             cboContaPagarTipoConta.Items.Clear();
             PreencherComboBoxContaPagarCategory(tabPageName, category);
             PreencherComboBoxContaPagarTipoConta(tabPageName, account);
+            PreencherContaPagarFrequencia(tabPageName, frequencia);
         }
     }
 }
