@@ -1,9 +1,12 @@
 ﻿using App.Forms.Enums;
 
-namespace App.Forms.ViewModel
+namespace App.Forms.DataSource
 {
-    public class BillToPayViewModel
+    public class DgvContaPagarDataSource
     {
+        /// <summary>
+        /// Descrição da Conta a Pagar
+        /// </summary>
         public string? Name { get; set; }
         public string? Account { get; set; }
         public string? Frequence { get; set; }
@@ -20,9 +23,6 @@ namespace App.Forms.ViewModel
         public DateTime? PurchaseDate { get; set; }
         public int? BestPayDay { get; set; }
         public string? AdditionalMessage { get; set; }
-        public DateTime CreationDate { get; set; }
-        public DateTime? LastChangeDate { get; set; }
-        public bool RegistrationSuccess { get; set; }
-        public RegistrationStatus Status { get; set; }
+        public string? Status { get; set; }
     }
 }

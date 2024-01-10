@@ -1,4 +1,6 @@
-﻿namespace App.Forms.Forms
+﻿using App.Forms.DataSource;
+
+namespace App.Forms.Forms
 {
     partial class Initial
     {
@@ -134,11 +136,13 @@
             btnContaPagarCadastrar.TabIndex = 29;
             btnContaPagarCadastrar.Text = "Cadastrar (Conta a Pagar)";
             btnContaPagarCadastrar.UseVisualStyleBackColor = true;
-            btnContaPagarCadastrar.UseWaitCursor = true;
             btnContaPagarCadastrar.Click += BtnContaPagarCadastrar_Click;
             // 
             // dgvContaPagar
             // 
+            dgvContaPagar.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            dgvContaPagar.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
+            dgvContaPagar.BackgroundColor = SystemColors.Window;
             dgvContaPagar.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvContaPagar.Location = new Point(25, 249);
             dgvContaPagar.Name = "dgvContaPagar";
