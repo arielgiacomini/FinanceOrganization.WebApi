@@ -83,7 +83,7 @@ namespace App.Forms.Forms
             tbcInitial.Location = new Point(0, 0);
             tbcInitial.Name = "tbcInitial";
             tbcInitial.SelectedIndex = 0;
-            tbcInitial.Size = new Size(1237, 544);
+            tbcInitial.Size = new Size(1439, 544);
             tbcInitial.TabIndex = 14;
             tbcInitial.SelectedIndexChanged += TbcInitial_SelectedIndexChanged;
             // 
@@ -93,7 +93,7 @@ namespace App.Forms.Forms
             tbpContaPagarLivre.Location = new Point(4, 24);
             tbpContaPagarLivre.Name = "tbpContaPagarLivre";
             tbpContaPagarLivre.Padding = new Padding(3);
-            tbpContaPagarLivre.Size = new Size(1229, 516);
+            tbpContaPagarLivre.Size = new Size(1431, 516);
             tbpContaPagarLivre.TabIndex = 0;
             tbpContaPagarLivre.Text = "Conta a Pagar - Livre";
             tbpContaPagarLivre.UseVisualStyleBackColor = true;
@@ -129,7 +129,7 @@ namespace App.Forms.Forms
             grbTemplateContaPagar.Controls.Add(cboContaPagarTipoConta);
             grbTemplateContaPagar.Location = new Point(18, 10);
             grbTemplateContaPagar.Name = "grbTemplateContaPagar";
-            grbTemplateContaPagar.Size = new Size(1183, 476);
+            grbTemplateContaPagar.Size = new Size(1407, 476);
             grbTemplateContaPagar.TabIndex = 15;
             grbTemplateContaPagar.TabStop = false;
             grbTemplateContaPagar.Text = "Cadastro de Conta a Pagar - Livre";
@@ -383,7 +383,7 @@ namespace App.Forms.Forms
             tbpContaPagarCartaoCredito.Location = new Point(4, 24);
             tbpContaPagarCartaoCredito.Name = "tbpContaPagarCartaoCredito";
             tbpContaPagarCartaoCredito.Padding = new Padding(3);
-            tbpContaPagarCartaoCredito.Size = new Size(1229, 516);
+            tbpContaPagarCartaoCredito.Size = new Size(1431, 516);
             tbpContaPagarCartaoCredito.TabIndex = 1;
             tbpContaPagarCartaoCredito.Text = "Lançar no Cartão de Crédito";
             tbpContaPagarCartaoCredito.UseVisualStyleBackColor = true;
@@ -396,7 +396,7 @@ namespace App.Forms.Forms
             tbpEfetuarPagamento.Controls.Add(dgvEfetuarPagamentoListagem);
             tbpEfetuarPagamento.Location = new Point(4, 24);
             tbpEfetuarPagamento.Name = "tbpEfetuarPagamento";
-            tbpEfetuarPagamento.Size = new Size(1229, 516);
+            tbpEfetuarPagamento.Size = new Size(1431, 516);
             tbpEfetuarPagamento.TabIndex = 2;
             tbpEfetuarPagamento.Text = "Pagamento";
             tbpEfetuarPagamento.UseVisualStyleBackColor = true;
@@ -409,7 +409,7 @@ namespace App.Forms.Forms
             btnEfetuarPagamentoBuscar.TabIndex = 3;
             btnEfetuarPagamentoBuscar.Text = "Buscar Dados";
             btnEfetuarPagamentoBuscar.UseVisualStyleBackColor = true;
-            btnEfetuarPagamentoBuscar.Click += btnEfetuarPagamentoBuscar_Click;
+            btnEfetuarPagamentoBuscar.Click += BtnEfetuarPagamentoBuscar_Click;
             // 
             // lblEfetuarPagamentoAnoMes
             // 
@@ -430,18 +430,21 @@ namespace App.Forms.Forms
             // 
             // dgvEfetuarPagamentoListagem
             // 
+            dgvEfetuarPagamentoListagem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            dgvEfetuarPagamentoListagem.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
             dgvEfetuarPagamentoListagem.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvEfetuarPagamentoListagem.Location = new Point(8, 47);
             dgvEfetuarPagamentoListagem.Name = "dgvEfetuarPagamentoListagem";
             dgvEfetuarPagamentoListagem.RowTemplate.Height = 25;
-            dgvEfetuarPagamentoListagem.Size = new Size(1212, 461);
+            dgvEfetuarPagamentoListagem.Size = new Size(1418, 461);
             dgvEfetuarPagamentoListagem.TabIndex = 0;
+            dgvEfetuarPagamentoListagem.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             // 
             // Initial
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1236, 544);
+            ClientSize = new Size(1442, 544);
             Controls.Add(tbcInitial);
             Name = "Initial";
             StartPosition = FormStartPosition.CenterScreen;

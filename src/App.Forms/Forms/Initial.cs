@@ -392,21 +392,48 @@ namespace App.Forms.Forms
             PreencherContaPagarFrequencia(tabPageName, frequencia);
         }
 
-        private async void btnEfetuarPagamentoBuscar_Click(object sender, EventArgs e)
+        private async void BtnEfetuarPagamentoBuscar_Click(object sender, EventArgs e)
         {
-            SearchBillToPayViewModel search = new SearchBillToPayViewModel
+            SearchBillToPayViewModel search = new()
             {
                 YearMonth = cboEfetuarPagamentoAnoMes.Text
             };
 
+            PreencherEfetuarPagamentoDataGridViewHistory(search);
+        }
+
+        private async void PreencherEfetuarPagamentoDataGridViewHistory(SearchBillToPayViewModel search)
+        {
             var resultSearch = await BillToPayServices.SearchBillToPay(search);
 
             var dataSource = MapSearchResultToDataSource(resultSearch);
 
             dgvEfetuarPagamentoListagem.DataSource = dataSource;
+            dgvEfetuarPagamentoListagem.Columns[0].HeaderText = "Id";
+            dgvEfetuarPagamentoListagem.Columns[0].Visible = false;
+            dgvEfetuarPagamentoListagem.Columns[1].HeaderText = "Id da tabela pai";
+            dgvEfetuarPagamentoListagem.Columns[1].Visible = false;
+            dgvEfetuarPagamentoListagem.Columns[2].HeaderText = "Conta";
+            dgvEfetuarPagamentoListagem.Columns[3].HeaderText = "Descrição";
+            dgvEfetuarPagamentoListagem.Columns[4].HeaderText = "Categoria";
+            dgvEfetuarPagamentoListagem.Columns[5].HeaderText = "Valor";
+            dgvEfetuarPagamentoListagem.Columns[5].DefaultCellStyle.Format = "C2";
+            dgvEfetuarPagamentoListagem.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgvEfetuarPagamentoListagem.Columns[6].HeaderText = "Data de Compra";
+            dgvEfetuarPagamentoListagem.Columns[7].HeaderText = "Vencimento";
+            dgvEfetuarPagamentoListagem.Columns[8].HeaderText = "Mês/Ano";
+            dgvEfetuarPagamentoListagem.Columns[9].HeaderText = "Frequência";
+            dgvEfetuarPagamentoListagem.Columns[10].HeaderText = "Tipo";
+            dgvEfetuarPagamentoListagem.Columns[11].HeaderText = "Data de Pagamento";
+            dgvEfetuarPagamentoListagem.Columns[12].HeaderText = "Pago?";
+            dgvEfetuarPagamentoListagem.Columns[13].HeaderText = "Mensagem";
+            dgvEfetuarPagamentoListagem.Columns[14].HeaderText = "Data de Criação";
+            dgvEfetuarPagamentoListagem.Columns[14].Visible = false;
+            dgvEfetuarPagamentoListagem.Columns[15].HeaderText = "Data de Alteração";
+            dgvEfetuarPagamentoListagem.Columns[15].Visible = false;
         }
 
-        private IList<DgvEfetuarPagamentoListagemDataSource> MapSearchResultToDataSource(SearchBillToPayOutput searchBillToPayOutput)
+        private static IList<DgvEfetuarPagamentoListagemDataSource> MapSearchResultToDataSource(SearchBillToPayOutput searchBillToPayOutput)
         {
             IList<DgvEfetuarPagamentoListagemDataSource> dgvEfetuarPagamentoListagemDataSources = new List<DgvEfetuarPagamentoListagemDataSource>();
 
