@@ -2,7 +2,7 @@
 
 namespace App.Forms.ViewModel
 {
-    public class BillToPayViewModel
+    public class CreateBillToPayViewModel
     {
         public string? Name { get; set; }
         public string? Account { get; set; }

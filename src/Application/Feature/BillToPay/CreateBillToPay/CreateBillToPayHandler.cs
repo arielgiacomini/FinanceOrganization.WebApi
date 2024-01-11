@@ -41,7 +41,7 @@ namespace Application.Feature.BillToPay.CreateBillToPay
 
             var output = new CreateBillToPayOutput
             {
-                Output = OutputBaseDetails.Success($"[{isSaved}] - Cadastro realizado com sucesso.", new object())
+                Output = OutputBaseDetails.Success($"[{isSaved}] - Cadastro realizado com sucesso.", new object(), 1)
             };
 
             return await Task.FromResult(output);
