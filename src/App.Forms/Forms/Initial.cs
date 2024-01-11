@@ -1,12 +1,20 @@
-﻿using App.Forms.ViewModel;
+﻿using App.Forms.DataSource;
+using App.Forms.Enums;
+using App.Forms.Services;
+using App.Forms.Services.Output;
+using App.Forms.ViewModel;
 using Domain.Utils;
+using Newtonsoft.Json;
 
 namespace App.Forms.Forms
 {
     public partial class Initial : Form
     {
-        private const string TAB_PAGE_LIVRE = "tbpLivre";
+        private const string TAB_PAGE_LIVRE = "tbpContaPagarLivre";
+        private const string TAB_PAGE_CARTAO_CREDITO = "tbpContaPagarCartaoCredito";
         private const string DESCRICAO_GROUP_BOX = "Cadastro de Conta a Pagar";
+        private IList<CreateBillToPayViewModel> _createBillToPayViewModels = new List<CreateBillToPayViewModel>();
+        private IList<SearchBillToPayViewModel> _searchBillToPayViewModels = new List<SearchBillToPayViewModel>();
 
         public Initial()
         {
@@ -24,24 +32,84 @@ namespace App.Forms.Forms
             TabPageIndexOne();
             PreencherContaPagarMelhorDiaPagamento();
             PreencherContaPagarFrequencia();
+            PreencherContaPagarTipoCadastro();
         }
 
-        private void BtnContaPagarCadastrar_Click(object sender, EventArgs e)
+        private async void BtnContaPagarCadastrar_Click(object sender, EventArgs e)
         {
-            BillToPayViewModel billToPayViewModel = new();
-            billToPayViewModel.Name = txtContaPagarNameDescription.Text;
-            billToPayViewModel.Account = cboContaPagarTipoConta.Text;
-            billToPayViewModel.Frequence = cboContaPagarFrequencia.Text;
-            billToPayViewModel.RegistrationType = cboContaPagarTipoCadastro.Text;
-            billToPayViewModel.InitialMonthYear = cboContaPagarAnoMesInicial.Text;
-            billToPayViewModel.FynallyMonthYear = cboContaPagarAnoMesFinal.Text;
-            billToPayViewModel.Category = cboContaPagarCategory.Text;
-            billToPayViewModel.Value = Convert.ToDecimal(txtContaPagarValor.Text.Replace("R$ ", ""));
-            billToPayViewModel.PurchaseDate = Convert.ToDateTime(dtpContaPagarDataCompra.Text);
-            billToPayViewModel.BestPayDay = Convert.ToInt32(cboContaPagarMelhorDiaPagamento.Text);
-            billToPayViewModel.AdditionalMessage = rtbContaPagarMensagemAdicional.Text;
-            billToPayViewModel.CreationDate = DateTime.Now;
-            billToPayViewModel.LastChangeDate = null;
+            var created = RegistrationStatus.Created;
+
+            var createBillToPay = new CreateBillToPayViewModel
+            {
+                Name = txtContaPagarNameDescription.Text,
+                Account = cboContaPagarTipoConta.Text,
+                Frequence = cboContaPagarFrequencia.Text,
+                RegistrationType = cboContaPagarTipoCadastro.Text,
+                InitialMonthYear = cboContaPagarAnoMesInicial.Text,
+                FynallyMonthYear = cboContaPagarAnoMesFinal.Text,
+                Category = cboContaPagarCategory.Text,
+                Value = Convert.ToDecimal(txtContaPagarValor.Text.Replace("R$ ", "")),
+                PurchaseDate = Convert.ToDateTime(dtpContaPagarDataCompra.Text),
+                BestPayDay = Convert.ToInt32(cboContaPagarMelhorDiaPagamento.Text),
+                AdditionalMessage = rtbContaPagarMensagemAdicional.Text,
+                CreationDate = DateTime.Now,
+                LastChangeDate = null
+            };
+
+            _createBillToPayViewModels.Add(createBillToPay);
+
+            PreencherContaPagarDataGridViewHistory(_createBillToPayViewModels, created);
+
+            var result = await BillToPayServices.CreateBillToPay(createBillToPay);
+
+            if (result == null || result.Output.Quantidade == 0)
+            {
+                var teste = "";
+            }
+        }
+
+        private void PreencherContaPagarDataGridViewHistory(IList<CreateBillToPayViewModel> billsToPayViewModel, RegistrationStatus registrationStatus)
+        {
+            dgvContaPagar.DataSource = MapCreateBillToPayViewModelToDataSource(billsToPayViewModel, registrationStatus);
+            dgvContaPagar.Columns[0].HeaderText = "Descrição";
+            dgvContaPagar.Columns[1].HeaderText = "Conta";
+            dgvContaPagar.Columns[2].HeaderText = "Frequência";
+            dgvContaPagar.Columns[3].HeaderText = "Tipo";
+            dgvContaPagar.Columns[4].HeaderText = "Inicial";
+            dgvContaPagar.Columns[5].HeaderText = "Final";
+            dgvContaPagar.Columns[6].HeaderText = "Categoria";
+            dgvContaPagar.Columns[7].HeaderText = "Valor";
+            dgvContaPagar.Columns[8].HeaderText = "Data de Compra";
+            dgvContaPagar.Columns[9].HeaderText = "Melhor Dia";
+            dgvContaPagar.Columns[10].HeaderText = "Mensagem";
+            dgvContaPagar.Columns[11].HeaderText = "Status";
+        }
+
+        private static IList<DgvContaPagarDataSource> MapCreateBillToPayViewModelToDataSource(IList<CreateBillToPayViewModel> billsToPayViewModel, RegistrationStatus status)
+        {
+            IList<DgvContaPagarDataSource> dgvContaPagarDataSources = new List<DgvContaPagarDataSource>();
+            foreach (var billToPayViewModel in billsToPayViewModel)
+            {
+                var dgvContaPagarDataSource = new DgvContaPagarDataSource()
+                {
+                    Name = billToPayViewModel.Name,
+                    Account = billToPayViewModel.Account,
+                    Frequence = billToPayViewModel.Frequence,
+                    RegistrationType = billToPayViewModel.RegistrationType,
+                    InitialMonthYear = billToPayViewModel.InitialMonthYear,
+                    FynallyMonthYear = billToPayViewModel.FynallyMonthYear,
+                    Category = billToPayViewModel.Category,
+                    Value = billToPayViewModel.Value,
+                    PurchaseDate = billToPayViewModel.PurchaseDate,
+                    BestPayDay = billToPayViewModel.BestPayDay,
+                    AdditionalMessage = billToPayViewModel.AdditionalMessage,
+                    Status = status.ToString()
+                };
+
+                dgvContaPagarDataSources.Add(dgvContaPagarDataSource);
+            }
+
+            return dgvContaPagarDataSources;
         }
 
         private void PreencherLabelDataCriacao()
@@ -157,12 +225,14 @@ namespace App.Forms.Forms
 
                 cboContaPagarAnoMesInicial.Items.Add(yearMonthAdd);
                 cboContaPagarAnoMesFinal.Items.Add(yearMonthAdd);
+                cboEfetuarPagamentoAnoMes.Items.Add(yearMonthAdd);
             }
 
             _ = yearMonths.TryGetValue(3, out string currentYearMont);
 
             cboContaPagarAnoMesInicial.SelectedItem = currentYearMont;
             cboContaPagarAnoMesFinal.SelectedItem = currentYearMont;
+            cboEfetuarPagamentoAnoMes.SelectedItem = currentYearMont;
         }
 
         private void PreencherContaPagarMelhorDiaPagamento()
@@ -211,6 +281,38 @@ namespace App.Forms.Forms
             }
         }
 
+        private void PreencherContaPagarTipoCadastro(string tabPageName = null, string tipoCadastroSelected = null)
+        {
+            Dictionary<int, string> tipoCadastro = new()
+            {
+                { 1, "Compra Livre" },
+                { 2, "Conta/Fatura Fixa" }
+            };
+
+            foreach (var item in tipoCadastro)
+            {
+                cboContaPagarTipoCadastro.Items.Add(item.Value);
+            }
+
+            if (tipoCadastroSelected == null)
+            {
+                cboContaPagarTipoCadastro.SelectedItem = tipoCadastro.FirstOrDefault().Value;
+            }
+            else
+            {
+                var theChoise = tipoCadastro.FirstOrDefault(x => x.Value == tipoCadastroSelected);
+
+                if (theChoise.Value.Length > 0)
+                {
+                    cboContaPagarTipoCadastro.SelectedItem = theChoise.Value;
+                }
+                else
+                {
+                    cboContaPagarTipoCadastro.SelectedItem = tipoCadastro.FirstOrDefault().Value;
+                }
+            }
+        }
+
         private void CkbContaPagarConsideraMesmoMes_CheckedChanged(object sender, EventArgs e)
         {
             RegraCamposAnoMes();
@@ -234,12 +336,12 @@ namespace App.Forms.Forms
             txtContaPagarValor.Text = Convert.ToDecimal("0").ToString("C");
         }
 
-        private void CboContaPagarAnoMesInicial_Leave_1(object sender, EventArgs e)
+        private void CboContaPagarAnoMesInicial_Leave(object sender, EventArgs e)
         {
             RegraCamposAnoMes();
         }
 
-        private void CboContaPagarAnoMesInicial_SelectedValueChanged_1(object sender, EventArgs e)
+        private void CboContaPagarAnoMesInicial_SelectedValueChanged(object sender, EventArgs e)
         {
             RegraCamposAnoMes();
         }
@@ -254,7 +356,7 @@ namespace App.Forms.Forms
                     SetParameters(tabPageCurrentText, "Dizimo", "Cartão de Débito", "Livre");
                     grbTemplateContaPagar.Text = string.Concat(DESCRICAO_GROUP_BOX, " - ", tabPageCurrentText);
                     break;
-                case "tbpCartaoCredito":
+                case TAB_PAGE_CARTAO_CREDITO:
                     SetParameters(tabPageCurrentText, "Alimentação:Café da Manhã", "Cartão de Crédito", "Mensal");
                     grbTemplateContaPagar.Text = string.Concat(DESCRICAO_GROUP_BOX, " - ", tabPageCurrentText);
                     break;
@@ -262,8 +364,18 @@ namespace App.Forms.Forms
                     break;
             }
 
-            PreencherLabelDataCriacao();
-            tbcInitial.TabPages[tbcInitial.SelectedIndex].Controls.Add(grbTemplateContaPagar);
+            if (TabPageCurrentIsFormWithTemplate())
+            {
+                PreencherLabelDataCriacao();
+                tbcInitial.TabPages[tbcInitial.SelectedIndex].Controls.Add(grbTemplateContaPagar);
+            }
+        }
+
+        private bool TabPageCurrentIsFormWithTemplate()
+        {
+            return
+                   tbcInitial.TabPages[tbcInitial.SelectedIndex].Name == TAB_PAGE_LIVRE
+                || tbcInitial.TabPages[tbcInitial.SelectedIndex].Name == TAB_PAGE_CARTAO_CREDITO;
         }
 
         private void TabPageIndexOne()
@@ -278,6 +390,43 @@ namespace App.Forms.Forms
             PreencherComboBoxContaPagarCategory(tabPageName, category);
             PreencherComboBoxContaPagarTipoConta(tabPageName, account);
             PreencherContaPagarFrequencia(tabPageName, frequencia);
+        }
+
+        private async void btnEfetuarPagamentoBuscar_Click(object sender, EventArgs e)
+        {
+            SearchBillToPayViewModel search = new SearchBillToPayViewModel
+            {
+                YearMonth = cboEfetuarPagamentoAnoMes.Text
+            };
+
+            var resultSearch = await BillToPayServices.SearchBillToPay(search);
+
+            var dataSource = MapSearchResultToDataSource(resultSearch);
+
+            dgvEfetuarPagamentoListagem.DataSource = dataSource;
+        }
+
+        private IList<DgvEfetuarPagamentoListagemDataSource> MapSearchResultToDataSource(SearchBillToPayOutput searchBillToPayOutput)
+        {
+            IList<DgvEfetuarPagamentoListagemDataSource> dgvEfetuarPagamentoListagemDataSources = new List<DgvEfetuarPagamentoListagemDataSource>();
+
+            if (searchBillToPayOutput.Output == null || searchBillToPayOutput.Output.Data == null)
+            {
+                return dgvEfetuarPagamentoListagemDataSources;
+            }
+
+            var dados = searchBillToPayOutput.Output.Data;
+
+            var json = JsonConvert.SerializeObject(searchBillToPayOutput.Output.Data);
+
+            var conversion = JsonConvert.DeserializeObject<IList<DgvEfetuarPagamentoListagemDataSource>>(json);
+
+            foreach (var item in conversion)
+            {
+                dgvEfetuarPagamentoListagemDataSources.Add(item);
+            }
+
+            return dgvEfetuarPagamentoListagemDataSources;
         }
     }
 }
