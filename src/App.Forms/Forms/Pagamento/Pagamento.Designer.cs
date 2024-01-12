@@ -40,6 +40,7 @@
             cboPagamentoMesAno = new ComboBox();
             btnPagamentoPagar = new Button();
             lblPagamentoNome = new Label();
+            lblPagamentoValor = new Label();
             SuspendLayout();
             // 
             // lblPagamentoIdContaPagar
@@ -77,6 +78,7 @@
             // rdbPagamentoPago
             // 
             rdbPagamentoPago.AutoSize = true;
+            rdbPagamentoPago.Checked = true;
             rdbPagamentoPago.Location = new Point(315, 128);
             rdbPagamentoPago.Name = "rdbPagamentoPago";
             rdbPagamentoPago.Size = new Size(52, 19);
@@ -92,7 +94,6 @@
             rdbPagamentoNaoPago.Name = "rdbPagamentoNaoPago";
             rdbPagamentoNaoPago.Size = new Size(77, 19);
             rdbPagamentoNaoPago.TabIndex = 5;
-            rdbPagamentoNaoPago.TabStop = true;
             rdbPagamentoNaoPago.Text = "Não Pago";
             rdbPagamentoNaoPago.UseVisualStyleBackColor = true;
             // 
@@ -138,21 +139,40 @@
             btnPagamentoPagar.TabIndex = 10;
             btnPagamentoPagar.Text = "Pagar";
             btnPagamentoPagar.UseVisualStyleBackColor = true;
+            btnPagamentoPagar.Click += BtnPagamentoPagar_Click;
             // 
             // lblPagamentoNome
             // 
             lblPagamentoNome.AutoSize = true;
-            lblPagamentoNome.Location = new Point(181, 9);
+            lblPagamentoNome.BackColor = Color.Lime;
+            lblPagamentoNome.Font = new Font("Calibri", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            lblPagamentoNome.ForeColor = SystemColors.HotTrack;
+            lblPagamentoNome.Location = new Point(25, 9);
             lblPagamentoNome.Name = "lblPagamentoNome";
-            lblPagamentoNome.Size = new Size(115, 15);
+            lblPagamentoNome.Size = new Size(148, 19);
             lblPagamentoNome.TabIndex = 11;
             lblPagamentoNome.Text = "Conta que será paga";
+            lblPagamentoNome.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblPagamentoValor
+            // 
+            lblPagamentoValor.AutoSize = true;
+            lblPagamentoValor.BackColor = Color.Crimson;
+            lblPagamentoValor.Font = new Font("Calibri", 12F, FontStyle.Bold, GraphicsUnit.Point);
+            lblPagamentoValor.ForeColor = SystemColors.ControlLightLight;
+            lblPagamentoValor.Location = new Point(388, 86);
+            lblPagamentoValor.Name = "lblPagamentoValor";
+            lblPagamentoValor.Size = new Size(44, 19);
+            lblPagamentoValor.TabIndex = 13;
+            lblPagamentoValor.Text = "Valor";
+            lblPagamentoValor.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // FrmPagamento
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(512, 198);
+            Controls.Add(lblPagamentoValor);
             Controls.Add(lblPagamentoNome);
             Controls.Add(btnPagamentoPagar);
             Controls.Add(cboPagamentoMesAno);
@@ -166,6 +186,7 @@
             Controls.Add(txtPagamentoIdContaPagar);
             Controls.Add(lblPagamentoIdContaPagar);
             Name = "FrmPagamento";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Informar Pagamento";
             Load += FrmPagamento_Load;
             ResumeLayout(false);
@@ -186,5 +207,6 @@
         private ComboBox cboPagamentoMesAno;
         private Button btnPagamentoPagar;
         private Label lblPagamentoNome;
+        private Label lblPagamentoValor;
     }
 }

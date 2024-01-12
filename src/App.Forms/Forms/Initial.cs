@@ -449,16 +449,29 @@ namespace App.Forms.Forms
             if (e.RowIndex >= 0)
             {
                 _ = Guid.TryParse(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[0].Value.ToString(), out Guid identificadorContaPagar);
+                var conta = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[2].Value.ToString();
                 var descricao = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[3].Value.ToString();
+                var valorOfDgv = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[5].Value?.ToString()?.Replace("R$ ", "") ?? "0";
+                var valor = Convert.ToDecimal(valorOfDgv);
+                var mesAno = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[8].Value.ToString();
 
                 FrmPagamento frmPagamento = new()
                 {
                     IdentificadorUnicoContaPagar = identificadorContaPagar,
-                    Nome = descricao
+                    Nome = descricao,
+                    Conta = conta,
+                    AnoMes = mesAno,
+                    Valor = valor
                 };
 
                 frmPagamento.ShowDialog();
             }
+        }
+
+        private void BtnPagamentoAvulso_Click(object sender, EventArgs e)
+        {
+            FrmPagamento frmPagamento = new();
+            frmPagamento.ShowDialog();
         }
     }
 }

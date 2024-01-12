@@ -63,6 +63,8 @@ namespace App.Forms.Forms
             cboContaPagarTipoConta = new ComboBox();
             tbpContaPagarCartaoCredito = new TabPage();
             tbpEfetuarPagamento = new TabPage();
+            lblPagamentoInfo = new Label();
+            btnPagamentoAvulso = new Button();
             btnEfetuarPagamentoBuscar = new Button();
             lblEfetuarPagamentoAnoMes = new Label();
             cboEfetuarPagamentoAnoMes = new ComboBox();
@@ -384,13 +386,15 @@ namespace App.Forms.Forms
             tbpContaPagarCartaoCredito.Location = new Point(4, 24);
             tbpContaPagarCartaoCredito.Name = "tbpContaPagarCartaoCredito";
             tbpContaPagarCartaoCredito.Padding = new Padding(3);
-            tbpContaPagarCartaoCredito.Size = new Size(1431, 516);
+            tbpContaPagarCartaoCredito.Size = new Size(1359, 516);
             tbpContaPagarCartaoCredito.TabIndex = 1;
             tbpContaPagarCartaoCredito.Text = "Lançar no Cartão de Crédito";
             tbpContaPagarCartaoCredito.UseVisualStyleBackColor = true;
             // 
             // tbpEfetuarPagamento
             // 
+            tbpEfetuarPagamento.Controls.Add(lblPagamentoInfo);
+            tbpEfetuarPagamento.Controls.Add(btnPagamentoAvulso);
             tbpEfetuarPagamento.Controls.Add(btnEfetuarPagamentoBuscar);
             tbpEfetuarPagamento.Controls.Add(lblEfetuarPagamentoAnoMes);
             tbpEfetuarPagamento.Controls.Add(cboEfetuarPagamentoAnoMes);
@@ -401,6 +405,25 @@ namespace App.Forms.Forms
             tbpEfetuarPagamento.TabIndex = 2;
             tbpEfetuarPagamento.Text = "Pagamento";
             tbpEfetuarPagamento.UseVisualStyleBackColor = true;
+            // 
+            // lblPagamentoInfo
+            // 
+            lblPagamentoInfo.AutoSize = true;
+            lblPagamentoInfo.Location = new Point(547, 18);
+            lblPagamentoInfo.Name = "lblPagamentoInfo";
+            lblPagamentoInfo.Size = new Size(287, 15);
+            lblPagamentoInfo.TabIndex = 5;
+            lblPagamentoInfo.Text = "Ideal p/ Pagamento em Massa, Ex.: Cartão de Crédito";
+            // 
+            // btnPagamentoAvulso
+            // 
+            btnPagamentoAvulso.Location = new Point(429, 6);
+            btnPagamentoAvulso.Name = "btnPagamentoAvulso";
+            btnPagamentoAvulso.Size = new Size(112, 38);
+            btnPagamentoAvulso.TabIndex = 4;
+            btnPagamentoAvulso.Text = "Novo Pagamento\r\nAvulso";
+            btnPagamentoAvulso.UseVisualStyleBackColor = true;
+            btnPagamentoAvulso.Click += BtnPagamentoAvulso_Click;
             // 
             // btnEfetuarPagamentoBuscar
             // 
@@ -507,5 +530,7 @@ namespace App.Forms.Forms
         private Label lblEfetuarPagamentoAnoMes;
         private ComboBox cboEfetuarPagamentoAnoMes;
         private Button btnEfetuarPagamentoBuscar;
+        private Label lblPagamentoInfo;
+        private Button btnPagamentoAvulso;
     }
 }

@@ -1,4 +1,7 @@
 ﻿using App.Forms.Enums;
+using App.Forms.Services;
+using App.Forms.Services.Output;
+using App.Forms.ViewModel;
 using Domain.Utils;
 
 namespace App.Forms.Forms.Pay
@@ -7,16 +10,16 @@ namespace App.Forms.Forms.Pay
     {
         public Guid IdentificadorUnicoContaPagar { get; set; } = Guid.Empty;
         public string? Nome { get; set; } = string.Empty;
+        public string? Conta { get; set; } = string.Empty;
+        public string? AnoMes { get; set; } = string.Empty;
+        public decimal? Valor { get; set; } = 0;
 
         public FrmPagamento()
         {
             InitializeComponent();
-            PreencherComboBoxAnoMes();
-            PreencherComboBoxContaPagarTipoConta();
-            RegraApresentarInfoPreenchidas();
         }
 
-        private void PreencherComboBoxAnoMes()
+        private void PreencherComboBoxAnoMes(string selectedItem = null)
         {
             var yearMonths = DateServiceUtils.GetListYearMonthsByThreeMonthsBeforeAndTwentyFourAfter();
 
@@ -25,6 +28,11 @@ namespace App.Forms.Forms.Pay
             _ = yearMonths.TryGetValue(3, out string? currentYearMont);
 
             cboPagamentoMesAno.SelectedItem = currentYearMont;
+
+            if (!string.IsNullOrWhiteSpace(selectedItem))
+            {
+                cboPagamentoMesAno.SelectedItem = selectedItem;
+            }
         }
 
         private void PreencherComboBoxContaPagarTipoConta(string accountSelected = null)
@@ -36,7 +44,7 @@ namespace App.Forms.Forms.Pay
                 cboPagamentoConta.Items.Add(item.Value);
             }
 
-            if (accountSelected == null)
+            if (string.IsNullOrWhiteSpace(accountSelected))
             {
                 cboPagamentoConta.SelectedItem = tipoConta.FirstOrDefault().Value;
             }
@@ -57,10 +65,9 @@ namespace App.Forms.Forms.Pay
 
         private void FrmPagamento_Load(object sender, EventArgs e)
         {
-            PreencherComboBoxAnoMes();
-            PreencherComboBoxContaPagarTipoConta();
+            PreencherComboBoxAnoMes(AnoMes);
+            PreencherComboBoxContaPagarTipoConta(Conta);
             RegraApresentarInfoPreenchidas();
-
         }
 
         private void RegraApresentarInfoPreenchidas()
@@ -68,6 +75,8 @@ namespace App.Forms.Forms.Pay
             if (IdentificadorUnicoContaPagar != Guid.Empty)
             {
                 txtPagamentoIdContaPagar.Enabled = false;
+                cboPagamentoConta.Enabled = false;
+                cboPagamentoMesAno.Enabled = false;
                 txtPagamentoIdContaPagar.Text = IdentificadorUnicoContaPagar.ToString();
             }
 
@@ -75,10 +84,101 @@ namespace App.Forms.Forms.Pay
             {
                 lblPagamentoNome.Text = Nome;
             }
+
+            if (Valor != null && Valor.Value > 0)
+            {
+                lblPagamentoValor.Text = Valor.Value.ToString("C");
+            }
+        }
+
+        private async void BtnPagamentoPagar_Click(object sender, EventArgs e)
+        {
+            PayBillToPayOutput output;
+            PayBillToPayViewModel request;
+
+            if (cboPagamentoConta.Text == "Cartão de Crédito")
+            {
+                if (!string.IsNullOrWhiteSpace(txtPagamentoIdContaPagar.Text))
+                {
+                    MessageBox.Show(
+                        $"Se você está efetuando um pagamento em massa da conta: " +
+                        $"{cboPagamentoConta.Text} não é possível informar um ID de conta para pagamento.",
+                        "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
+                request = MapPayBillToPayToRequest();
+            }
             else
             {
-                lblPagamentoNome.Text = string.Empty;
+                _ = Guid.TryParse(txtPagamentoIdContaPagar.Text, out Guid idContaPagar);
+
+                request = MapPayBillToPayToRequest(idContaPagar, false);
             }
+
+            output = await BillToPayServices.PayBillToPay(request);
+
+            SetOutput(output);
+        }
+
+        private static void SetOutput(PayBillToPayOutput? output)
+        {
+            if (output == null)
+            {
+                MessageBox.Show("Ocorreu um erro ao tentar efetuar o pagamento.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (output!.Output!.Status == OutputStatus.Success)
+            {
+                MessageBox.Show($"{output!.Output!.Message}", "Pagamento realizado com sucesso!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var validations = output!.Output?.Validations;
+
+            if (validations != null && validations!.Count > 0)
+            {
+                var mensagem = string.Empty;
+                foreach (var validation in validations)
+                {
+                    mensagem += string.Concat(validation.Key, "-", validation.Value);
+                }
+
+                MessageBox.Show(mensagem, "Validação", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            var errors = output!.Output?.Errors;
+            if (errors != null && errors!.Count > 0)
+            {
+                var mensagem = string.Empty;
+                foreach (var error in errors)
+                {
+                    mensagem += string.Concat(error.Key, "-", error.Value);
+                }
+
+                MessageBox.Show(mensagem, "Erros", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private PayBillToPayViewModel MapPayBillToPayToRequest(Guid? idContaPagar = null, bool sendYearMonthAndAccount = true)
+        {
+            var request = new PayBillToPayViewModel()
+            {
+                Id = idContaPagar,
+                PayDay = txtPagamentoData.Text,
+                HasPay = rdbPagamentoPago.Checked ? rdbPagamentoPago.Checked : rdbPagamentoNaoPago.Checked,
+                LastChangeDate = DateTime.Now,
+                YearMonth = cboPagamentoMesAno.Text,
+                Account = cboPagamentoConta.Text
+            };
+
+            if (!sendYearMonthAndAccount)
+            {
+                request.Account = null;
+                request.YearMonth = null;
+            }
+
+            return request;
         }
     }
 }
