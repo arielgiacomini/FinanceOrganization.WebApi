@@ -8,17 +8,24 @@ namespace Application.Feature.BillToPay.PayBillToPay
     {
         public static async Task<Dictionary<string, string>> ValidateInput(
             PayBillToPayInput input,
-            IBillToPayRepository walletToPayRepository)
+            IBillToPayRepository billToPayRepository)
         {
-            return await CreateValidateBaseInput(input, walletToPayRepository);
+            return await CreateValidateBaseInput(input, billToPayRepository);
         }
 
         private static async Task<Dictionary<string, string>> CreateValidateBaseInput(PayBillToPayInput input,
-            IBillToPayRepository walletToPayRepository)
+            IBillToPayRepository billToPayRepository)
         {
             Dictionary<string, string> validatorBase = new();
 
-            if (input.Account == Account.CARTAO_CREDITO)
+            Domain.Entities.BillToPay billToPay = new();
+
+            if (input.Id != null)
+            {
+                billToPay = await billToPayRepository.GetBillToPayById(input.Id.Value);
+            }
+
+            if (input.Account == Account.CARTAO_CREDITO || billToPay!.Account == Account.CARTAO_CREDITO)
             {
                 if (string.IsNullOrEmpty(input.YearMonth))
                 {
@@ -54,7 +61,7 @@ namespace Application.Feature.BillToPay.PayBillToPay
 
                 if (input.Id != null)
                 {
-                    var result = await walletToPayRepository.GetBillToPayById(input.Id.Value);
+                    var result = await billToPayRepository.GetBillToPayById(input.Id.Value);
 
                     if (result == null)
                     {
