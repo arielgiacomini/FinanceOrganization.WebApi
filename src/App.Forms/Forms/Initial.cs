@@ -396,7 +396,9 @@ namespace App.Forms.Forms
 
             var dataSource = MapSearchResultToDataSource(resultSearch);
 
-            dgvEfetuarPagamentoListagem.DataSource = dataSource;
+            var dataSourceOrderBy = dataSource.OrderByDescending(x => x.CreationDate).ToList();
+
+            dgvEfetuarPagamentoListagem.DataSource = dataSourceOrderBy;
             dgvEfetuarPagamentoListagem.Columns[0].HeaderText = "Id";
             dgvEfetuarPagamentoListagem.Columns[0].Visible = false;
             dgvEfetuarPagamentoListagem.Columns[1].HeaderText = "Id da tabela pai";
