@@ -42,5 +42,23 @@ namespace App.Forms.Services
 
             return JsonConvert.DeserializeObject<SearchBillToPayOutput>(response) ?? new SearchBillToPayOutput();
         }
+
+        public static async Task<PayBillToPayOutput> PayBillToPay(PayBillToPayViewModel payBillToPayViewModel)
+        {
+            using var client = new HttpClient();
+
+            var content = new StringContent(JsonConvert.SerializeObject(payBillToPayViewModel), Encoding.UTF8, "application/json");
+
+            var result = client.PatchAsync($"http://api.financeiro.arielgiacomini.com.br/v1/bills-to-pay/pay", content).Result;
+
+            if (!result.IsSuccessStatusCode)
+            {
+                return new PayBillToPayOutput();
+            }
+
+            var response = await result.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<PayBillToPayOutput>(response) ?? new PayBillToPayOutput();
+        }
     }
 }

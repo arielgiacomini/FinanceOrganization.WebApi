@@ -1,5 +1,6 @@
 ﻿using App.Forms.DataSource;
 using App.Forms.Enums;
+using App.Forms.Forms.Pay;
 using App.Forms.Services;
 using App.Forms.Services.Output;
 using App.Forms.ViewModel;
@@ -14,7 +15,6 @@ namespace App.Forms.Forms
         private const string TAB_PAGE_CARTAO_CREDITO = "tbpContaPagarCartaoCredito";
         private const string DESCRICAO_GROUP_BOX = "Cadastro de Conta a Pagar";
         private IList<CreateBillToPayViewModel> _createBillToPayViewModels = new List<CreateBillToPayViewModel>();
-        private IList<SearchBillToPayViewModel> _searchBillToPayViewModels = new List<SearchBillToPayViewModel>();
 
         public Initial()
         {
@@ -209,26 +209,14 @@ namespace App.Forms.Forms
 
         private void PreencherComboBoxAnoMes()
         {
-            var dateTimeCorteInitial = DateTime.Now.AddMonths(-3);
+            var yearMonths = DateServiceUtils.GetListYearMonthsByThreeMonthsBeforeAndTwentyFourAfter();
+            var yearMonthsArray = yearMonths.Values.ToArray();
 
-            DateTime firstDate = new(dateTimeCorteInitial.Year, dateTimeCorteInitial.Month, 1, 0, 0, 0, DateTimeKind.Local);
+            cboContaPagarAnoMesInicial.Items.AddRange(yearMonthsArray);
+            cboContaPagarAnoMesFinal.Items.AddRange(yearMonthsArray);
+            cboEfetuarPagamentoAnoMes.Items.AddRange(yearMonthsArray);
 
-            Dictionary<int, string> yearMonths = new();
-
-            for (int i = 0; i < 27; i++)
-            {
-                var dateAdd = firstDate.AddMonths(i);
-
-                var yearMonthAdd = DateServiceUtils.GetYearMonthPortugueseByDateTime(dateAdd);
-
-                yearMonths.Add(i, yearMonthAdd);
-
-                cboContaPagarAnoMesInicial.Items.Add(yearMonthAdd);
-                cboContaPagarAnoMesFinal.Items.Add(yearMonthAdd);
-                cboEfetuarPagamentoAnoMes.Items.Add(yearMonthAdd);
-            }
-
-            _ = yearMonths.TryGetValue(3, out string currentYearMont);
+            _ = yearMonths.TryGetValue(3, out string? currentYearMont);
 
             cboContaPagarAnoMesInicial.SelectedItem = currentYearMont;
             cboContaPagarAnoMesFinal.SelectedItem = currentYearMont;
@@ -392,21 +380,48 @@ namespace App.Forms.Forms
             PreencherContaPagarFrequencia(tabPageName, frequencia);
         }
 
-        private async void btnEfetuarPagamentoBuscar_Click(object sender, EventArgs e)
+        private async void BtnEfetuarPagamentoBuscar_Click(object sender, EventArgs e)
         {
-            SearchBillToPayViewModel search = new SearchBillToPayViewModel
+            SearchBillToPayViewModel search = new()
             {
                 YearMonth = cboEfetuarPagamentoAnoMes.Text
             };
 
+            await PreencherEfetuarPagamentoDataGridViewHistory(search);
+        }
+
+        private async Task PreencherEfetuarPagamentoDataGridViewHistory(SearchBillToPayViewModel search)
+        {
             var resultSearch = await BillToPayServices.SearchBillToPay(search);
 
             var dataSource = MapSearchResultToDataSource(resultSearch);
 
             dgvEfetuarPagamentoListagem.DataSource = dataSource;
+            dgvEfetuarPagamentoListagem.Columns[0].HeaderText = "Id";
+            dgvEfetuarPagamentoListagem.Columns[0].Visible = false;
+            dgvEfetuarPagamentoListagem.Columns[1].HeaderText = "Id da tabela pai";
+            dgvEfetuarPagamentoListagem.Columns[1].Visible = false;
+            dgvEfetuarPagamentoListagem.Columns[2].HeaderText = "Conta";
+            dgvEfetuarPagamentoListagem.Columns[3].HeaderText = "Descrição";
+            dgvEfetuarPagamentoListagem.Columns[4].HeaderText = "Categoria";
+            dgvEfetuarPagamentoListagem.Columns[5].HeaderText = "Valor";
+            dgvEfetuarPagamentoListagem.Columns[5].DefaultCellStyle.Format = "C2";
+            dgvEfetuarPagamentoListagem.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgvEfetuarPagamentoListagem.Columns[6].HeaderText = "Data de Compra";
+            dgvEfetuarPagamentoListagem.Columns[7].HeaderText = "Vencimento";
+            dgvEfetuarPagamentoListagem.Columns[8].HeaderText = "Mês/Ano";
+            dgvEfetuarPagamentoListagem.Columns[9].HeaderText = "Frequência";
+            dgvEfetuarPagamentoListagem.Columns[10].HeaderText = "Tipo";
+            dgvEfetuarPagamentoListagem.Columns[11].HeaderText = "Data de Pagamento";
+            dgvEfetuarPagamentoListagem.Columns[12].HeaderText = "Pago?";
+            dgvEfetuarPagamentoListagem.Columns[13].HeaderText = "Mensagem";
+            dgvEfetuarPagamentoListagem.Columns[14].HeaderText = "Data de Criação";
+            dgvEfetuarPagamentoListagem.Columns[14].Visible = false;
+            dgvEfetuarPagamentoListagem.Columns[15].HeaderText = "Data de Alteração";
+            dgvEfetuarPagamentoListagem.Columns[15].Visible = false;
         }
 
-        private IList<DgvEfetuarPagamentoListagemDataSource> MapSearchResultToDataSource(SearchBillToPayOutput searchBillToPayOutput)
+        private static IList<DgvEfetuarPagamentoListagemDataSource> MapSearchResultToDataSource(SearchBillToPayOutput searchBillToPayOutput)
         {
             IList<DgvEfetuarPagamentoListagemDataSource> dgvEfetuarPagamentoListagemDataSources = new List<DgvEfetuarPagamentoListagemDataSource>();
 
@@ -427,6 +442,36 @@ namespace App.Forms.Forms
             }
 
             return dgvEfetuarPagamentoListagemDataSources;
+        }
+
+        private void DgvEfetuarPagamentoListagem_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                _ = Guid.TryParse(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[0].Value.ToString(), out Guid identificadorContaPagar);
+                var conta = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[2].Value.ToString();
+                var descricao = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[3].Value.ToString();
+                var valorOfDgv = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[5].Value?.ToString()?.Replace("R$ ", "") ?? "0";
+                var valor = Convert.ToDecimal(valorOfDgv);
+                var mesAno = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[8].Value.ToString();
+
+                FrmPagamento frmPagamento = new()
+                {
+                    IdentificadorUnicoContaPagar = identificadorContaPagar,
+                    Nome = descricao,
+                    Conta = conta,
+                    AnoMes = mesAno,
+                    Valor = valor
+                };
+
+                frmPagamento.ShowDialog();
+            }
+        }
+
+        private void BtnPagamentoAvulso_Click(object sender, EventArgs e)
+        {
+            FrmPagamento frmPagamento = new();
+            frmPagamento.ShowDialog();
         }
     }
 }

@@ -30,6 +30,7 @@ namespace App.Forms.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             tbcInitial = new TabControl();
             tbpContaPagarLivre = new TabPage();
             grbTemplateContaPagar = new GroupBox();
@@ -62,6 +63,8 @@ namespace App.Forms.Forms
             cboContaPagarTipoConta = new ComboBox();
             tbpContaPagarCartaoCredito = new TabPage();
             tbpEfetuarPagamento = new TabPage();
+            lblPagamentoInfo = new Label();
+            btnPagamentoAvulso = new Button();
             btnEfetuarPagamentoBuscar = new Button();
             lblEfetuarPagamentoAnoMes = new Label();
             cboEfetuarPagamentoAnoMes = new ComboBox();
@@ -83,7 +86,7 @@ namespace App.Forms.Forms
             tbcInitial.Location = new Point(0, 0);
             tbcInitial.Name = "tbcInitial";
             tbcInitial.SelectedIndex = 0;
-            tbcInitial.Size = new Size(1237, 544);
+            tbcInitial.Size = new Size(1367, 544);
             tbcInitial.TabIndex = 14;
             tbcInitial.SelectedIndexChanged += TbcInitial_SelectedIndexChanged;
             // 
@@ -93,7 +96,7 @@ namespace App.Forms.Forms
             tbpContaPagarLivre.Location = new Point(4, 24);
             tbpContaPagarLivre.Name = "tbpContaPagarLivre";
             tbpContaPagarLivre.Padding = new Padding(3);
-            tbpContaPagarLivre.Size = new Size(1229, 516);
+            tbpContaPagarLivre.Size = new Size(1359, 516);
             tbpContaPagarLivre.TabIndex = 0;
             tbpContaPagarLivre.Text = "Conta a Pagar - Livre";
             tbpContaPagarLivre.UseVisualStyleBackColor = true;
@@ -129,7 +132,7 @@ namespace App.Forms.Forms
             grbTemplateContaPagar.Controls.Add(cboContaPagarTipoConta);
             grbTemplateContaPagar.Location = new Point(18, 10);
             grbTemplateContaPagar.Name = "grbTemplateContaPagar";
-            grbTemplateContaPagar.Size = new Size(1183, 476);
+            grbTemplateContaPagar.Size = new Size(1407, 476);
             grbTemplateContaPagar.TabIndex = 15;
             grbTemplateContaPagar.TabStop = false;
             grbTemplateContaPagar.Text = "Cadastro de Conta a Pagar - Livre";
@@ -383,23 +386,44 @@ namespace App.Forms.Forms
             tbpContaPagarCartaoCredito.Location = new Point(4, 24);
             tbpContaPagarCartaoCredito.Name = "tbpContaPagarCartaoCredito";
             tbpContaPagarCartaoCredito.Padding = new Padding(3);
-            tbpContaPagarCartaoCredito.Size = new Size(1229, 516);
+            tbpContaPagarCartaoCredito.Size = new Size(1359, 516);
             tbpContaPagarCartaoCredito.TabIndex = 1;
             tbpContaPagarCartaoCredito.Text = "Lançar no Cartão de Crédito";
             tbpContaPagarCartaoCredito.UseVisualStyleBackColor = true;
             // 
             // tbpEfetuarPagamento
             // 
+            tbpEfetuarPagamento.Controls.Add(lblPagamentoInfo);
+            tbpEfetuarPagamento.Controls.Add(btnPagamentoAvulso);
             tbpEfetuarPagamento.Controls.Add(btnEfetuarPagamentoBuscar);
             tbpEfetuarPagamento.Controls.Add(lblEfetuarPagamentoAnoMes);
             tbpEfetuarPagamento.Controls.Add(cboEfetuarPagamentoAnoMes);
             tbpEfetuarPagamento.Controls.Add(dgvEfetuarPagamentoListagem);
             tbpEfetuarPagamento.Location = new Point(4, 24);
             tbpEfetuarPagamento.Name = "tbpEfetuarPagamento";
-            tbpEfetuarPagamento.Size = new Size(1229, 516);
+            tbpEfetuarPagamento.Size = new Size(1359, 516);
             tbpEfetuarPagamento.TabIndex = 2;
             tbpEfetuarPagamento.Text = "Pagamento";
             tbpEfetuarPagamento.UseVisualStyleBackColor = true;
+            // 
+            // lblPagamentoInfo
+            // 
+            lblPagamentoInfo.AutoSize = true;
+            lblPagamentoInfo.Location = new Point(547, 18);
+            lblPagamentoInfo.Name = "lblPagamentoInfo";
+            lblPagamentoInfo.Size = new Size(287, 15);
+            lblPagamentoInfo.TabIndex = 5;
+            lblPagamentoInfo.Text = "Ideal p/ Pagamento em Massa, Ex.: Cartão de Crédito";
+            // 
+            // btnPagamentoAvulso
+            // 
+            btnPagamentoAvulso.Location = new Point(429, 6);
+            btnPagamentoAvulso.Name = "btnPagamentoAvulso";
+            btnPagamentoAvulso.Size = new Size(112, 38);
+            btnPagamentoAvulso.TabIndex = 4;
+            btnPagamentoAvulso.Text = "Novo Pagamento\r\nAvulso";
+            btnPagamentoAvulso.UseVisualStyleBackColor = true;
+            btnPagamentoAvulso.Click += BtnPagamentoAvulso_Click;
             // 
             // btnEfetuarPagamentoBuscar
             // 
@@ -409,7 +433,7 @@ namespace App.Forms.Forms
             btnEfetuarPagamentoBuscar.TabIndex = 3;
             btnEfetuarPagamentoBuscar.Text = "Buscar Dados";
             btnEfetuarPagamentoBuscar.UseVisualStyleBackColor = true;
-            btnEfetuarPagamentoBuscar.Click += btnEfetuarPagamentoBuscar_Click;
+            btnEfetuarPagamentoBuscar.Click += BtnEfetuarPagamentoBuscar_Click;
             // 
             // lblEfetuarPagamentoAnoMes
             // 
@@ -430,18 +454,29 @@ namespace App.Forms.Forms
             // 
             // dgvEfetuarPagamentoListagem
             // 
+            dgvEfetuarPagamentoListagem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            dgvEfetuarPagamentoListagem.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
             dgvEfetuarPagamentoListagem.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Window;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
+            dgvEfetuarPagamentoListagem.DefaultCellStyle = dataGridViewCellStyle1;
             dgvEfetuarPagamentoListagem.Location = new Point(8, 47);
             dgvEfetuarPagamentoListagem.Name = "dgvEfetuarPagamentoListagem";
             dgvEfetuarPagamentoListagem.RowTemplate.Height = 25;
-            dgvEfetuarPagamentoListagem.Size = new Size(1212, 461);
+            dgvEfetuarPagamentoListagem.Size = new Size(1418, 461);
             dgvEfetuarPagamentoListagem.TabIndex = 0;
+            dgvEfetuarPagamentoListagem.CellDoubleClick += DgvEfetuarPagamentoListagem_CellDoubleClick;
             // 
             // Initial
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1236, 544);
+            ClientSize = new Size(1370, 544);
             Controls.Add(tbcInitial);
             Name = "Initial";
             StartPosition = FormStartPosition.CenterScreen;
@@ -495,5 +530,7 @@ namespace App.Forms.Forms
         private Label lblEfetuarPagamentoAnoMes;
         private ComboBox cboEfetuarPagamentoAnoMes;
         private Button btnEfetuarPagamentoBuscar;
+        private Label lblPagamentoInfo;
+        private Button btnPagamentoAvulso;
     }
 }
