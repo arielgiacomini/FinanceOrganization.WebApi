@@ -236,5 +236,25 @@
 
             return dictionary;
         }
+
+        public static Dictionary<int, string> GetListYearMonthsByThreeMonthsBeforeAndTwentyFourAfter()
+        {
+            var dateTimeCorteInitial = DateTime.Now.AddMonths(-3);
+
+            DateTime firstDate = new(dateTimeCorteInitial.Year, dateTimeCorteInitial.Month, 1, 0, 0, 0, DateTimeKind.Local);
+
+            Dictionary<int, string> yearMonths = new();
+
+            for (int i = 0; i < 27; i++)
+            {
+                var dateAdd = firstDate.AddMonths(i);
+
+                var yearMonthAdd = DateServiceUtils.GetYearMonthPortugueseByDateTime(dateAdd);
+
+                yearMonths.Add(i, yearMonthAdd);
+            }
+
+            return yearMonths;
+        }
     }
 }

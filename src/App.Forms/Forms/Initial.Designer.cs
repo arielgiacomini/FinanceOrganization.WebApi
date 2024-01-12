@@ -30,6 +30,7 @@ namespace App.Forms.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             tbcInitial = new TabControl();
             tbpContaPagarLivre = new TabPage();
             grbTemplateContaPagar = new GroupBox();
@@ -83,7 +84,7 @@ namespace App.Forms.Forms
             tbcInitial.Location = new Point(0, 0);
             tbcInitial.Name = "tbcInitial";
             tbcInitial.SelectedIndex = 0;
-            tbcInitial.Size = new Size(1439, 544);
+            tbcInitial.Size = new Size(1367, 544);
             tbcInitial.TabIndex = 14;
             tbcInitial.SelectedIndexChanged += TbcInitial_SelectedIndexChanged;
             // 
@@ -93,7 +94,7 @@ namespace App.Forms.Forms
             tbpContaPagarLivre.Location = new Point(4, 24);
             tbpContaPagarLivre.Name = "tbpContaPagarLivre";
             tbpContaPagarLivre.Padding = new Padding(3);
-            tbpContaPagarLivre.Size = new Size(1431, 516);
+            tbpContaPagarLivre.Size = new Size(1359, 516);
             tbpContaPagarLivre.TabIndex = 0;
             tbpContaPagarLivre.Text = "Conta a Pagar - Livre";
             tbpContaPagarLivre.UseVisualStyleBackColor = true;
@@ -396,7 +397,7 @@ namespace App.Forms.Forms
             tbpEfetuarPagamento.Controls.Add(dgvEfetuarPagamentoListagem);
             tbpEfetuarPagamento.Location = new Point(4, 24);
             tbpEfetuarPagamento.Name = "tbpEfetuarPagamento";
-            tbpEfetuarPagamento.Size = new Size(1431, 516);
+            tbpEfetuarPagamento.Size = new Size(1359, 516);
             tbpEfetuarPagamento.TabIndex = 2;
             tbpEfetuarPagamento.Text = "Pagamento";
             tbpEfetuarPagamento.UseVisualStyleBackColor = true;
@@ -433,18 +434,26 @@ namespace App.Forms.Forms
             dgvEfetuarPagamentoListagem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             dgvEfetuarPagamentoListagem.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
             dgvEfetuarPagamentoListagem.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Window;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
+            dgvEfetuarPagamentoListagem.DefaultCellStyle = dataGridViewCellStyle1;
             dgvEfetuarPagamentoListagem.Location = new Point(8, 47);
             dgvEfetuarPagamentoListagem.Name = "dgvEfetuarPagamentoListagem";
             dgvEfetuarPagamentoListagem.RowTemplate.Height = 25;
             dgvEfetuarPagamentoListagem.Size = new Size(1418, 461);
             dgvEfetuarPagamentoListagem.TabIndex = 0;
-            dgvEfetuarPagamentoListagem.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvEfetuarPagamentoListagem.CellDoubleClick += DgvEfetuarPagamentoListagem_CellDoubleClick;
             // 
             // Initial
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1442, 544);
+            ClientSize = new Size(1370, 544);
             Controls.Add(tbcInitial);
             Name = "Initial";
             StartPosition = FormStartPosition.CenterScreen;

@@ -1,5 +1,6 @@
 ﻿using App.Forms.DataSource;
 using App.Forms.Enums;
+using App.Forms.Forms.Pay;
 using App.Forms.Services;
 using App.Forms.Services.Output;
 using App.Forms.ViewModel;
@@ -14,7 +15,6 @@ namespace App.Forms.Forms
         private const string TAB_PAGE_CARTAO_CREDITO = "tbpContaPagarCartaoCredito";
         private const string DESCRICAO_GROUP_BOX = "Cadastro de Conta a Pagar";
         private IList<CreateBillToPayViewModel> _createBillToPayViewModels = new List<CreateBillToPayViewModel>();
-        private IList<SearchBillToPayViewModel> _searchBillToPayViewModels = new List<SearchBillToPayViewModel>();
 
         public Initial()
         {
@@ -209,26 +209,14 @@ namespace App.Forms.Forms
 
         private void PreencherComboBoxAnoMes()
         {
-            var dateTimeCorteInitial = DateTime.Now.AddMonths(-3);
+            var yearMonths = DateServiceUtils.GetListYearMonthsByThreeMonthsBeforeAndTwentyFourAfter();
+            var yearMonthsArray = yearMonths.Values.ToArray();
 
-            DateTime firstDate = new(dateTimeCorteInitial.Year, dateTimeCorteInitial.Month, 1, 0, 0, 0, DateTimeKind.Local);
+            cboContaPagarAnoMesInicial.Items.AddRange(yearMonthsArray);
+            cboContaPagarAnoMesFinal.Items.AddRange(yearMonthsArray);
+            cboEfetuarPagamentoAnoMes.Items.AddRange(yearMonthsArray);
 
-            Dictionary<int, string> yearMonths = new();
-
-            for (int i = 0; i < 27; i++)
-            {
-                var dateAdd = firstDate.AddMonths(i);
-
-                var yearMonthAdd = DateServiceUtils.GetYearMonthPortugueseByDateTime(dateAdd);
-
-                yearMonths.Add(i, yearMonthAdd);
-
-                cboContaPagarAnoMesInicial.Items.Add(yearMonthAdd);
-                cboContaPagarAnoMesFinal.Items.Add(yearMonthAdd);
-                cboEfetuarPagamentoAnoMes.Items.Add(yearMonthAdd);
-            }
-
-            _ = yearMonths.TryGetValue(3, out string currentYearMont);
+            _ = yearMonths.TryGetValue(3, out string? currentYearMont);
 
             cboContaPagarAnoMesInicial.SelectedItem = currentYearMont;
             cboContaPagarAnoMesFinal.SelectedItem = currentYearMont;
@@ -399,10 +387,10 @@ namespace App.Forms.Forms
                 YearMonth = cboEfetuarPagamentoAnoMes.Text
             };
 
-            PreencherEfetuarPagamentoDataGridViewHistory(search);
+            await PreencherEfetuarPagamentoDataGridViewHistory(search);
         }
 
-        private async void PreencherEfetuarPagamentoDataGridViewHistory(SearchBillToPayViewModel search)
+        private async Task PreencherEfetuarPagamentoDataGridViewHistory(SearchBillToPayViewModel search)
         {
             var resultSearch = await BillToPayServices.SearchBillToPay(search);
 
@@ -454,6 +442,23 @@ namespace App.Forms.Forms
             }
 
             return dgvEfetuarPagamentoListagemDataSources;
+        }
+
+        private void DgvEfetuarPagamentoListagem_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                _ = Guid.TryParse(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[0].Value.ToString(), out Guid identificadorContaPagar);
+                var descricao = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[3].Value.ToString();
+
+                FrmPagamento frmPagamento = new()
+                {
+                    IdentificadorUnicoContaPagar = identificadorContaPagar,
+                    Nome = descricao
+                };
+
+                frmPagamento.ShowDialog();
+            }
         }
     }
 }
