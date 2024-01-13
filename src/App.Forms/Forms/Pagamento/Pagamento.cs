@@ -104,6 +104,7 @@ namespace App.Forms.Forms.Pay
                         $"Se você está efetuando um pagamento em massa da conta: " +
                         $"{cboPagamentoConta.Text} não é possível informar um ID de conta para pagamento.",
                         "Validação", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
 
                 request = MapPayBillToPayToRequest();

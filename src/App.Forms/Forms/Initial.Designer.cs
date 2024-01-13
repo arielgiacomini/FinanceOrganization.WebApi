@@ -454,6 +454,7 @@ namespace App.Forms.Forms
             // 
             // dgvEfetuarPagamentoListagem
             // 
+            dgvEfetuarPagamentoListagem.AllowUserToOrderColumns = true;
             dgvEfetuarPagamentoListagem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             dgvEfetuarPagamentoListagem.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
             dgvEfetuarPagamentoListagem.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;

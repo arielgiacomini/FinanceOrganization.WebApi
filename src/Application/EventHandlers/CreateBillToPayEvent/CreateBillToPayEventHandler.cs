@@ -112,8 +112,11 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             bool addMonthForDueDate = false;
 
-            if (fixedInvoice.Account == Account.CARTAO_CREDITO || (fixedInvoice.BestPayDay <= DIA_MAXIMO_CONTA_MES_SUBSEQUENTE
-                && (fixedInvoice.Account != Account.CARTAO_CREDITO && fixedInvoice.Account != Account.CARTAO_VALE_REFEICAO && fixedInvoice.Account != Account.CARTAO_VALE_ALIMENTACAO)))
+            if (fixedInvoice.Account == Account.CARTAO_CREDITO || 
+                (fixedInvoice.BestPayDay <= DIA_MAXIMO_CONTA_MES_SUBSEQUENTE
+                && (fixedInvoice.Account != Account.CARTAO_CREDITO 
+                 && fixedInvoice.Account != Account.CARTAO_VALE_REFEICAO 
+                 && fixedInvoice.Account != Account.CARTAO_VALE_ALIMENTACAO)))
             {
                 addMonthForDueDate = true;
             }

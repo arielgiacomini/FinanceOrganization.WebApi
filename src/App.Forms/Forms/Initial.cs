@@ -145,21 +145,27 @@ namespace App.Forms.Forms
                 { 21, "Serviço:Cloud" },
                 { 22, "Serviço:Produtividade" },
                 { 23, "Serviço:Streaming" },
-                { 24, "Transporte:Escolar" }
+                { 24, "Transporte:Escolar" },
+                { 25, "Alimentação:Açougue" }
             };
 
-            foreach (var item in categoriasContaPagar)
+            var categoriasContaPagarOrderBy = categoriasContaPagar
+                .OrderBy(x => x.Value)
+                .ToList();
+
+            foreach (var item in categoriasContaPagarOrderBy)
             {
                 cboContaPagarCategory.Items.Add(item.Value);
             }
 
             if (categorySelected == null)
             {
-                cboContaPagarCategory.SelectedItem = categoriasContaPagar.FirstOrDefault().Value;
+                cboContaPagarCategory.SelectedItem = categoriasContaPagarOrderBy.FirstOrDefault().Value;
             }
             else
             {
-                var theChoise = categoriasContaPagar.FirstOrDefault(x => x.Value == categorySelected);
+                var theChoise = categoriasContaPagarOrderBy
+                    .FirstOrDefault(x => x.Value == categorySelected);
 
                 if (theChoise.Value.Length > 0)
                 {
@@ -167,7 +173,8 @@ namespace App.Forms.Forms
                 }
                 else
                 {
-                    cboContaPagarCategory.SelectedItem = categoriasContaPagar.FirstOrDefault().Value;
+                    cboContaPagarCategory.SelectedItem = categoriasContaPagarOrderBy
+                        .FirstOrDefault().Value;
                 }
             }
         }
@@ -396,7 +403,9 @@ namespace App.Forms.Forms
 
             var dataSource = MapSearchResultToDataSource(resultSearch);
 
-            dgvEfetuarPagamentoListagem.DataSource = dataSource;
+            var dataSourceOrderBy = dataSource.OrderByDescending(x => x.CreationDate).ToList();
+
+            dgvEfetuarPagamentoListagem.DataSource = dataSourceOrderBy;
             dgvEfetuarPagamentoListagem.Columns[0].HeaderText = "Id";
             dgvEfetuarPagamentoListagem.Columns[0].Visible = false;
             dgvEfetuarPagamentoListagem.Columns[1].HeaderText = "Id da tabela pai";
@@ -415,6 +424,7 @@ namespace App.Forms.Forms
             dgvEfetuarPagamentoListagem.Columns[11].HeaderText = "Data de Pagamento";
             dgvEfetuarPagamentoListagem.Columns[12].HeaderText = "Pago?";
             dgvEfetuarPagamentoListagem.Columns[13].HeaderText = "Mensagem";
+            dgvEfetuarPagamentoListagem.Columns[13].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dgvEfetuarPagamentoListagem.Columns[14].HeaderText = "Data de Criação";
             dgvEfetuarPagamentoListagem.Columns[14].Visible = false;
             dgvEfetuarPagamentoListagem.Columns[15].HeaderText = "Data de Alteração";
