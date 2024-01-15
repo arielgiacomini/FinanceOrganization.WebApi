@@ -24,7 +24,7 @@ namespace App.Forms.Forms
         private void Initial_Load(object sender, EventArgs e)
         {
             PreencherLabelDataCriacao();
-            PreencherComboBoxContaPagarCategory();
+            PreencherComboBoxContaPagarCategoria();
             PreencherComboBoxContaPagarTipoConta();
             PreencherComboBoxAnoMes();
             RegraCamposAnoMes();
@@ -118,7 +118,7 @@ namespace App.Forms.Forms
             lblContaPagarDataCriacao.Text = string.Concat(texto, DateTime.Now);
         }
 
-        private void PreencherComboBoxContaPagarCategory(string tabPageName = null, string categorySelected = null)
+        private void PreencherComboBoxContaPagarCategoria(string tabPageName = null, string categorySelected = null)
         {
             Dictionary<int, string> categoriasContaPagar = new()
             {
@@ -146,7 +146,9 @@ namespace App.Forms.Forms
                 { 22, "Serviço:Produtividade" },
                 { 23, "Serviço:Streaming" },
                 { 24, "Transporte:Escolar" },
-                { 25, "Alimentação:Açougue" }
+                { 25, "Alimentação:Açougue" },
+                { 26, "Automóvel:Pedágio" },
+                { 27, "Viagem" }
             };
 
             var categoriasContaPagarOrderBy = categoriasContaPagar
@@ -382,7 +384,7 @@ namespace App.Forms.Forms
         {
             cboContaPagarCategory.Items.Clear();
             cboContaPagarTipoConta.Items.Clear();
-            PreencherComboBoxContaPagarCategory(tabPageName, category);
+            PreencherComboBoxContaPagarCategoria(tabPageName, category);
             PreencherComboBoxContaPagarTipoConta(tabPageName, account);
         }
 
