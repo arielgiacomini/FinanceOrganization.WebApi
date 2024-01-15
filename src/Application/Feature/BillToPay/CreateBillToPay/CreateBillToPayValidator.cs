@@ -31,7 +31,14 @@ namespace Application.Feature.BillToPay.CreateBillToPay
 
             if (billToPay != null && AccountIsValidRule(billToPay.Account))
             {
-                validatorBase.Add("[32]", $"Já existe uma conta a pagar para este mesmo nome: {input.Name}, neste mesmo Ano/Mes: {input.InitialMonthYear} e nesta frequência: {input.Frequence}");
+                validatorBase.Add("[32]", $"Já existe uma conta a pagar para este mesmo nome: {input.Name}, " +
+                    $"neste mesmo Ano/Mes: {input.InitialMonthYear} e nesta frequência: {input.Frequence}");
+            }
+
+            if (input.RegistrationType == "Conta/Fatura Fixa" && input.Frequence != "Livre" && input.Account == "Cartão de Crédito")
+            {
+                validatorBase.Add("[33]", $"O tipo: [{input.RegistrationType}] com a frequência: [{input.Frequence}] " +
+                    $"não pode ser da conta: [{input.Account}]");
             }
 
             return validatorBase;

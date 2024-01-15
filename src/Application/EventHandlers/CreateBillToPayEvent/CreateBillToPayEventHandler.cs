@@ -14,6 +14,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
         private readonly IBillToPayRepository _billToPayRepository;
         private const string FREQUENCIA_MENSAL_RECORRENTE = "Mensal:Recorrente";
+        private const string FREQUENCIA_MENSAL = "Mensal";
+        private const string FREQUENCIA_LIVRE = "Livre";
         private const int DIA_MAXIMO_CONTA_MES_SUBSEQUENTE = 24;
         private const int DIA_VENCIMENTO_CARTAO_CREDITO = 9;
         private const string TIPO_REGISTRO_FATURA_FIXA = "Conta/Fatura Fixa";
@@ -112,10 +114,10 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             bool addMonthForDueDate = false;
 
-            if (fixedInvoice.Account == Account.CARTAO_CREDITO || 
+            if (fixedInvoice.Account == Account.CARTAO_CREDITO ||
                 (fixedInvoice.BestPayDay <= DIA_MAXIMO_CONTA_MES_SUBSEQUENTE
-                && (fixedInvoice.Account != Account.CARTAO_CREDITO 
-                 && fixedInvoice.Account != Account.CARTAO_VALE_REFEICAO 
+                && (fixedInvoice.Account != Account.CARTAO_CREDITO
+                 && fixedInvoice.Account != Account.CARTAO_VALE_REFEICAO
                  && fixedInvoice.Account != Account.CARTAO_VALE_ALIMENTACAO)))
             {
                 addMonthForDueDate = true;
@@ -134,7 +136,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 {
                     // Crédito Recorrente.
                     considerPurchase = true;
-                    purchasesDate = DateServiceUtils.GetNextYearMonthAndDateTime(fixedInvoice.PurchaseDate, qtdMonthAdd, null, true);
+                    purchasesDate = DateServiceUtils
+                        .GetNextYearMonthAndDateTime(fixedInvoice.PurchaseDate, qtdMonthAdd, null, true);
                 }
             }
 
@@ -174,18 +177,23 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
         private async Task DebitFixedAccount(FixedInvoice fixedInvoice, int qtdMonthAdd)
         {
-            if (fixedInvoice.RegistrationType == TIPO_REGISTRO_COMPRA_LIVRE && qtdMonthAdd == 0)
+            if (IsValidToDebit(fixedInvoice, qtdMonthAdd))
             {
                 var descontar = await _billToPayRepository
                     .GetByYearMonthCategoryAndRegistrationType(
                     fixedInvoice.InitialMonthYear!, fixedInvoice.Category!, TIPO_REGISTRO_FATURA_FIXA);
 
-                if (descontar != null)
+                if (descontar == null)
+                {
+                    return;
+                }
+
+                if (descontar.Frequence == FREQUENCIA_MENSAL)
                 {
                     var valueOld = descontar.Value;
 
                     descontar.Value -= fixedInvoice.Value;
-                    descontar.AdditionalMessage += $" | Retirado: [R$ {fixedInvoice.Value}] em [{DateTime.Now}] do valor que estava: [R$ {valueOld}]";
+                    descontar.AdditionalMessage += $"Retirado: [R$ {fixedInvoice.Value}] em [{DateTime.Now}] do valor que estava: [R$ {valueOld}] | ";
 
                     var edited = await _billToPayRepository.Edit(descontar);
 
@@ -195,6 +203,15 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     }
                 }
             }
+        }
+
+        private static bool IsValidToDebit(FixedInvoice fixedInvoice, int qtdMonthAdd)
+        {
+            var isTrue = fixedInvoice.RegistrationType == TIPO_REGISTRO_COMPRA_LIVRE
+                      && qtdMonthAdd == 0
+                      && fixedInvoice.Frequence == FREQUENCIA_LIVRE;
+
+            return isTrue;
         }
 
         public static bool EnterPaid(FixedInvoice? fixedInvoice)
@@ -211,7 +228,10 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 case Account.CARTAO_VALE_ALIMENTACAO:
                 case Account.CARTAO_VALE_REFEICAO:
                 case Account.CARTAO_DEBITO:
-                    considerPaid = true;
+                    if (fixedInvoice.RegistrationType != TIPO_REGISTRO_FATURA_FIXA)
+                    {
+                        considerPaid = true;
+                    }
                     break;
             }
 
