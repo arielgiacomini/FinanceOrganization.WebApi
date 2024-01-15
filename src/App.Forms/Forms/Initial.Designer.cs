@@ -63,6 +63,9 @@ namespace App.Forms.Forms
             cboContaPagarTipoConta = new ComboBox();
             tbpContaPagarCartaoCredito = new TabPage();
             tbpEfetuarPagamento = new TabPage();
+            lblEfetuarPagamentoCategoria = new Label();
+            cboEfetuarPagamentoCategoria = new ComboBox();
+            lblEfetuarPagamentoInformativoDuploCliqueGrid = new Label();
             lblPagamentoInfo = new Label();
             btnPagamentoAvulso = new Button();
             btnEfetuarPagamentoBuscar = new Button();
@@ -393,6 +396,9 @@ namespace App.Forms.Forms
             // 
             // tbpEfetuarPagamento
             // 
+            tbpEfetuarPagamento.Controls.Add(lblEfetuarPagamentoCategoria);
+            tbpEfetuarPagamento.Controls.Add(cboEfetuarPagamentoCategoria);
+            tbpEfetuarPagamento.Controls.Add(lblEfetuarPagamentoInformativoDuploCliqueGrid);
             tbpEfetuarPagamento.Controls.Add(lblPagamentoInfo);
             tbpEfetuarPagamento.Controls.Add(btnPagamentoAvulso);
             tbpEfetuarPagamento.Controls.Add(btnEfetuarPagamentoBuscar);
@@ -406,10 +412,37 @@ namespace App.Forms.Forms
             tbpEfetuarPagamento.Text = "Pagamento";
             tbpEfetuarPagamento.UseVisualStyleBackColor = true;
             // 
+            // lblEfetuarPagamentoCategoria
+            // 
+            lblEfetuarPagamentoCategoria.AutoSize = true;
+            lblEfetuarPagamentoCategoria.Location = new Point(354, 17);
+            lblEfetuarPagamentoCategoria.Name = "lblEfetuarPagamentoCategoria";
+            lblEfetuarPagamentoCategoria.Size = new Size(61, 15);
+            lblEfetuarPagamentoCategoria.TabIndex = 7;
+            lblEfetuarPagamentoCategoria.Text = "Categoria:";
+            // 
+            // cboEfetuarPagamentoCategoria
+            // 
+            cboEfetuarPagamentoCategoria.FormattingEnabled = true;
+            cboEfetuarPagamentoCategoria.Location = new Point(421, 14);
+            cboEfetuarPagamentoCategoria.Name = "cboEfetuarPagamentoCategoria";
+            cboEfetuarPagamentoCategoria.Size = new Size(188, 23);
+            cboEfetuarPagamentoCategoria.TabIndex = 8;
+            cboEfetuarPagamentoCategoria.SelectedValueChanged += CboEfetuarPagamentoCategoria_SelectedValueChanged;
+            // 
+            // lblEfetuarPagamentoInformativoDuploCliqueGrid
+            // 
+            lblEfetuarPagamentoInformativoDuploCliqueGrid.AutoSize = true;
+            lblEfetuarPagamentoInformativoDuploCliqueGrid.Location = new Point(9, 42);
+            lblEfetuarPagamentoInformativoDuploCliqueGrid.Name = "lblEfetuarPagamentoInformativoDuploCliqueGrid";
+            lblEfetuarPagamentoInformativoDuploCliqueGrid.Size = new Size(334, 15);
+            lblEfetuarPagamentoInformativoDuploCliqueGrid.TabIndex = 6;
+            lblEfetuarPagamentoInformativoDuploCliqueGrid.Text = "Ao efetuar duplo clique na linha do Grid abre para Pagamento";
+            // 
             // lblPagamentoInfo
             // 
             lblPagamentoInfo.AutoSize = true;
-            lblPagamentoInfo.Location = new Point(547, 18);
+            lblPagamentoInfo.Location = new Point(1069, 15);
             lblPagamentoInfo.Name = "lblPagamentoInfo";
             lblPagamentoInfo.Size = new Size(287, 15);
             lblPagamentoInfo.TabIndex = 5;
@@ -417,7 +450,7 @@ namespace App.Forms.Forms
             // 
             // btnPagamentoAvulso
             // 
-            btnPagamentoAvulso.Location = new Point(429, 6);
+            btnPagamentoAvulso.Location = new Point(951, 3);
             btnPagamentoAvulso.Name = "btnPagamentoAvulso";
             btnPagamentoAvulso.Size = new Size(112, 38);
             btnPagamentoAvulso.TabIndex = 4;
@@ -466,10 +499,10 @@ namespace App.Forms.Forms
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
             dgvEfetuarPagamentoListagem.DefaultCellStyle = dataGridViewCellStyle1;
-            dgvEfetuarPagamentoListagem.Location = new Point(8, 47);
+            dgvEfetuarPagamentoListagem.Location = new Point(8, 60);
             dgvEfetuarPagamentoListagem.Name = "dgvEfetuarPagamentoListagem";
             dgvEfetuarPagamentoListagem.RowTemplate.Height = 25;
-            dgvEfetuarPagamentoListagem.Size = new Size(1418, 461);
+            dgvEfetuarPagamentoListagem.Size = new Size(1418, 448);
             dgvEfetuarPagamentoListagem.TabIndex = 0;
             dgvEfetuarPagamentoListagem.CellDoubleClick += DgvEfetuarPagamentoListagem_CellDoubleClick;
             // 
@@ -533,5 +566,8 @@ namespace App.Forms.Forms
         private Button btnEfetuarPagamentoBuscar;
         private Label lblPagamentoInfo;
         private Button btnPagamentoAvulso;
+        private Label lblEfetuarPagamentoInformativoDuploCliqueGrid;
+        private Label lblEfetuarPagamentoCategoria;
+        private ComboBox cboEfetuarPagamentoCategoria;
     }
 }
