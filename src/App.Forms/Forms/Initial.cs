@@ -384,7 +384,6 @@ namespace App.Forms.Forms
             cboContaPagarTipoConta.Items.Clear();
             PreencherComboBoxContaPagarCategory(tabPageName, category);
             PreencherComboBoxContaPagarTipoConta(tabPageName, account);
-            PreencherContaPagarFrequencia(tabPageName, frequencia);
         }
 
         private async void BtnEfetuarPagamentoBuscar_Click(object sender, EventArgs e)
