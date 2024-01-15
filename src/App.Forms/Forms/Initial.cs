@@ -6,6 +6,7 @@ using App.Forms.Services.Output;
 using App.Forms.ViewModel;
 using Domain.Utils;
 using Newtonsoft.Json;
+using System.Data;
 
 namespace App.Forms.Forms
 {
@@ -13,8 +14,10 @@ namespace App.Forms.Forms
     {
         private const string TAB_PAGE_LIVRE = "tbpContaPagarLivre";
         private const string TAB_PAGE_CARTAO_CREDITO = "tbpContaPagarCartaoCredito";
+        private const string TAB_PAGE_PAGAMENTO = "tbpEfetuarPagamento";
         private const string DESCRICAO_GROUP_BOX = "Cadastro de Conta a Pagar";
         private IList<CreateBillToPayViewModel> _createBillToPayViewModels = new List<CreateBillToPayViewModel>();
+        private IList<DgvEfetuarPagamentoListagemDataSource> _dgvEfetuarPagamentoListagemDataSource = new List<DgvEfetuarPagamentoListagemDataSource>();
 
         public Initial()
         {
@@ -24,7 +27,7 @@ namespace App.Forms.Forms
         private void Initial_Load(object sender, EventArgs e)
         {
             PreencherLabelDataCriacao();
-            PreencherComboBoxContaPagarCategory();
+            PreencherComboBoxContaPagarCategoria();
             PreencherComboBoxContaPagarTipoConta();
             PreencherComboBoxAnoMes();
             RegraCamposAnoMes();
@@ -118,10 +121,11 @@ namespace App.Forms.Forms
             lblContaPagarDataCriacao.Text = string.Concat(texto, DateTime.Now);
         }
 
-        private void PreencherComboBoxContaPagarCategory(string tabPageName = null, string categorySelected = null)
+        private void PreencherComboBoxContaPagarCategoria(string tabPageName = null, string categorySelected = null)
         {
             Dictionary<int, string> categoriasContaPagar = new()
             {
+                { 0, "Nenhum" },
                 { 1, "Alimentação:Almoço" },
                 { 2, "Alimentação:Besteiras" },
                 { 3, "Alimentação:Café da Manhã" },
@@ -146,7 +150,10 @@ namespace App.Forms.Forms
                 { 22, "Serviço:Produtividade" },
                 { 23, "Serviço:Streaming" },
                 { 24, "Transporte:Escolar" },
-                { 25, "Alimentação:Açougue" }
+                { 25, "Alimentação:Açougue" },
+                { 26, "Automóvel:Pedágio" },
+                { 27, "Viagem" },
+                { 28, "Automóvel:Documentação" }
             };
 
             var categoriasContaPagarOrderBy = categoriasContaPagar
@@ -156,11 +163,13 @@ namespace App.Forms.Forms
             foreach (var item in categoriasContaPagarOrderBy)
             {
                 cboContaPagarCategory.Items.Add(item.Value);
+                cboEfetuarPagamentoCategoria.Items.Add(item.Value);
             }
 
             if (categorySelected == null)
             {
                 cboContaPagarCategory.SelectedItem = categoriasContaPagarOrderBy.FirstOrDefault().Value;
+                cboEfetuarPagamentoCategoria.SelectedItem = categoriasContaPagarOrderBy.FirstOrDefault().Value;
             }
             else
             {
@@ -170,11 +179,15 @@ namespace App.Forms.Forms
                 if (theChoise.Value.Length > 0)
                 {
                     cboContaPagarCategory.SelectedItem = theChoise.Value;
+                    cboEfetuarPagamentoCategoria.SelectedItem = theChoise.Value;
                 }
                 else
                 {
-                    cboContaPagarCategory.SelectedItem = categoriasContaPagarOrderBy
+                    var dado = categoriasContaPagarOrderBy
                         .FirstOrDefault().Value;
+
+                    cboContaPagarCategory.SelectedItem = dado;
+                    cboEfetuarPagamentoCategoria.SelectedItem = dado;
                 }
             }
         }
@@ -355,6 +368,9 @@ namespace App.Forms.Forms
                     SetParameters(tabPageCurrentText, "Alimentação:Café da Manhã", "Cartão de Crédito", "Mensal");
                     grbTemplateContaPagar.Text = string.Concat(DESCRICAO_GROUP_BOX, " - ", tabPageCurrentText);
                     break;
+                case TAB_PAGE_PAGAMENTO:
+                    SetParameters(tabPageCurrentText, "Nenhum");
+                    break;
                 default:
                     break;
             }
@@ -378,16 +394,18 @@ namespace App.Forms.Forms
             tbcInitial.TabPages[tbcInitial.SelectedIndex].Controls.Add(grbTemplateContaPagar);
         }
 
-        private void SetParameters(string tabPageName, string category, string account, string frequencia)
+        private void SetParameters(string tabPageName, string? category = null, string? account = null, string? frequencia = null)
         {
             cboContaPagarCategory.Items.Clear();
             cboContaPagarTipoConta.Items.Clear();
-            PreencherComboBoxContaPagarCategory(tabPageName, category);
+            PreencherComboBoxContaPagarCategoria(tabPageName, category);
             PreencherComboBoxContaPagarTipoConta(tabPageName, account);
         }
 
         private async void BtnEfetuarPagamentoBuscar_Click(object sender, EventArgs e)
         {
+            _dgvEfetuarPagamentoListagemDataSource.Clear();
+
             SearchBillToPayViewModel search = new()
             {
                 YearMonth = cboEfetuarPagamentoAnoMes.Text
@@ -403,6 +421,13 @@ namespace App.Forms.Forms
             var dataSource = MapSearchResultToDataSource(resultSearch);
 
             var dataSourceOrderBy = dataSource.OrderByDescending(x => x.CreationDate).ToList();
+
+            PreecherDataGridView(dataSourceOrderBy);
+        }
+
+        private void PreecherDataGridView(IList<DgvEfetuarPagamentoListagemDataSource> dataSourceOrderBy)
+        {
+            _dgvEfetuarPagamentoListagemDataSource = dataSourceOrderBy;
 
             dgvEfetuarPagamentoListagem.DataSource = dataSourceOrderBy;
             dgvEfetuarPagamentoListagem.Columns[0].HeaderText = "Id";
@@ -481,6 +506,22 @@ namespace App.Forms.Forms
         {
             FrmPagamento frmPagamento = new();
             frmPagamento.ShowDialog();
+        }
+
+        private void CboEfetuarPagamentoCategoria_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (cboEfetuarPagamentoCategoria.Text != "Nenhum")
+            {
+                var filterByCategory = _dgvEfetuarPagamentoListagemDataSource
+                    .Where(x => x.Category == cboEfetuarPagamentoCategoria.Text)
+                    .ToList();
+
+                PreecherDataGridView(filterByCategory);
+            }
+            else
+            {
+                PreecherDataGridView(_dgvEfetuarPagamentoListagemDataSource);
+            }
         }
     }
 }
