@@ -63,6 +63,8 @@ namespace App.Forms.Forms
             cboContaPagarTipoConta = new ComboBox();
             tbpContaPagarCartaoCredito = new TabPage();
             tbpEfetuarPagamento = new TabPage();
+            lblGridViewValorTotal = new Label();
+            lblGridViewQuantidadeTotal = new Label();
             lblEfetuarPagamentoCategoria = new Label();
             cboEfetuarPagamentoCategoria = new ComboBox();
             lblEfetuarPagamentoInformativoDuploCliqueGrid = new Label();
@@ -401,6 +403,8 @@ namespace App.Forms.Forms
             // 
             // tbpEfetuarPagamento
             // 
+            tbpEfetuarPagamento.Controls.Add(lblGridViewValorTotal);
+            tbpEfetuarPagamento.Controls.Add(lblGridViewQuantidadeTotal);
             tbpEfetuarPagamento.Controls.Add(lblEfetuarPagamentoCategoria);
             tbpEfetuarPagamento.Controls.Add(cboEfetuarPagamentoCategoria);
             tbpEfetuarPagamento.Controls.Add(lblEfetuarPagamentoInformativoDuploCliqueGrid);
@@ -416,6 +420,28 @@ namespace App.Forms.Forms
             tbpEfetuarPagamento.TabIndex = 2;
             tbpEfetuarPagamento.Text = "Pagamento";
             tbpEfetuarPagamento.UseVisualStyleBackColor = true;
+            // 
+            // lblGridViewValorTotal
+            // 
+            lblGridViewValorTotal.AutoSize = true;
+            lblGridViewValorTotal.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
+            lblGridViewValorTotal.ForeColor = Color.OrangeRed;
+            lblGridViewValorTotal.Location = new Point(146, 42);
+            lblGridViewValorTotal.Name = "lblGridViewValorTotal";
+            lblGridViewValorTotal.Size = new Size(79, 17);
+            lblGridViewValorTotal.TabIndex = 10;
+            lblGridViewValorTotal.Text = "Valor Total:";
+            // 
+            // lblGridViewQuantidadeTotal
+            // 
+            lblGridViewQuantidadeTotal.AutoSize = true;
+            lblGridViewQuantidadeTotal.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
+            lblGridViewQuantidadeTotal.ForeColor = Color.OrangeRed;
+            lblGridViewQuantidadeTotal.Location = new Point(8, 42);
+            lblGridViewQuantidadeTotal.Name = "lblGridViewQuantidadeTotal";
+            lblGridViewQuantidadeTotal.Size = new Size(118, 17);
+            lblGridViewQuantidadeTotal.TabIndex = 9;
+            lblGridViewQuantidadeTotal.Text = "Quantidade Itens:";
             // 
             // lblEfetuarPagamentoCategoria
             // 
@@ -438,7 +464,7 @@ namespace App.Forms.Forms
             // lblEfetuarPagamentoInformativoDuploCliqueGrid
             // 
             lblEfetuarPagamentoInformativoDuploCliqueGrid.AutoSize = true;
-            lblEfetuarPagamentoInformativoDuploCliqueGrid.Location = new Point(9, 42);
+            lblEfetuarPagamentoInformativoDuploCliqueGrid.Location = new Point(1020, 42);
             lblEfetuarPagamentoInformativoDuploCliqueGrid.Name = "lblEfetuarPagamentoInformativoDuploCliqueGrid";
             lblEfetuarPagamentoInformativoDuploCliqueGrid.Size = new Size(334, 15);
             lblEfetuarPagamentoInformativoDuploCliqueGrid.TabIndex = 6;
@@ -574,5 +600,7 @@ namespace App.Forms.Forms
         private Label lblEfetuarPagamentoInformativoDuploCliqueGrid;
         private Label lblEfetuarPagamentoCategoria;
         private ComboBox cboEfetuarPagamentoCategoria;
+        private Label lblGridViewValorTotal;
+        private Label lblGridViewQuantidadeTotal;
     }
 }

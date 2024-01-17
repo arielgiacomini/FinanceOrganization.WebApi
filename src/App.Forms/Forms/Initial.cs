@@ -6,6 +6,7 @@ using App.Forms.Services.Output;
 using App.Forms.ViewModel;
 using Domain.Utils;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Data;
 
 namespace App.Forms.Forms
@@ -406,6 +407,7 @@ namespace App.Forms.Forms
         private async void BtnEfetuarPagamentoBuscar_Click(object sender, EventArgs e)
         {
             _dgvEfetuarPagamentoListagemDataSource.Clear();
+            cboEfetuarPagamentoCategoria.SelectedItem = "Nenhum";
 
             SearchBillToPayViewModel search = new()
             {
@@ -428,6 +430,9 @@ namespace App.Forms.Forms
 
         private void PreecherDataGridView(IList<DgvEfetuarPagamentoListagemDataSource> dataSourceOrderBy)
         {
+            
+            lblGridViewQuantidadeTotal.Text = string.Concat("Quantidade Total: ", dataSourceOrderBy.Count);
+            lblGridViewValorTotal.Text = string.Concat("Valor Total: R$ ", string.Format("{0:#,##0.00}", Convert.ToDecimal(dataSourceOrderBy.Sum(x => x.Value))));
             _dgvEfetuarPagamentoListagemDataSource = dataSourceOrderBy;
 
             dgvEfetuarPagamentoListagem.DataSource = dataSourceOrderBy;
