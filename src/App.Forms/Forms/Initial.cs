@@ -16,7 +16,8 @@ namespace App.Forms.Forms
         private const string TAB_PAGE_CARTAO_CREDITO = "tbpContaPagarCartaoCredito";
         private const string TAB_PAGE_PAGAMENTO = "tbpEfetuarPagamento";
         private const string DESCRICAO_GROUP_BOX = "Cadastro de Conta a Pagar";
-        private IList<CreateBillToPayViewModel> _createBillToPayViewModels = new List<CreateBillToPayViewModel>();
+        public decimal valorContaPagarDigitadoTextBox = 0;
+        private readonly IList<CreateBillToPayViewModel> _createBillToPayViewModels = new List<CreateBillToPayViewModel>();
         private IList<DgvEfetuarPagamentoListagemDataSource> _dgvEfetuarPagamentoListagemDataSource = new List<DgvEfetuarPagamentoListagemDataSource>();
 
         public Initial()
@@ -522,6 +523,20 @@ namespace App.Forms.Forms
             {
                 PreecherDataGridView(_dgvEfetuarPagamentoListagemDataSource);
             }
+        }
+
+        private void TxtContaPagarValor_Enter(object sender, EventArgs e)
+        {
+            txtContaPagarValor.Text = "";
+        }
+
+        private void TxtContaPagarValor_Leave(object sender, EventArgs e)
+        {
+            valorContaPagarDigitadoTextBox = StringDecimalUtils
+                .TranslateStringEmDecimal(txtContaPagarValor.Text);
+
+            txtContaPagarValor.Text = StringDecimalUtils
+                .TranslateValorEmStringDinheiro(txtContaPagarValor.Text);
         }
     }
 }
