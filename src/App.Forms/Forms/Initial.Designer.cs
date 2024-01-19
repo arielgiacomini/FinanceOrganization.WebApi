@@ -30,7 +30,7 @@ namespace App.Forms.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             tbcInitial = new TabControl();
             tbpContaPagarLivre = new TabPage();
             grbTemplateContaPagar = new GroupBox();
@@ -163,14 +163,14 @@ namespace App.Forms.Forms
             dgvContaPagar.Location = new Point(25, 249);
             dgvContaPagar.Name = "dgvContaPagar";
             dgvContaPagar.RowTemplate.Height = 25;
-            dgvContaPagar.Size = new Size(1139, 203);
+            dgvContaPagar.Size = new Size(1304, 203);
             dgvContaPagar.TabIndex = 15;
             // 
             // grbContaPagarHistorico
             // 
             grbContaPagarHistorico.Location = new Point(8, 227);
             grbContaPagarHistorico.Name = "grbContaPagarHistorico";
-            grbContaPagarHistorico.Size = new Size(1169, 243);
+            grbContaPagarHistorico.Size = new Size(1327, 243);
             grbContaPagarHistorico.TabIndex = 28;
             grbContaPagarHistorico.TabStop = false;
             grbContaPagarHistorico.Text = "Histórico de Cadastros";
@@ -522,20 +522,21 @@ namespace App.Forms.Forms
             dgvEfetuarPagamentoListagem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             dgvEfetuarPagamentoListagem.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
             dgvEfetuarPagamentoListagem.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = SystemColors.Window;
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            dgvEfetuarPagamentoListagem.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Window;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
+            dgvEfetuarPagamentoListagem.DefaultCellStyle = dataGridViewCellStyle1;
             dgvEfetuarPagamentoListagem.Location = new Point(8, 60);
             dgvEfetuarPagamentoListagem.Name = "dgvEfetuarPagamentoListagem";
             dgvEfetuarPagamentoListagem.RowTemplate.Height = 25;
             dgvEfetuarPagamentoListagem.Size = new Size(1418, 448);
             dgvEfetuarPagamentoListagem.TabIndex = 0;
             dgvEfetuarPagamentoListagem.CellDoubleClick += DgvEfetuarPagamentoListagem_CellDoubleClick;
+            dgvEfetuarPagamentoListagem.CellMouseDown += DgvEfetuarPagamentoListagem_CellMouseDown;
             // 
             // Initial
             // 

@@ -430,7 +430,7 @@ namespace App.Forms.Forms
 
         private void PreecherDataGridView(IList<DgvEfetuarPagamentoListagemDataSource> dataSourceOrderBy)
         {
-            
+
             lblGridViewQuantidadeTotal.Text = string.Concat("Quantidade Total: ", dataSourceOrderBy.Count);
             lblGridViewValorTotal.Text = string.Concat("Valor Total: R$ ", string.Format("{0:#,##0.00}", Convert.ToDecimal(dataSourceOrderBy.Sum(x => x.Value))));
             _dgvEfetuarPagamentoListagemDataSource = dataSourceOrderBy;
@@ -542,6 +542,14 @@ namespace App.Forms.Forms
 
             txtContaPagarValor.Text = StringDecimalUtils
                 .TranslateValorEmStringDinheiro(txtContaPagarValor.Text);
+        }
+
+        private void DgvEfetuarPagamentoListagem_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+
+            }
         }
     }
 }
