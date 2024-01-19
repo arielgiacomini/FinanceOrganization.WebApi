@@ -543,5 +543,13 @@ namespace App.Forms.Forms
             txtContaPagarValor.Text = StringDecimalUtils
                 .TranslateValorEmStringDinheiro(txtContaPagarValor.Text);
         }
+
+        private void DgvEfetuarPagamentoListagem_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+
+            }
+        }
     }
 }

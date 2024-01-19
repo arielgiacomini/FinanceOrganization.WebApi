@@ -536,6 +536,7 @@ namespace App.Forms.Forms
             dgvEfetuarPagamentoListagem.Size = new Size(1418, 448);
             dgvEfetuarPagamentoListagem.TabIndex = 0;
             dgvEfetuarPagamentoListagem.CellDoubleClick += DgvEfetuarPagamentoListagem_CellDoubleClick;
+            dgvEfetuarPagamentoListagem.CellMouseDown += DgvEfetuarPagamentoListagem_CellMouseDown;
             // 
             // Initial
             // 
