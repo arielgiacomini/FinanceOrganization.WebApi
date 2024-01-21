@@ -256,5 +256,26 @@
 
             return yearMonths;
         }
+
+        public static DateTime? GetDateTimeOfString(string? dateTime)
+        {
+            DateTime? dateTimeResult;
+
+            if (dateTime is null)
+            {
+                return null;
+            }
+
+            try
+            {
+                dateTimeResult = Convert.ToDateTime(dateTime);
+            }
+            catch
+            {
+                dateTimeResult = null;
+            }
+
+            return dateTimeResult;
+        }
     }
 }

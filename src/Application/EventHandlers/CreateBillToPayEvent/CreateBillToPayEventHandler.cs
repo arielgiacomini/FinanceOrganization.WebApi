@@ -16,7 +16,6 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         private const string FREQUENCIA_MENSAL_RECORRENTE = "Mensal:Recorrente";
         private const string FREQUENCIA_MENSAL = "Mensal";
         private const string FREQUENCIA_LIVRE = "Livre";
-        private const int DIA_MAXIMO_CONTA_MES_SUBSEQUENTE = 24;
         private const int DIA_VENCIMENTO_CARTAO_CREDITO = 9;
         private const string TIPO_REGISTRO_FATURA_FIXA = "Conta/Fatura Fixa";
         private const string TIPO_REGISTRO_COMPRA_LIVRE = "Compra Livre";
@@ -114,11 +113,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             bool addMonthForDueDate = false;
 
-            if (fixedInvoice.Account == Account.CARTAO_CREDITO ||
-                (fixedInvoice.BestPayDay <= DIA_MAXIMO_CONTA_MES_SUBSEQUENTE
-                && (fixedInvoice.Account != Account.CARTAO_CREDITO
-                 && fixedInvoice.Account != Account.CARTAO_VALE_REFEICAO
-                 && fixedInvoice.Account != Account.CARTAO_VALE_ALIMENTACAO)))
+            if (fixedInvoice.Account == Account.CARTAO_CREDITO)
             {
                 addMonthForDueDate = true;
             }

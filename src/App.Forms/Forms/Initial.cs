@@ -1,5 +1,6 @@
 ﻿using App.Forms.DataSource;
 using App.Forms.Enums;
+using App.Forms.Forms.Edição;
 using App.Forms.Forms.Pay;
 using App.Forms.Services;
 using App.Forms.Services.Output;
@@ -64,6 +65,11 @@ namespace App.Forms.Forms
 
             var result = await BillToPayServices.CreateBillToPay(createBillToPay);
 
+            TratamentoOutput(created, result);
+        }
+
+        private void TratamentoOutput(RegistrationStatus created, CreateBillToPayOutput result)
+        {
             if (result.Output.Status == OutputStatus.Success)
             {
                 MessageBox.Show(result.Output.Data.ToString(),
@@ -571,9 +577,41 @@ namespace App.Forms.Forms
 
         private void DgvEfetuarPagamentoListagem_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
             {
+                _ = Guid.TryParse(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[0].Value.ToString(), out Guid identificadorContaPagar);
 
+                if (identificadorContaPagar == Guid.Empty)
+                {
+                    MessageBox.Show("Não encontramos o Identificador da Conta pagar conseguir editar.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                var editBillToPayViewModel = new EditBillToPayViewModel
+                {
+                    Id = identificadorContaPagar,
+                    IdFixedInvoice = Convert.ToInt32(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[1].Value?.ToString()),
+                    Account = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[2].Value?.ToString(),
+                    Name = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[3].Value?.ToString(),
+                    Category = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[4].Value?.ToString(),
+                    Value = Convert.ToDecimal(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[5].Value?.ToString()?.Replace("R$ ", "") ?? "0"),
+                    PurchaseDate = DateServiceUtils.GetDateTimeOfString(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[6].Value?.ToString()),
+                    DueDate = DateServiceUtils.GetDateTimeOfString(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[7].Value?.ToString())!.Value,
+                    YearMonth = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[8].Value?.ToString(),
+                    Frequence = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[9].Value?.ToString(),
+                    RegistrationType = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[10].Value?.ToString(),
+                    PayDay = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[11].Value?.ToString(),
+                    HasPay = Convert.ToBoolean(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[12].Value?.ToString()),
+                    AdditionalMessage = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[13].Value?.ToString(),
+                    LastChangeDate = DateTime.Now
+                };
+
+                FrmEdit frmPagamento = new()
+                {
+                    EditBillToPayViewModel = editBillToPayViewModel
+                };
+
+                frmPagamento.ShowDialog();
             }
         }
     }
