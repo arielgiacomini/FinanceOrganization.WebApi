@@ -6,7 +6,6 @@ using App.Forms.Services.Output;
 using App.Forms.ViewModel;
 using Domain.Utils;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Data;
 
 namespace App.Forms.Forms
@@ -63,13 +62,36 @@ namespace App.Forms.Forms
 
             _createBillToPayViewModels.Add(createBillToPay);
 
-            PreencherContaPagarDataGridViewHistory(_createBillToPayViewModels, created);
-
             var result = await BillToPayServices.CreateBillToPay(createBillToPay);
 
-            if (result == null || result.Output.Quantidade == 0)
+            if (result.Output.Status == OutputStatus.Success)
             {
-                var teste = "";
+                MessageBox.Show(result.Output.Data.ToString(),
+                    "Cadastro de Conta Realizado com Sucesso.",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                PreencherContaPagarDataGridViewHistory(_createBillToPayViewModels, created);
+            }
+            else
+            {
+                var information = string.Empty;
+
+                var errors = result.Output.Errors;
+                var validations = result.Output.Validations;
+
+                foreach (var error in errors)
+                {
+                    information = string
+                        .Concat(information, error.Key, " - ", error.Value, " | ");
+                }
+
+                foreach (var validation in validations)
+                {
+                    information = string
+                        .Concat(information, validation.Key, " - ", validation.Value, " | ");
+                }
+
+                MessageBox.Show(information, "Erro ao tentar cadastrar", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -423,12 +445,15 @@ namespace App.Forms.Forms
 
             var dataSource = MapSearchResultToDataSource(resultSearch);
 
-            var dataSourceOrderBy = dataSource.OrderByDescending(x => x.CreationDate).ToList();
+            var dataSourceOrderBy = dataSource
+                .OrderByDescending(x => x.DueDate)
+                .ThenByDescending(purchase => purchase.PurchaseDate)
+                .ToList();
 
-            PreecherDataGridView(dataSourceOrderBy);
+            PreecherDataGridViewEfetuarPagamento(dataSourceOrderBy);
         }
 
-        private void PreecherDataGridView(IList<DgvEfetuarPagamentoListagemDataSource> dataSourceOrderBy)
+        private void PreecherDataGridViewEfetuarPagamento(IList<DgvEfetuarPagamentoListagemDataSource> dataSourceOrderBy)
         {
 
             lblGridViewQuantidadeTotal.Text = string.Concat("Quantidade Total: ", dataSourceOrderBy.Count);
@@ -472,11 +497,11 @@ namespace App.Forms.Forms
 
             var dados = searchBillToPayOutput.Output.Data;
 
-            var json = JsonConvert.SerializeObject(searchBillToPayOutput.Output.Data);
+            var json = JsonConvert.SerializeObject(dados);
 
             var conversion = JsonConvert.DeserializeObject<IList<DgvEfetuarPagamentoListagemDataSource>>(json);
 
-            foreach (var item in conversion)
+            foreach (var item in conversion!)
             {
                 dgvEfetuarPagamentoListagemDataSources.Add(item);
             }
@@ -522,11 +547,11 @@ namespace App.Forms.Forms
                     .Where(x => x.Category == cboEfetuarPagamentoCategoria.Text)
                     .ToList();
 
-                PreecherDataGridView(filterByCategory);
+                PreecherDataGridViewEfetuarPagamento(filterByCategory);
             }
             else
             {
-                PreecherDataGridView(_dgvEfetuarPagamentoListagemDataSource);
+                PreecherDataGridViewEfetuarPagamento(_dgvEfetuarPagamentoListagemDataSource);
             }
         }
 
