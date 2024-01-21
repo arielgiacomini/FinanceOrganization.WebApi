@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             grbTemplateContaPagar = new GroupBox();
+            txtContaPagarDataPagamento = new TextBox();
+            lblContaPagarDataPagamento = new Label();
+            dtpContaPagarDataVencimento = new DateTimePicker();
+            lblContaPagarDataVencimento = new Label();
             btnContaPagarCadastrar = new Button();
             lblContaPagarDataCriacao = new Label();
             rtbContaPagarMensagemAdicional = new RichTextBox();
@@ -37,28 +41,31 @@
             lblContaPagarTipoCadastro = new Label();
             cboContaPagarFrequencia = new ComboBox();
             lblContaPagarFrequencia = new Label();
-            cboContaPagarMelhorDiaPagamento = new ComboBox();
-            lblContaPagarMelhorDiaPagamento = new Label();
             dtpContaPagarDataCompra = new DateTimePicker();
             lblContaPagarDataCompra = new Label();
             txtContaPagarValor = new TextBox();
             lblContaPagarValor = new Label();
             lblContaPagarNameDescription = new Label();
-            cboContaPagarAnoMesFinal = new ComboBox();
             txtContaPagarNameDescription = new TextBox();
-            lblContaPagarAnoMesFinal = new Label();
             lblContaPagarCategory = new Label();
-            ckbContaPagarConsideraMesmoMes = new CheckBox();
             cboContaPagarCategory = new ComboBox();
             cboContaPagarAnoMesInicial = new ComboBox();
             lblContaPagarTipoConta = new Label();
-            lblContaPagarAnoMesInicial = new Label();
+            lblContaPagarAnoMes = new Label();
             cboContaPagarTipoConta = new ComboBox();
+            rdbPagamentoNaoPago = new RadioButton();
+            rdbPagamentoPago = new RadioButton();
             grbTemplateContaPagar.SuspendLayout();
             SuspendLayout();
             // 
             // grbTemplateContaPagar
             // 
+            grbTemplateContaPagar.Controls.Add(rdbPagamentoNaoPago);
+            grbTemplateContaPagar.Controls.Add(rdbPagamentoPago);
+            grbTemplateContaPagar.Controls.Add(txtContaPagarDataPagamento);
+            grbTemplateContaPagar.Controls.Add(lblContaPagarDataPagamento);
+            grbTemplateContaPagar.Controls.Add(dtpContaPagarDataVencimento);
+            grbTemplateContaPagar.Controls.Add(lblContaPagarDataVencimento);
             grbTemplateContaPagar.Controls.Add(btnContaPagarCadastrar);
             grbTemplateContaPagar.Controls.Add(lblContaPagarDataCriacao);
             grbTemplateContaPagar.Controls.Add(rtbContaPagarMensagemAdicional);
@@ -67,22 +74,17 @@
             grbTemplateContaPagar.Controls.Add(lblContaPagarTipoCadastro);
             grbTemplateContaPagar.Controls.Add(cboContaPagarFrequencia);
             grbTemplateContaPagar.Controls.Add(lblContaPagarFrequencia);
-            grbTemplateContaPagar.Controls.Add(cboContaPagarMelhorDiaPagamento);
-            grbTemplateContaPagar.Controls.Add(lblContaPagarMelhorDiaPagamento);
             grbTemplateContaPagar.Controls.Add(dtpContaPagarDataCompra);
             grbTemplateContaPagar.Controls.Add(lblContaPagarDataCompra);
             grbTemplateContaPagar.Controls.Add(txtContaPagarValor);
             grbTemplateContaPagar.Controls.Add(lblContaPagarValor);
             grbTemplateContaPagar.Controls.Add(lblContaPagarNameDescription);
-            grbTemplateContaPagar.Controls.Add(cboContaPagarAnoMesFinal);
             grbTemplateContaPagar.Controls.Add(txtContaPagarNameDescription);
-            grbTemplateContaPagar.Controls.Add(lblContaPagarAnoMesFinal);
             grbTemplateContaPagar.Controls.Add(lblContaPagarCategory);
-            grbTemplateContaPagar.Controls.Add(ckbContaPagarConsideraMesmoMes);
             grbTemplateContaPagar.Controls.Add(cboContaPagarCategory);
             grbTemplateContaPagar.Controls.Add(cboContaPagarAnoMesInicial);
             grbTemplateContaPagar.Controls.Add(lblContaPagarTipoConta);
-            grbTemplateContaPagar.Controls.Add(lblContaPagarAnoMesInicial);
+            grbTemplateContaPagar.Controls.Add(lblContaPagarAnoMes);
             grbTemplateContaPagar.Controls.Add(cboContaPagarTipoConta);
             grbTemplateContaPagar.Location = new Point(12, 12);
             grbTemplateContaPagar.Name = "grbTemplateContaPagar";
@@ -90,6 +92,38 @@
             grbTemplateContaPagar.TabIndex = 16;
             grbTemplateContaPagar.TabStop = false;
             grbTemplateContaPagar.Text = "Cadastro de Conta a Pagar - Livre";
+            // 
+            // txtContaPagarDataPagamento
+            // 
+            txtContaPagarDataPagamento.Location = new Point(652, 149);
+            txtContaPagarDataPagamento.Name = "txtContaPagarDataPagamento";
+            txtContaPagarDataPagamento.Size = new Size(237, 23);
+            txtContaPagarDataPagamento.TabIndex = 33;
+            // 
+            // lblContaPagarDataPagamento
+            // 
+            lblContaPagarDataPagamento.AutoSize = true;
+            lblContaPagarDataPagamento.Location = new Point(532, 151);
+            lblContaPagarDataPagamento.Name = "lblContaPagarDataPagamento";
+            lblContaPagarDataPagamento.Size = new Size(114, 15);
+            lblContaPagarDataPagamento.TabIndex = 32;
+            lblContaPagarDataPagamento.Text = "Data de Pagamento:";
+            // 
+            // dtpContaPagarDataVencimento
+            // 
+            dtpContaPagarDataVencimento.Location = new Point(652, 105);
+            dtpContaPagarDataVencimento.Name = "dtpContaPagarDataVencimento";
+            dtpContaPagarDataVencimento.Size = new Size(237, 23);
+            dtpContaPagarDataVencimento.TabIndex = 31;
+            // 
+            // lblContaPagarDataVencimento
+            // 
+            lblContaPagarDataVencimento.AutoSize = true;
+            lblContaPagarDataVencimento.Location = new Point(530, 111);
+            lblContaPagarDataVencimento.Name = "lblContaPagarDataVencimento";
+            lblContaPagarDataVencimento.Size = new Size(116, 15);
+            lblContaPagarDataVencimento.TabIndex = 30;
+            lblContaPagarDataVencimento.Text = "Data de Vencimento:";
             // 
             // btnContaPagarCadastrar
             // 
@@ -132,7 +166,7 @@
             // cboContaPagarTipoCadastro
             // 
             cboContaPagarTipoCadastro.FormattingEnabled = true;
-            cboContaPagarTipoCadastro.Location = new Point(652, 187);
+            cboContaPagarTipoCadastro.Location = new Point(116, 205);
             cboContaPagarTipoCadastro.Name = "cboContaPagarTipoCadastro";
             cboContaPagarTipoCadastro.Size = new Size(204, 23);
             cboContaPagarTipoCadastro.TabIndex = 23;
@@ -140,7 +174,7 @@
             // lblContaPagarTipoCadastro
             // 
             lblContaPagarTipoCadastro.AutoSize = true;
-            lblContaPagarTipoCadastro.Location = new Point(547, 190);
+            lblContaPagarTipoCadastro.Location = new Point(11, 208);
             lblContaPagarTipoCadastro.Name = "lblContaPagarTipoCadastro";
             lblContaPagarTipoCadastro.Size = new Size(99, 15);
             lblContaPagarTipoCadastro.TabIndex = 22;
@@ -149,7 +183,7 @@
             // cboContaPagarFrequencia
             // 
             cboContaPagarFrequencia.FormattingEnabled = true;
-            cboContaPagarFrequencia.Location = new Point(652, 149);
+            cboContaPagarFrequencia.Location = new Point(652, 205);
             cboContaPagarFrequencia.Name = "cboContaPagarFrequencia";
             cboContaPagarFrequencia.Size = new Size(161, 23);
             cboContaPagarFrequencia.TabIndex = 21;
@@ -157,31 +191,11 @@
             // lblContaPagarFrequencia
             // 
             lblContaPagarFrequencia.AutoSize = true;
-            lblContaPagarFrequencia.Location = new Point(578, 152);
+            lblContaPagarFrequencia.Location = new Point(578, 208);
             lblContaPagarFrequencia.Name = "lblContaPagarFrequencia";
             lblContaPagarFrequencia.Size = new Size(68, 15);
             lblContaPagarFrequencia.TabIndex = 20;
             lblContaPagarFrequencia.Text = "Frequência:";
-            // 
-            // cboContaPagarMelhorDiaPagamento
-            // 
-            cboContaPagarMelhorDiaPagamento.BackColor = SystemColors.Window;
-            cboContaPagarMelhorDiaPagamento.Font = new Font("Calibri", 12F, FontStyle.Bold, GraphicsUnit.Point);
-            cboContaPagarMelhorDiaPagamento.FormatString = "N0";
-            cboContaPagarMelhorDiaPagamento.FormattingEnabled = true;
-            cboContaPagarMelhorDiaPagamento.Location = new Point(652, 111);
-            cboContaPagarMelhorDiaPagamento.Name = "cboContaPagarMelhorDiaPagamento";
-            cboContaPagarMelhorDiaPagamento.Size = new Size(62, 27);
-            cboContaPagarMelhorDiaPagamento.TabIndex = 19;
-            // 
-            // lblContaPagarMelhorDiaPagamento
-            // 
-            lblContaPagarMelhorDiaPagamento.AutoSize = true;
-            lblContaPagarMelhorDiaPagamento.Location = new Point(499, 114);
-            lblContaPagarMelhorDiaPagamento.Name = "lblContaPagarMelhorDiaPagamento";
-            lblContaPagarMelhorDiaPagamento.Size = new Size(147, 15);
-            lblContaPagarMelhorDiaPagamento.TabIndex = 18;
-            lblContaPagarMelhorDiaPagamento.Text = "Melhor dia de Pagamento:";
             // 
             // dtpContaPagarDataCompra
             // 
@@ -208,6 +222,8 @@
             txtContaPagarValor.Size = new Size(133, 27);
             txtContaPagarValor.TabIndex = 13;
             txtContaPagarValor.TextAlign = HorizontalAlignment.Right;
+            txtContaPagarValor.Enter += TxtContaPagarValor_Enter;
+            txtContaPagarValor.Leave += TxtContaPagarValor_Leave;
             // 
             // lblContaPagarValor
             // 
@@ -227,29 +243,12 @@
             lblContaPagarNameDescription.TabIndex = 0;
             lblContaPagarNameDescription.Text = "Nome/Descrição:";
             // 
-            // cboContaPagarAnoMesFinal
-            // 
-            cboContaPagarAnoMesFinal.FormattingEnabled = true;
-            cboContaPagarAnoMesFinal.Location = new Point(116, 187);
-            cboContaPagarAnoMesFinal.Name = "cboContaPagarAnoMesFinal";
-            cboContaPagarAnoMesFinal.Size = new Size(161, 23);
-            cboContaPagarAnoMesFinal.TabIndex = 11;
-            // 
             // txtContaPagarNameDescription
             // 
             txtContaPagarNameDescription.Location = new Point(116, 32);
             txtContaPagarNameDescription.Name = "txtContaPagarNameDescription";
             txtContaPagarNameDescription.Size = new Size(445, 23);
             txtContaPagarNameDescription.TabIndex = 1;
-            // 
-            // lblContaPagarAnoMesFinal
-            // 
-            lblContaPagarAnoMesFinal.AutoSize = true;
-            lblContaPagarAnoMesFinal.Location = new Point(23, 190);
-            lblContaPagarAnoMesFinal.Name = "lblContaPagarAnoMesFinal";
-            lblContaPagarAnoMesFinal.Size = new Size(87, 15);
-            lblContaPagarAnoMesFinal.TabIndex = 10;
-            lblContaPagarAnoMesFinal.Text = "Ano/Mês Final:";
             // 
             // lblContaPagarCategory
             // 
@@ -259,18 +258,6 @@
             lblContaPagarCategory.Size = new Size(61, 15);
             lblContaPagarCategory.TabIndex = 2;
             lblContaPagarCategory.Text = "Categoria:";
-            // 
-            // ckbContaPagarConsideraMesmoMes
-            // 
-            ckbContaPagarConsideraMesmoMes.AutoSize = true;
-            ckbContaPagarConsideraMesmoMes.Checked = true;
-            ckbContaPagarConsideraMesmoMes.CheckState = CheckState.Checked;
-            ckbContaPagarConsideraMesmoMes.Location = new Point(283, 159);
-            ckbContaPagarConsideraMesmoMes.Name = "ckbContaPagarConsideraMesmoMes";
-            ckbContaPagarConsideraMesmoMes.Size = new Size(124, 34);
-            ckbContaPagarConsideraMesmoMes.TabIndex = 9;
-            ckbContaPagarConsideraMesmoMes.Text = "Considera como \r\nMês Inicial e Final?";
-            ckbContaPagarConsideraMesmoMes.UseVisualStyleBackColor = true;
             // 
             // cboContaPagarCategory
             // 
@@ -282,6 +269,7 @@
             // 
             // cboContaPagarAnoMesInicial
             // 
+            cboContaPagarAnoMesInicial.Enabled = false;
             cboContaPagarAnoMesInicial.FormattingEnabled = true;
             cboContaPagarAnoMesInicial.Location = new Point(116, 151);
             cboContaPagarAnoMesInicial.Name = "cboContaPagarAnoMesInicial";
@@ -297,14 +285,14 @@
             lblContaPagarTipoConta.TabIndex = 4;
             lblContaPagarTipoConta.Text = "Tipo de Conta:";
             // 
-            // lblContaPagarAnoMesInicial
+            // lblContaPagarAnoMes
             // 
-            lblContaPagarAnoMesInicial.AutoSize = true;
-            lblContaPagarAnoMesInicial.Location = new Point(19, 154);
-            lblContaPagarAnoMesInicial.Name = "lblContaPagarAnoMesInicial";
-            lblContaPagarAnoMesInicial.Size = new Size(93, 15);
-            lblContaPagarAnoMesInicial.TabIndex = 7;
-            lblContaPagarAnoMesInicial.Text = "Ano/Mês Inicial:";
+            lblContaPagarAnoMes.AutoSize = true;
+            lblContaPagarAnoMes.Location = new Point(53, 157);
+            lblContaPagarAnoMes.Name = "lblContaPagarAnoMes";
+            lblContaPagarAnoMes.Size = new Size(59, 15);
+            lblContaPagarAnoMes.TabIndex = 7;
+            lblContaPagarAnoMes.Text = "Ano/Mês:";
             // 
             // cboContaPagarTipoConta
             // 
@@ -313,6 +301,28 @@
             cboContaPagarTipoConta.Name = "cboContaPagarTipoConta";
             cboContaPagarTipoConta.Size = new Size(167, 23);
             cboContaPagarTipoConta.TabIndex = 5;
+            // 
+            // rdbPagamentoNaoPago
+            // 
+            rdbPagamentoNaoPago.AutoSize = true;
+            rdbPagamentoNaoPago.Location = new Point(710, 180);
+            rdbPagamentoNaoPago.Name = "rdbPagamentoNaoPago";
+            rdbPagamentoNaoPago.Size = new Size(77, 19);
+            rdbPagamentoNaoPago.TabIndex = 35;
+            rdbPagamentoNaoPago.Text = "Não Pago";
+            rdbPagamentoNaoPago.UseVisualStyleBackColor = true;
+            // 
+            // rdbPagamentoPago
+            // 
+            rdbPagamentoPago.AutoSize = true;
+            rdbPagamentoPago.Checked = true;
+            rdbPagamentoPago.Location = new Point(652, 180);
+            rdbPagamentoPago.Name = "rdbPagamentoPago";
+            rdbPagamentoPago.Size = new Size(52, 19);
+            rdbPagamentoPago.TabIndex = 34;
+            rdbPagamentoPago.TabStop = true;
+            rdbPagamentoPago.Text = "Pago";
+            rdbPagamentoPago.UseVisualStyleBackColor = true;
             // 
             // FrmEdit
             // 
@@ -356,7 +366,13 @@
         private ComboBox cboContaPagarCategory;
         private ComboBox cboContaPagarAnoMesInicial;
         private Label lblContaPagarTipoConta;
-        private Label lblContaPagarAnoMesInicial;
+        private Label lblContaPagarAnoMes;
         private ComboBox cboContaPagarTipoConta;
+        private DateTimePicker dtpContaPagarDataVencimento;
+        private Label lblContaPagarDataVencimento;
+        private TextBox txtContaPagarDataPagamento;
+        private Label lblContaPagarDataPagamento;
+        private RadioButton rdbPagamentoNaoPago;
+        private RadioButton rdbPagamentoPago;
     }
 }

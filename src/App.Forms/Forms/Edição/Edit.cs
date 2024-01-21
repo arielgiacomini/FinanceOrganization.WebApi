@@ -8,6 +8,7 @@ namespace App.Forms.Forms.Edição
     public partial class FrmEdit : Form
     {
         public EditBillToPayViewModel EditBillToPayViewModel { get; set; } = new EditBillToPayViewModel();
+        public decimal valorContaPagarDigitadoTextBox = 0;
 
         public FrmEdit()
         {
@@ -26,11 +27,22 @@ namespace App.Forms.Forms.Edição
             cboContaPagarFrequencia.Text = EditBillToPayViewModel.Frequence;
             cboContaPagarTipoCadastro.Text = EditBillToPayViewModel.RegistrationType;
             cboContaPagarAnoMesInicial.Text = EditBillToPayViewModel.YearMonth;
-            cboContaPagarAnoMesFinal.Text = EditBillToPayViewModel.YearMonth;
             cboContaPagarCategory.Text = EditBillToPayViewModel.Category;
             txtContaPagarValor.Text = EditBillToPayViewModel.Value.ToString("C");
-            dtpContaPagarDataCompra.Text = EditBillToPayViewModel.PurchaseDate.ToString();
-            cboContaPagarMelhorDiaPagamento.Text = EditBillToPayViewModel.DueDate.Day.ToString();
+
+            if (EditBillToPayViewModel.PurchaseDate == null)
+            {
+                dtpContaPagarDataCompra.Enabled = false;
+            }
+            else
+            {
+                dtpContaPagarDataCompra.Text = EditBillToPayViewModel.PurchaseDate.ToString();
+            }
+
+            dtpContaPagarDataVencimento.Text = EditBillToPayViewModel.DueDate.ToString();
+            txtContaPagarDataPagamento.Text = EditBillToPayViewModel.PayDay?.ToString();
+            rdbPagamentoPago.Checked = EditBillToPayViewModel.HasPay;
+            rdbPagamentoNaoPago.Checked = !EditBillToPayViewModel.HasPay;
             rtbContaPagarMensagemAdicional.Text = EditBillToPayViewModel.AdditionalMessage;
             lblContaPagarDataCriacao.Text = EditBillToPayViewModel.LastChangeDate.ToString();
         }
@@ -41,14 +53,14 @@ namespace App.Forms.Forms.Edição
 
             var result = await BillToPayServices.EditBillToPay(EditBillToPayViewModel);
 
-            TratamentoOutput(result);
+            OutputMapper(result);
         }
 
-        private static void TratamentoOutput(EditBillToPayOutput result)
+        private static void OutputMapper(EditBillToPayOutput result)
         {
             if (result.Output.Status == OutputStatus.Success)
             {
-                MessageBox.Show(result.Output.Data.ToString(),
+                MessageBox.Show(result.Output.Message,
                     "Edição de Conta Realizado com Sucesso.",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -85,9 +97,25 @@ namespace App.Forms.Forms.Edição
             EditBillToPayViewModel.Category = cboContaPagarCategory.Text;
             EditBillToPayViewModel.Value = Convert.ToDecimal(txtContaPagarValor.Text.Replace("R$ ", ""));
             EditBillToPayViewModel.PurchaseDate = DateServiceUtils.GetDateTimeOfString(dtpContaPagarDataCompra.Text);
-            //EditBillToPayViewModel.DueDate = // Data de Vencimento;
+            EditBillToPayViewModel.PayDay = txtContaPagarDataPagamento.Text;
+            EditBillToPayViewModel.HasPay = rdbPagamentoPago.Checked ? rdbPagamentoPago.Checked : rdbPagamentoNaoPago.Checked;
+            EditBillToPayViewModel.DueDate = DateServiceUtils.GetDateTimeOfString(dtpContaPagarDataVencimento.Text) ?? DateTime.Now;
             EditBillToPayViewModel.AdditionalMessage = rtbContaPagarMensagemAdicional.Text;
             EditBillToPayViewModel.LastChangeDate = DateServiceUtils.GetDateTimeOfString(lblContaPagarDataCriacao.Text) ?? DateTime.Now;
+        }
+
+        private void TxtContaPagarValor_Leave(object sender, EventArgs e)
+        {
+            valorContaPagarDigitadoTextBox = StringDecimalUtils
+            .TranslateStringEmDecimal(txtContaPagarValor.Text);
+
+            txtContaPagarValor.Text = StringDecimalUtils
+                .TranslateValorEmStringDinheiro(txtContaPagarValor.Text);
+        }
+
+        private void TxtContaPagarValor_Enter(object sender, EventArgs e)
+        {
+            txtContaPagarValor.Text = "";
         }
     }
 }
