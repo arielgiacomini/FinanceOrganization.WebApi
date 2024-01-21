@@ -1,9 +1,11 @@
 ﻿using App.Forms.DataSource;
 using App.Forms.Enums;
+using App.Forms.Forms.Edição;
 using App.Forms.Forms.Pay;
 using App.Forms.Services;
 using App.Forms.Services.Output;
 using App.Forms.ViewModel;
+using Domain.Entities;
 using Domain.Utils;
 using Newtonsoft.Json;
 using System.Data;
@@ -16,16 +18,18 @@ namespace App.Forms.Forms
         private const string TAB_PAGE_CARTAO_CREDITO = "tbpContaPagarCartaoCredito";
         private const string TAB_PAGE_PAGAMENTO = "tbpEfetuarPagamento";
         private const string DESCRICAO_GROUP_BOX = "Cadastro de Conta a Pagar";
+        private const string EH_CARTAO_CREDITO_NAIRA = "Cartão de Crédito Nubank Naíra";
         public decimal valorContaPagarDigitadoTextBox = 0;
         private readonly IList<CreateBillToPayViewModel> _createBillToPayViewModels = new List<CreateBillToPayViewModel>();
         private IList<DgvEfetuarPagamentoListagemDataSource> _dgvEfetuarPagamentoListagemDataSource = new List<DgvEfetuarPagamentoListagemDataSource>();
+        public static int CurrentIndex { get; set; } = 0;
 
         public Initial()
         {
             InitializeComponent();
         }
 
-        private void Initial_Load(object sender, EventArgs e)
+        private async void Initial_Load(object sender, EventArgs e)
         {
             PreencherLabelDataCriacao();
             PreencherComboBoxContaPagarCategoria();
@@ -37,6 +41,8 @@ namespace App.Forms.Forms
             PreencherContaPagarMelhorDiaPagamento();
             PreencherContaPagarFrequencia();
             PreencherContaPagarTipoCadastro();
+            await BuscarListaPagamentos();
+            tbcInitial.SelectedTab = tbcInitial.TabPages[(tbcInitial.TabCount) - 1];
         }
 
         private async void BtnContaPagarCadastrar_Click(object sender, EventArgs e)
@@ -64,6 +70,11 @@ namespace App.Forms.Forms
 
             var result = await BillToPayServices.CreateBillToPay(createBillToPay);
 
+            TratamentoOutput(created, result);
+        }
+
+        private void TratamentoOutput(RegistrationStatus created, CreateBillToPayOutput result)
+        {
             if (result.Output.Status == OutputStatus.Success)
             {
                 MessageBox.Show(result.Output.Data.ToString(),
@@ -177,7 +188,11 @@ namespace App.Forms.Forms
                 { 25, "Alimentação:Açougue" },
                 { 26, "Automóvel:Pedágio" },
                 { 27, "Viagem" },
-                { 28, "Automóvel:Documentação" }
+                { 28, "Automóvel:Documentação" },
+                { 29, "Cabeleleiro:Ariel" },
+                { 30, "Cabeleleiro:Naira" },
+                { 31, "Cabeleleiro:Helena" },
+                { 32, "Cabeleleiro:Leo" }
             };
 
             var categoriasContaPagarOrderBy = categoriasContaPagar
@@ -428,6 +443,11 @@ namespace App.Forms.Forms
 
         private async void BtnEfetuarPagamentoBuscar_Click(object sender, EventArgs e)
         {
+            await BuscarListaPagamentos();
+        }
+
+        private async Task BuscarListaPagamentos()
+        {
             _dgvEfetuarPagamentoListagemDataSource.Clear();
             cboEfetuarPagamentoCategoria.SelectedItem = "Nenhum";
 
@@ -446,7 +466,9 @@ namespace App.Forms.Forms
             var dataSource = MapSearchResultToDataSource(resultSearch);
 
             var dataSourceOrderBy = dataSource
-                .OrderByDescending(x => x.DueDate)
+                .OrderBy(hasPay => hasPay.HasPay)
+                .ThenBy(creditCard => creditCard.Account == Account.CARTAO_CREDITO)
+                .ThenBy(dueDate => dueDate.DueDate)
                 .ThenByDescending(purchase => purchase.PurchaseDate)
                 .ToList();
 
@@ -455,9 +477,8 @@ namespace App.Forms.Forms
 
         private void PreecherDataGridViewEfetuarPagamento(IList<DgvEfetuarPagamentoListagemDataSource> dataSourceOrderBy)
         {
+            Consolidate(dataSourceOrderBy);
 
-            lblGridViewQuantidadeTotal.Text = string.Concat("Quantidade Total: ", dataSourceOrderBy.Count);
-            lblGridViewValorTotal.Text = string.Concat("Valor Total: R$ ", string.Format("{0:#,##0.00}", Convert.ToDecimal(dataSourceOrderBy.Sum(x => x.Value))));
             _dgvEfetuarPagamentoListagemDataSource = dataSourceOrderBy;
 
             dgvEfetuarPagamentoListagem.DataSource = dataSourceOrderBy;
@@ -484,6 +505,33 @@ namespace App.Forms.Forms
             dgvEfetuarPagamentoListagem.Columns[14].Visible = false;
             dgvEfetuarPagamentoListagem.Columns[15].HeaderText = "Data de Alteração";
             dgvEfetuarPagamentoListagem.Columns[15].Visible = false;
+        }
+
+        private void Consolidate(IList<DgvEfetuarPagamentoListagemDataSource> dataSourceOrderBy)
+        {
+            lblGridViewTotais.Text = string
+                .Concat("Total: ", dataSourceOrderBy.Count, " - ", "Total: R$ ", string
+                .Format("{0:#,##0.00}", Convert.ToDecimal(dataSourceOrderBy.Sum(x => x.Value))));
+
+            lblGridViewCartaoCreditoFamilia.Text = string
+                .Concat("Cartão de Crédito: ", dataSourceOrderBy
+                .Count(creditCardFamily => creditCardFamily.Account == Account.CARTAO_CREDITO), " - ", "Cartão de Crédito: R$ ", string
+                .Format("{0:#,##0.00}", Convert
+                .ToDecimal(dataSourceOrderBy
+                .Where(creditCardFamily => creditCardFamily.Account == Account.CARTAO_CREDITO)
+                .Sum(x => x.Value))));
+
+            lblGridViewCartaoCreditoNaira.Text = string
+                .Concat("Cartão de Crédito: ", dataSourceOrderBy
+                .Count(creditCardNaira => creditCardNaira.Account == Account.CARTAO_CREDITO
+                    && creditCardNaira.AdditionalMessage != null && creditCardNaira.AdditionalMessage.ToString()
+                .StartsWith(EH_CARTAO_CREDITO_NAIRA)), " - ", "Cartão de Crédito Naíra: R$ ", string
+                .Format("{0:#,##0.00}", Convert
+                .ToDecimal(dataSourceOrderBy
+                .Where(creditCardNaira => creditCardNaira.Account == Account.CARTAO_CREDITO
+                    && creditCardNaira.AdditionalMessage != null && creditCardNaira.AdditionalMessage.ToString()
+                .StartsWith(EH_CARTAO_CREDITO_NAIRA))
+                .Sum(x => x.Value))));
         }
 
         private static IList<DgvEfetuarPagamentoListagemDataSource> MapSearchResultToDataSource(SearchBillToPayOutput searchBillToPayOutput)
@@ -571,9 +619,96 @@ namespace App.Forms.Forms
 
         private void DgvEfetuarPagamentoListagem_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right && e.RowIndex >= 0)
             {
+                _ = Guid.TryParse(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[0].Value.ToString(), out Guid identificadorContaPagar);
 
+                if (identificadorContaPagar == Guid.Empty)
+                {
+                    MessageBox.Show("Não encontramos o Identificador da Conta pagar conseguir editar.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                var editBillToPayViewModel = new EditBillToPayViewModel
+                {
+                    Id = identificadorContaPagar,
+                    IdFixedInvoice = Convert.ToInt32(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[1].Value?.ToString()),
+                    Account = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[2].Value?.ToString(),
+                    Name = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[3].Value?.ToString(),
+                    Category = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[4].Value?.ToString(),
+                    Value = Convert.ToDecimal(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[5].Value?.ToString()?.Replace("R$ ", "") ?? "0"),
+                    PurchaseDate = DateServiceUtils.GetDateTimeOfString(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[6].Value?.ToString()),
+                    DueDate = DateServiceUtils.GetDateTimeOfString(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[7].Value?.ToString())!.Value,
+                    YearMonth = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[8].Value?.ToString(),
+                    Frequence = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[9].Value?.ToString(),
+                    RegistrationType = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[10].Value?.ToString(),
+                    PayDay = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[11].Value?.ToString(),
+                    HasPay = Convert.ToBoolean(dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[12].Value?.ToString()),
+                    AdditionalMessage = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[13].Value?.ToString(),
+                    LastChangeDate = DateTime.Now
+                };
+
+                FrmEdit frmPagamento = new()
+                {
+                    EditBillToPayViewModel = editBillToPayViewModel
+                };
+
+                frmPagamento.ShowDialog();
+            }
+        }
+
+        private void DgvEfetuarPagamentoListagem_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            foreach (DataGridViewRow row in dgvEfetuarPagamentoListagem.Rows)
+            {
+                if (Convert.ToBoolean(row.Cells[12].Value))
+                {
+                    SetColorRows(row, Color.DarkGreen, Color.White);
+                }
+
+                if (row.Cells[2].Value.ToString() == Account.CARTAO_CREDITO && !Convert.ToBoolean(row.Cells[12].Value))
+                {
+                    SetColorRows(row, Color.DarkOrange, Color.White);
+                }
+
+                if (!string.IsNullOrWhiteSpace(row.Cells[13].Value?.ToString())
+                    && row.Cells[13].Value.ToString()!.StartsWith(EH_CARTAO_CREDITO_NAIRA))
+                {
+                    SetColorRows(row, Color.DimGray, Color.White);
+                }
+            }
+        }
+
+        private static bool ContaPagarVencida(DataGridViewRow row)
+        {
+            return Convert.ToDateTime(row.Cells[7].Value) <= DateTime.Now;
+        }
+
+        private static bool ContaPagarVencimentoProximo(DataGridViewRow row)
+        {
+            bool vencimentoProximo = false;
+            var now = DateTime.Now;
+            var nowMoreFiveDays = now.AddDays(5);
+            var dataVencimento = Convert.ToDateTime(row.Cells[7].Value?.ToString());
+            var descricao = row.Cells[3].Value?.ToString();
+            var index = row.Index;
+
+            if (dataVencimento >= now && dataVencimento <= nowMoreFiveDays)
+            {
+                vencimentoProximo = true;
+            }
+
+            return vencimentoProximo;
+        }
+
+        private static void SetColorRows(DataGridViewRow row, Color backColor, Color foreColor)
+        {
+            var columnsCount = row.Cells.Count;
+
+            for (int i = 0; i < columnsCount; i++)
+            {
+                row.Cells[i].Style.BackColor = backColor;
+                row.Cells[i].Style.ForeColor = foreColor;
             }
         }
     }

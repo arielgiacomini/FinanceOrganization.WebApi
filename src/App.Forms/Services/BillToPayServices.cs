@@ -64,6 +64,24 @@ namespace App.Forms.Services
             return JsonConvert.DeserializeObject<PayBillToPayOutput>(response) ?? new PayBillToPayOutput();
         }
 
+        public static async Task<EditBillToPayOutput> EditBillToPay(EditBillToPayViewModel editBillToPayViewModel)
+        {
+            using var client = new HttpClient();
+
+            var content = new StringContent(JsonConvert.SerializeObject(editBillToPayViewModel), Encoding.UTF8, "application/json");
+
+            var result = client.PutAsync($"{FinanceOrganizationApiUrl}/v1/bills-to-pay/edit", content).Result;
+
+            if (!result.IsSuccessStatusCode)
+            {
+                return new EditBillToPayOutput();
+            }
+
+            var response = await result.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<EditBillToPayOutput>(response) ?? new EditBillToPayOutput();
+        }
+
         private static string GetFinanceOrganizationApiUrl()
         {
             var configUrl = ConfigurationManager.AppSettings["finance-organization-api-url"];
