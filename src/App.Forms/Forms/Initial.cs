@@ -19,10 +19,10 @@ namespace App.Forms.Forms
         private const string TAB_PAGE_PAGAMENTO = "tbpEfetuarPagamento";
         private const string DESCRICAO_GROUP_BOX = "Cadastro de Conta a Pagar";
         private const string EH_CARTAO_CREDITO_NAIRA = "Cartão de Crédito Nubank Naíra";
-        public decimal valorContaPagarDigitadoTextBox = 0;
         private readonly IList<CreateBillToPayViewModel> _createBillToPayViewModels = new List<CreateBillToPayViewModel>();
         private IList<DgvEfetuarPagamentoListagemDataSource> _dgvEfetuarPagamentoListagemDataSource = new List<DgvEfetuarPagamentoListagemDataSource>();
         public static int CurrentIndex { get; set; } = 0;
+        public decimal ValorContaPagarDigitadoTextBox { get; set; } = 0;
 
         public Initial()
         {
@@ -510,22 +510,28 @@ namespace App.Forms.Forms
         private void Consolidate(IList<DgvEfetuarPagamentoListagemDataSource> dataSourceOrderBy)
         {
             lblGridViewTotais.Text = string
-                .Concat("Total: ", dataSourceOrderBy.Count, " - ", "Total: R$ ", string
+                .Concat("Total Geral: ", dataSourceOrderBy.Count, " - ", "R$ ", string
                 .Format("{0:#,##0.00}", Convert.ToDecimal(dataSourceOrderBy.Sum(x => x.Value))));
 
+            lblGridViewTotalPago.Text = string
+                .Concat("Total Pago: ", dataSourceOrderBy.Count(pay => pay.HasPay), " - ", "R$ ", string
+                .Format("{0:#,##0.00}", Convert.ToDecimal(dataSourceOrderBy
+                .Where(pay => pay.HasPay)
+                .Sum(x => x.Value))));
+
             lblGridViewCartaoCreditoFamilia.Text = string
-                .Concat("Cartão de Crédito: ", dataSourceOrderBy
-                .Count(creditCardFamily => creditCardFamily.Account == Account.CARTAO_CREDITO), " - ", "Cartão de Crédito: R$ ", string
+                .Concat("Cartão de Crédito Família: ", dataSourceOrderBy
+                .Count(creditCardFamily => creditCardFamily.Account == Account.CARTAO_CREDITO), " - ", "R$ ", string
                 .Format("{0:#,##0.00}", Convert
                 .ToDecimal(dataSourceOrderBy
                 .Where(creditCardFamily => creditCardFamily.Account == Account.CARTAO_CREDITO)
                 .Sum(x => x.Value))));
 
             lblGridViewCartaoCreditoNaira.Text = string
-                .Concat("Cartão de Crédito: ", dataSourceOrderBy
+                .Concat("Cartão de Crédito Naíra: ", dataSourceOrderBy
                 .Count(creditCardNaira => creditCardNaira.Account == Account.CARTAO_CREDITO
                     && creditCardNaira.AdditionalMessage != null && creditCardNaira.AdditionalMessage.ToString()
-                .StartsWith(EH_CARTAO_CREDITO_NAIRA)), " - ", "Cartão de Crédito Naíra: R$ ", string
+                .StartsWith(EH_CARTAO_CREDITO_NAIRA)), " - ", "R$ ", string
                 .Format("{0:#,##0.00}", Convert
                 .ToDecimal(dataSourceOrderBy
                 .Where(creditCardNaira => creditCardNaira.Account == Account.CARTAO_CREDITO
@@ -610,7 +616,7 @@ namespace App.Forms.Forms
 
         private void TxtContaPagarValor_Leave(object sender, EventArgs e)
         {
-            valorContaPagarDigitadoTextBox = StringDecimalUtils
+            ValorContaPagarDigitadoTextBox = StringDecimalUtils
                 .TranslateStringEmDecimal(txtContaPagarValor.Text);
 
             txtContaPagarValor.Text = StringDecimalUtils
@@ -657,28 +663,6 @@ namespace App.Forms.Forms
             }
         }
 
-        private void DgvEfetuarPagamentoListagem_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            foreach (DataGridViewRow row in dgvEfetuarPagamentoListagem.Rows)
-            {
-                if (Convert.ToBoolean(row.Cells[12].Value))
-                {
-                    SetColorRows(row, Color.DarkGreen, Color.White);
-                }
-
-                if (row.Cells[2].Value.ToString() == Account.CARTAO_CREDITO && !Convert.ToBoolean(row.Cells[12].Value))
-                {
-                    SetColorRows(row, Color.DarkOrange, Color.White);
-                }
-
-                if (!string.IsNullOrWhiteSpace(row.Cells[13].Value?.ToString())
-                    && row.Cells[13].Value.ToString()!.StartsWith(EH_CARTAO_CREDITO_NAIRA))
-                {
-                    SetColorRows(row, Color.DimGray, Color.White);
-                }
-            }
-        }
-
         private static bool ContaPagarVencida(DataGridViewRow row)
         {
             return Convert.ToDateTime(row.Cells[7].Value) <= DateTime.Now;
@@ -709,6 +693,28 @@ namespace App.Forms.Forms
             {
                 row.Cells[i].Style.BackColor = backColor;
                 row.Cells[i].Style.ForeColor = foreColor;
+            }
+        }
+
+        private void DgvEfetuarPagamentoListagem_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            foreach (DataGridViewRow row in dgvEfetuarPagamentoListagem.Rows)
+            {
+                if (Convert.ToBoolean(row.Cells[12].Value))
+                {
+                    SetColorRows(row, Color.DarkGreen, Color.White);
+                }
+
+                if (row.Cells[2].Value.ToString() == Account.CARTAO_CREDITO && !Convert.ToBoolean(row.Cells[12].Value))
+                {
+                    SetColorRows(row, Color.DarkOrange, Color.White);
+                }
+
+                if (!string.IsNullOrWhiteSpace(row.Cells[13].Value?.ToString())
+                    && row.Cells[13].Value.ToString()!.StartsWith(EH_CARTAO_CREDITO_NAIRA))
+                {
+                    SetColorRows(row, Color.DimGray, Color.White);
+                }
             }
         }
     }
