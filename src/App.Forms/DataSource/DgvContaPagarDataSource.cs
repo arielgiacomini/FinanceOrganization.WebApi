@@ -1,6 +1,4 @@
-﻿using App.Forms.Enums;
-
-namespace App.Forms.DataSource
+﻿namespace App.Forms.DataSource
 {
     public class DgvContaPagarDataSource
     {

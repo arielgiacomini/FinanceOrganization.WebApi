@@ -1,7 +1,6 @@
 ﻿using Application;
 using Domain.Options;
 using Infrastructure;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
