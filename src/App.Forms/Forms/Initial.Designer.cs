@@ -63,6 +63,7 @@ namespace App.Forms.Forms
             cboContaPagarTipoConta = new ComboBox();
             tbpContaPagarCartaoCredito = new TabPage();
             tbpEfetuarPagamento = new TabPage();
+            lblGridViewTotalPago = new Label();
             lblGridViewCartaoCreditoNaira = new Label();
             lblGridViewCartaoCreditoFamilia = new Label();
             lblGridViewTotais = new Label();
@@ -404,6 +405,7 @@ namespace App.Forms.Forms
             // 
             // tbpEfetuarPagamento
             // 
+            tbpEfetuarPagamento.Controls.Add(lblGridViewTotalPago);
             tbpEfetuarPagamento.Controls.Add(lblGridViewCartaoCreditoNaira);
             tbpEfetuarPagamento.Controls.Add(lblGridViewCartaoCreditoFamilia);
             tbpEfetuarPagamento.Controls.Add(lblGridViewTotais);
@@ -423,12 +425,23 @@ namespace App.Forms.Forms
             tbpEfetuarPagamento.Text = "Pagamento";
             tbpEfetuarPagamento.UseVisualStyleBackColor = true;
             // 
+            // lblGridViewTotalPago
+            // 
+            lblGridViewTotalPago.AutoSize = true;
+            lblGridViewTotalPago.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
+            lblGridViewTotalPago.ForeColor = Color.Green;
+            lblGridViewTotalPago.Location = new Point(10, 65);
+            lblGridViewTotalPago.Name = "lblGridViewTotalPago";
+            lblGridViewTotalPago.Size = new Size(110, 17);
+            lblGridViewTotalPago.TabIndex = 13;
+            lblGridViewTotalPago.Text = "Valor Total Pago";
+            // 
             // lblGridViewCartaoCreditoNaira
             // 
             lblGridViewCartaoCreditoNaira.AutoSize = true;
             lblGridViewCartaoCreditoNaira.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
             lblGridViewCartaoCreditoNaira.ForeColor = Color.DimGray;
-            lblGridViewCartaoCreditoNaira.Location = new Point(9, 93);
+            lblGridViewCartaoCreditoNaira.Location = new Point(268, 65);
             lblGridViewCartaoCreditoNaira.Name = "lblGridViewCartaoCreditoNaira";
             lblGridViewCartaoCreditoNaira.Size = new Size(153, 17);
             lblGridViewCartaoCreditoNaira.TabIndex = 12;
@@ -439,7 +452,7 @@ namespace App.Forms.Forms
             lblGridViewCartaoCreditoFamilia.AutoSize = true;
             lblGridViewCartaoCreditoFamilia.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point);
             lblGridViewCartaoCreditoFamilia.ForeColor = Color.DarkOrange;
-            lblGridViewCartaoCreditoFamilia.Location = new Point(8, 73);
+            lblGridViewCartaoCreditoFamilia.Location = new Point(267, 45);
             lblGridViewCartaoCreditoFamilia.Name = "lblGridViewCartaoCreditoFamilia";
             lblGridViewCartaoCreditoFamilia.Size = new Size(165, 17);
             lblGridViewCartaoCreditoFamilia.TabIndex = 11;
@@ -450,7 +463,7 @@ namespace App.Forms.Forms
             lblGridViewTotais.AutoSize = true;
             lblGridViewTotais.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             lblGridViewTotais.ForeColor = Color.OrangeRed;
-            lblGridViewTotais.Location = new Point(8, 52);
+            lblGridViewTotais.Location = new Point(10, 42);
             lblGridViewTotais.Name = "lblGridViewTotais";
             lblGridViewTotais.Size = new Size(99, 20);
             lblGridViewTotais.TabIndex = 9;
@@ -532,6 +545,7 @@ namespace App.Forms.Forms
             // dgvEfetuarPagamentoListagem
             // 
             dgvEfetuarPagamentoListagem.AllowUserToOrderColumns = true;
+            dgvEfetuarPagamentoListagem.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvEfetuarPagamentoListagem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             dgvEfetuarPagamentoListagem.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
             dgvEfetuarPagamentoListagem.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -543,14 +557,14 @@ namespace App.Forms.Forms
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
             dgvEfetuarPagamentoListagem.DefaultCellStyle = dataGridViewCellStyle1;
-            dgvEfetuarPagamentoListagem.Location = new Point(8, 112);
+            dgvEfetuarPagamentoListagem.Location = new Point(8, 85);
             dgvEfetuarPagamentoListagem.Name = "dgvEfetuarPagamentoListagem";
             dgvEfetuarPagamentoListagem.RowTemplate.Height = 25;
-            dgvEfetuarPagamentoListagem.Size = new Size(1182, 362);
+            dgvEfetuarPagamentoListagem.Size = new Size(1182, 389);
             dgvEfetuarPagamentoListagem.TabIndex = 0;
             dgvEfetuarPagamentoListagem.CellDoubleClick += DgvEfetuarPagamentoListagem_CellDoubleClick;
-            dgvEfetuarPagamentoListagem.CellFormatting += DgvEfetuarPagamentoListagem_CellFormatting;
             dgvEfetuarPagamentoListagem.CellMouseDown += DgvEfetuarPagamentoListagem_CellMouseDown;
+            dgvEfetuarPagamentoListagem.RowsAdded += DgvEfetuarPagamentoListagem_RowsAdded;
             // 
             // Initial
             // 
@@ -618,5 +632,6 @@ namespace App.Forms.Forms
         private Label lblGridViewTotais;
         private Label lblGridViewCartaoCreditoFamilia;
         private Label lblGridViewCartaoCreditoNaira;
+        private Label lblGridViewTotalPago;
     }
 }
