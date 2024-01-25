@@ -23,6 +23,6 @@ namespace App.Forms.ViewModel
         public DateTime CreationDate { get; set; }
         public DateTime? LastChangeDate { get; set; }
         public bool RegistrationSuccess { get; set; }
-        public RegistrationStatus Status { get; set; }
+        public RegistrationStatus Status { get; set; } = RegistrationStatus.AwaitRequestAPI;
     }
 }

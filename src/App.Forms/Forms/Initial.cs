@@ -19,10 +19,11 @@ namespace App.Forms.Forms
         private const string TAB_PAGE_PAGAMENTO = "tbpEfetuarPagamento";
         private const string DESCRICAO_GROUP_BOX = "Cadastro de Conta a Pagar";
         private const string EH_CARTAO_CREDITO_NAIRA = "Cartão de Crédito Nubank Naíra";
-        private readonly IList<CreateBillToPayViewModel> _createBillToPayViewModels = new List<CreateBillToPayViewModel>();
+        private readonly Dictionary<int, CreateBillToPayViewModel> _createBillToPayViewModels = new Dictionary<int, CreateBillToPayViewModel>();
         private IList<DgvEfetuarPagamentoListagemDataSource> _dgvEfetuarPagamentoListagemDataSource = new List<DgvEfetuarPagamentoListagemDataSource>();
         public static int CurrentIndex { get; set; } = 0;
         public decimal ValorContaPagarDigitadoTextBox { get; set; } = 0;
+        public int Identifier { get; set; } = 0;
 
         public Initial()
         {
@@ -47,7 +48,7 @@ namespace App.Forms.Forms
 
         private async void BtnContaPagarCadastrar_Click(object sender, EventArgs e)
         {
-            var created = RegistrationStatus.Created;
+            Identifier++;
 
             var createBillToPay = new CreateBillToPayViewModel
             {
@@ -63,28 +64,39 @@ namespace App.Forms.Forms
                 BestPayDay = Convert.ToInt32(cboContaPagarMelhorDiaPagamento.Text),
                 AdditionalMessage = rtbContaPagarMensagemAdicional.Text,
                 CreationDate = DateTime.Now,
-                LastChangeDate = null
+                LastChangeDate = null,
+                Status = RegistrationStatus.AwaitRequestAPI
             };
 
-            _createBillToPayViewModels.Add(createBillToPay);
+            _createBillToPayViewModels.Add(Identifier, createBillToPay);
+
+            UpdateDataGridView();
 
             var result = await BillToPayServices.CreateBillToPay(createBillToPay);
 
-            TratamentoOutput(created, result);
+            _createBillToPayViewModels[Identifier].Status = RegistrationStatus.AwaitResponseAPI;
+
+            UpdateDataGridView();
+
+            TratamentoOutput(Identifier, result);
         }
 
-        private void TratamentoOutput(RegistrationStatus created, CreateBillToPayOutput result)
+        private void TratamentoOutput(int identifier, CreateBillToPayOutput result)
         {
             if (result.Output.Status == OutputStatus.Success)
             {
-                MessageBox.Show(result.Output.Data.ToString(),
-                    "Cadastro de Conta Realizado com Sucesso.",
+                MessageBox.Show(result.Output.Message,
+                    "Cadastro de Conta a Pagar Realizado com Sucesso.",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                PreencherContaPagarDataGridViewHistory(_createBillToPayViewModels, created);
+                _createBillToPayViewModels[identifier].Status = RegistrationStatus.Created;
+                UpdateDataGridView();
             }
             else
             {
+                _createBillToPayViewModels[identifier].Status = RegistrationStatus.RegistrationError;
+                UpdateDataGridView();
+
                 var information = string.Empty;
 
                 var errors = result.Output.Errors;
@@ -106,9 +118,9 @@ namespace App.Forms.Forms
             }
         }
 
-        private void PreencherContaPagarDataGridViewHistory(IList<CreateBillToPayViewModel> billsToPayViewModel, RegistrationStatus registrationStatus)
+        private void UpdateDataGridView()
         {
-            dgvContaPagar.DataSource = MapCreateBillToPayViewModelToDataSource(billsToPayViewModel, registrationStatus);
+            dgvContaPagar.DataSource = MapCreateBillToPayViewModelToDataSource(_createBillToPayViewModels);
             dgvContaPagar.Columns[0].HeaderText = "Descrição";
             dgvContaPagar.Columns[1].HeaderText = "Conta";
             dgvContaPagar.Columns[2].HeaderText = "Frequência";
@@ -123,31 +135,31 @@ namespace App.Forms.Forms
             dgvContaPagar.Columns[11].HeaderText = "Status";
         }
 
-        private static IList<DgvContaPagarDataSource> MapCreateBillToPayViewModelToDataSource(IList<CreateBillToPayViewModel> billsToPayViewModel, RegistrationStatus status)
+        private static IList<DgvContaPagarDataSource> MapCreateBillToPayViewModelToDataSource(Dictionary<int, CreateBillToPayViewModel> billToPayViewModel)
         {
-            IList<DgvContaPagarDataSource> dgvContaPagarDataSources = new List<DgvContaPagarDataSource>();
-            foreach (var billToPayViewModel in billsToPayViewModel)
+            IList<DgvContaPagarDataSource> list = new List<DgvContaPagarDataSource>();
+            foreach (var item in billToPayViewModel.Values)
             {
                 var dgvContaPagarDataSource = new DgvContaPagarDataSource()
                 {
-                    Name = billToPayViewModel.Name,
-                    Account = billToPayViewModel.Account,
-                    Frequence = billToPayViewModel.Frequence,
-                    RegistrationType = billToPayViewModel.RegistrationType,
-                    InitialMonthYear = billToPayViewModel.InitialMonthYear,
-                    FynallyMonthYear = billToPayViewModel.FynallyMonthYear,
-                    Category = billToPayViewModel.Category,
-                    Value = billToPayViewModel.Value,
-                    PurchaseDate = billToPayViewModel.PurchaseDate,
-                    BestPayDay = billToPayViewModel.BestPayDay,
-                    AdditionalMessage = billToPayViewModel.AdditionalMessage,
-                    Status = status.ToString()
+                    Name = item.Name,
+                    Account = item.Account,
+                    Frequence = item.Frequence,
+                    RegistrationType = item.RegistrationType,
+                    InitialMonthYear = item.InitialMonthYear,
+                    FynallyMonthYear = item.FynallyMonthYear,
+                    Category = item.Category,
+                    Value = item.Value,
+                    PurchaseDate = item.PurchaseDate,
+                    BestPayDay = item.BestPayDay,
+                    AdditionalMessage = item.AdditionalMessage,
+                    Status = item.Status.ToString()
                 };
 
-                dgvContaPagarDataSources.Add(dgvContaPagarDataSource);
+                list.Add(dgvContaPagarDataSource);
             }
 
-            return dgvContaPagarDataSources;
+            return list;
         }
 
         private void PreencherLabelDataCriacao()
@@ -714,6 +726,32 @@ namespace App.Forms.Forms
                     && row.Cells[13].Value.ToString()!.StartsWith(EH_CARTAO_CREDITO_NAIRA))
                 {
                     SetColorRows(row, Color.DimGray, Color.White);
+                }
+            }
+        }
+
+        private void DgvContaPagar_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            foreach (DataGridViewRow row in dgvContaPagar.Rows)
+            {
+                if (row.Cells[11].Value == RegistrationStatus.AwaitRequestAPI.ToString())
+                {
+                    SetColorRows(row, Color.Yellow, Color.Black);
+                }
+
+                if (row.Cells[11].Value == RegistrationStatus.AwaitResponseAPI.ToString())
+                {
+                    SetColorRows(row, Color.DarkOrange, Color.Black);
+                }
+
+                if (row.Cells[11].Value == RegistrationStatus.Created.ToString())
+                {
+                    SetColorRows(row, Color.DarkGreen, Color.White);
+                }
+
+                if (row.Cells[11].Value == RegistrationStatus.RegistrationError.ToString())
+                {
+                    SetColorRows(row, Color.DarkRed, Color.White);
                 }
             }
         }
