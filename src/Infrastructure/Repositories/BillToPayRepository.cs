@@ -2,15 +2,19 @@
 using Domain.Interfaces;
 using Infrastructure.Database.Context;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Infrastructure.Repositories
 {
     public class BillToPayRepository : IBillToPayRepository
     {
         private readonly FinanceOrganizationContext _context;
+        private readonly ILogger _logger;
 
-        public BillToPayRepository(FinanceOrganizationContext context)
+        public BillToPayRepository(ILogger logger,
+            FinanceOrganizationContext context)
         {
+            _logger = logger;
             _context = context;
         }
 
@@ -88,11 +92,26 @@ namespace Infrastructure.Repositories
 
         public async Task<int> SaveRange(IList<BillToPay> billsToPay)
         {
-            _context.AddRange(billsToPay);
+            int contador = 0;
 
-            var result = _context.SaveChanges();
+            foreach (var item in billsToPay)
+            {
+                try
+                {
+                    _context.Add(item);
 
-            return await Task.FromResult(result);
+                    _context.SaveChanges();
+
+                    contador++;
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex, "{message}, item: {@item}", ex.Message, item);
+                    throw;
+                }
+            }
+
+            return await Task.FromResult(contador);
         }
 
         public async Task<int> Edit(BillToPay billToPay)

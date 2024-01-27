@@ -31,6 +31,7 @@ namespace Infrastructure.Repositories
                             (fixedInvoice.LastChangeDate == null
                          || (fixedInvoice.LastChangeDate <= DateTime.Now.AddDays(daysLater)
                          && fixedInvoice.RegistrationType == registrationType)))
+                   .OrderBy(orderBy => orderBy.Id)
                    .ToListAsync();
 
             return result;

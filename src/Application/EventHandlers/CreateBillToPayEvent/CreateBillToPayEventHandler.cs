@@ -136,7 +136,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 }
             }
 
-            if (fixedInvoice.InitialMonthYear == fixedInvoice.FynallyMonthYear)
+            if (fixedInvoice.InitialMonthYear == fixedInvoice.FynallyMonthYear
+                && DateServiceUtils.IsCurrentMonth(fixedInvoice.InitialMonthYear, fixedInvoice.FynallyMonthYear))
             {
                 qtdMonthAdd = 0;
             }
@@ -239,6 +240,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             if (result?.FynallyMonthYear?.Length > 0)
             {
+                await EditFixedInvoiceNow(billToPay);
                 return;
             }
 
@@ -250,6 +252,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             if (qtdMonthAdd <= 0 || totalMonths > _billToPayOptions.HowManyMonthForward)
             {
+                await EditFixedInvoiceNow(billToPay);
                 return;
             }
 
@@ -299,7 +302,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     HasPay = false,
                     AdditionalMessage = billToPay.AdditionalMessage,
                     CreationDate = DateTime.Now,
-                    LastChangeDate = null
+                    LastChangeDate = new DateTime(1753, 01, 01, 12, 0, 0, DateTimeKind.Local)
                 };
             }
             else
@@ -321,7 +324,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     HasPay = false,
                     AdditionalMessage = fixedInvoice.AdditionalMessage,
                     CreationDate = DateTime.Now,
-                    LastChangeDate = null
+                    LastChangeDate = new DateTime(1753, 01, 01, 12, 0, 0, DateTimeKind.Local)
                 };
 
                 if (EnterPaid(fixedInvoice))
@@ -335,10 +338,41 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             }
         }
 
+        public async Task EditFixedInvoiceNow(BillToPay billToPay)
+        {
+            var fixedInvoiceByDb = await _fixedInvoiceRepository.GetById(billToPay.IdFixedInvoice);
+
+            if (fixedInvoiceByDb == null)
+            {
+                return;
+            }
+
+            var fixedInvoice = new FixedInvoice()
+            {
+                Id = fixedInvoiceByDb!.Id,
+                Name = fixedInvoiceByDb.Name,
+                Account = fixedInvoiceByDb.Account,
+                Frequence = fixedInvoiceByDb.Frequence,
+                RegistrationType = fixedInvoiceByDb.RegistrationType,
+                PurchaseDate = fixedInvoiceByDb.PurchaseDate,
+                InitialMonthYear = fixedInvoiceByDb.InitialMonthYear,
+                FynallyMonthYear = fixedInvoiceByDb.FynallyMonthYear,
+                Category = fixedInvoiceByDb.Category,
+                Value = fixedInvoiceByDb.Value,
+                BestPayDay = fixedInvoiceByDb.BestPayDay,
+                AdditionalMessage = fixedInvoiceByDb.AdditionalMessage,
+                CreationDate = fixedInvoiceByDb.CreationDate,
+                LastChangeDate = DateTime.Now
+            };
+
+            await _fixedInvoiceRepository.Edit(fixedInvoice);
+        }
+
         private static void EditFixedInvoice(FixedInvoice fixedInvoice)
         {
             fixedInvoice.LastChangeDate = DateTime.Now;
         }
+
 
         private static BillToPay? GetLastRegistrationBillToPay(IList<BillToPay> billsToPay)
         {
