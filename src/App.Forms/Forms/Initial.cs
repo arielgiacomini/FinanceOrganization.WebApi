@@ -55,7 +55,7 @@ namespace App.Forms.Forms
             tbcInitial.SelectedTab = tbcInitial.TabPages[(tbcInitial.TabCount) - 1];
         }
 
-        private string AdjusteInfoHeader()
+        private string AdjusteInfoHeader(DateTime? lastUpdate = null)
         {
             string? lblInfoHeaderIntern;
 
@@ -65,7 +65,7 @@ namespace App.Forms.Forms
                 lblInfoHeader.ForeColor = Color.White;
                 lblVersion.BackColor = Color.OrangeRed;
                 lblVersion.ForeColor = Color.White;
-                lblInfoHeaderIntern = string.Concat("CFM - PRODUÇÃO", " - ", InfoHeader.Url);
+                lblInfoHeaderIntern = string.Concat("CFM - PRODUÇÃO", " - ", InfoHeader.Url, " - ", "Última Busca: ", lastUpdate ?? DateTime.Now);
             }
             else
             {
@@ -73,7 +73,7 @@ namespace App.Forms.Forms
                 lblInfoHeader.ForeColor = Color.White;
                 lblVersion.BackColor = Color.DarkGreen;
                 lblVersion.ForeColor = Color.White;
-                lblInfoHeaderIntern = string.Concat("CFM - HOMOLOGAÇÃO", " - ", InfoHeader.Url);
+                lblInfoHeaderIntern = string.Concat("CFM - HOMOLOGAÇÃO", " - ", InfoHeader.Url, " - ", "Última Busca: ", lastUpdate ?? DateTime.Now);
             }
 
             return lblInfoHeaderIntern;
@@ -488,6 +488,7 @@ namespace App.Forms.Forms
 
         private async void BtnEfetuarPagamentoBuscar_Click(object sender, EventArgs e)
         {
+            lblInfoHeader.Text = AdjusteInfoHeader(DateTime.Now);
             await BuscarListaPagamentos();
         }
 
