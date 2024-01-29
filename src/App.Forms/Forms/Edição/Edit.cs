@@ -97,8 +97,8 @@ namespace App.Forms.Forms.Edição
             EditBillToPayViewModel.Category = cboContaPagarCategory.Text;
             EditBillToPayViewModel.Value = Convert.ToDecimal(txtContaPagarValor.Text.Replace("R$ ", ""));
             EditBillToPayViewModel.PurchaseDate = DateServiceUtils.GetDateTimeOfString(dtpContaPagarDataCompra.Text);
-            EditBillToPayViewModel.PayDay = txtContaPagarDataPagamento.Text;
-            EditBillToPayViewModel.HasPay = rdbPagamentoPago.Checked ? rdbPagamentoPago.Checked : rdbPagamentoNaoPago.Checked;
+            EditBillToPayViewModel.PayDay = string.IsNullOrWhiteSpace(txtContaPagarDataPagamento.Text) ? null : txtContaPagarDataPagamento.Text;
+            EditBillToPayViewModel.HasPay = rdbPagamentoPago.Checked;
             EditBillToPayViewModel.DueDate = DateServiceUtils.GetDateTimeOfString(dtpContaPagarDataVencimento.Text) ?? DateTime.Now;
             EditBillToPayViewModel.AdditionalMessage = rtbContaPagarMensagemAdicional.Text;
             EditBillToPayViewModel.LastChangeDate = DateServiceUtils.GetDateTimeOfString(lblContaPagarDataCriacao.Text) ?? DateTime.Now;
