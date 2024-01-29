@@ -76,6 +76,8 @@ namespace App.Forms.Forms
             lblEfetuarPagamentoAnoMes = new Label();
             cboEfetuarPagamentoAnoMes = new ComboBox();
             dgvEfetuarPagamentoListagem = new DataGridView();
+            lblVersion = new Label();
+            lblInfoHeader = new Label();
             tbcInitial.SuspendLayout();
             tbpContaPagarLivre.SuspendLayout();
             grbTemplateContaPagar.SuspendLayout();
@@ -90,10 +92,10 @@ namespace App.Forms.Forms
             tbcInitial.Controls.Add(tbpContaPagarLivre);
             tbcInitial.Controls.Add(tbpContaPagarCartaoCredito);
             tbcInitial.Controls.Add(tbpEfetuarPagamento);
-            tbcInitial.Location = new Point(0, 0);
+            tbcInitial.Location = new Point(0, 21);
             tbcInitial.Name = "tbcInitial";
             tbcInitial.SelectedIndex = 0;
-            tbcInitial.Size = new Size(1210, 510);
+            tbcInitial.Size = new Size(1210, 489);
             tbcInitial.TabIndex = 14;
             tbcInitial.SelectedIndexChanged += TbcInitial_SelectedIndexChanged;
             // 
@@ -103,13 +105,14 @@ namespace App.Forms.Forms
             tbpContaPagarLivre.Location = new Point(4, 24);
             tbpContaPagarLivre.Name = "tbpContaPagarLivre";
             tbpContaPagarLivre.Padding = new Padding(3);
-            tbpContaPagarLivre.Size = new Size(1202, 482);
+            tbpContaPagarLivre.Size = new Size(1202, 461);
             tbpContaPagarLivre.TabIndex = 0;
             tbpContaPagarLivre.Text = "Conta a Pagar - Livre";
             tbpContaPagarLivre.UseVisualStyleBackColor = true;
             // 
             // grbTemplateContaPagar
             // 
+            grbTemplateContaPagar.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             grbTemplateContaPagar.Controls.Add(btnContaPagarCadastrar);
             grbTemplateContaPagar.Controls.Add(dgvContaPagar);
             grbTemplateContaPagar.Controls.Add(grbContaPagarHistorico);
@@ -158,6 +161,7 @@ namespace App.Forms.Forms
             // 
             // dgvContaPagar
             // 
+            dgvContaPagar.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             dgvContaPagar.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             dgvContaPagar.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
             dgvContaPagar.BackgroundColor = SystemColors.Window;
@@ -165,15 +169,16 @@ namespace App.Forms.Forms
             dgvContaPagar.Location = new Point(25, 249);
             dgvContaPagar.Name = "dgvContaPagar";
             dgvContaPagar.RowTemplate.Height = 25;
-            dgvContaPagar.Size = new Size(1128, 203);
+            dgvContaPagar.Size = new Size(1128, 183);
             dgvContaPagar.TabIndex = 15;
             dgvContaPagar.RowsAdded += DgvContaPagar_RowsAdded;
             // 
             // grbContaPagarHistorico
             // 
+            grbContaPagarHistorico.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             grbContaPagarHistorico.Location = new Point(8, 227);
             grbContaPagarHistorico.Name = "grbContaPagarHistorico";
-            grbContaPagarHistorico.Size = new Size(1159, 243);
+            grbContaPagarHistorico.Size = new Size(1159, 211);
             grbContaPagarHistorico.TabIndex = 28;
             grbContaPagarHistorico.TabStop = false;
             grbContaPagarHistorico.Text = "Histórico de Cadastros";
@@ -399,7 +404,7 @@ namespace App.Forms.Forms
             tbpContaPagarCartaoCredito.Location = new Point(4, 24);
             tbpContaPagarCartaoCredito.Name = "tbpContaPagarCartaoCredito";
             tbpContaPagarCartaoCredito.Padding = new Padding(3);
-            tbpContaPagarCartaoCredito.Size = new Size(1202, 482);
+            tbpContaPagarCartaoCredito.Size = new Size(1202, 461);
             tbpContaPagarCartaoCredito.TabIndex = 1;
             tbpContaPagarCartaoCredito.Text = "Lançar no Cartão de Crédito";
             tbpContaPagarCartaoCredito.UseVisualStyleBackColor = true;
@@ -421,7 +426,7 @@ namespace App.Forms.Forms
             tbpEfetuarPagamento.Controls.Add(dgvEfetuarPagamentoListagem);
             tbpEfetuarPagamento.Location = new Point(4, 24);
             tbpEfetuarPagamento.Name = "tbpEfetuarPagamento";
-            tbpEfetuarPagamento.Size = new Size(1202, 482);
+            tbpEfetuarPagamento.Size = new Size(1202, 461);
             tbpEfetuarPagamento.TabIndex = 2;
             tbpEfetuarPagamento.Text = "Pagamento";
             tbpEfetuarPagamento.UseVisualStyleBackColor = true;
@@ -562,17 +567,44 @@ namespace App.Forms.Forms
             dgvEfetuarPagamentoListagem.Location = new Point(8, 85);
             dgvEfetuarPagamentoListagem.Name = "dgvEfetuarPagamentoListagem";
             dgvEfetuarPagamentoListagem.RowTemplate.Height = 25;
-            dgvEfetuarPagamentoListagem.Size = new Size(1182, 389);
+            dgvEfetuarPagamentoListagem.Size = new Size(1182, 368);
             dgvEfetuarPagamentoListagem.TabIndex = 0;
             dgvEfetuarPagamentoListagem.CellDoubleClick += DgvEfetuarPagamentoListagem_CellDoubleClick;
             dgvEfetuarPagamentoListagem.CellMouseDown += DgvEfetuarPagamentoListagem_CellMouseDown;
             dgvEfetuarPagamentoListagem.RowsAdded += DgvEfetuarPagamentoListagem_RowsAdded;
+            // 
+            // lblVersion
+            // 
+            lblVersion.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            lblVersion.BackColor = Color.DarkOrange;
+            lblVersion.ForeColor = Color.DimGray;
+            lblVersion.Location = new Point(992, 3);
+            lblVersion.Name = "lblVersion";
+            lblVersion.RightToLeft = RightToLeft.Yes;
+            lblVersion.Size = new Size(214, 14);
+            lblVersion.TabIndex = 30;
+            lblVersion.Text = "Versão: 1.1.0";
+            // 
+            // lblInfoHeader
+            // 
+            lblInfoHeader.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            lblInfoHeader.BackColor = Color.DarkOrange;
+            lblInfoHeader.FlatStyle = FlatStyle.Popup;
+            lblInfoHeader.ForeColor = Color.DimGray;
+            lblInfoHeader.Location = new Point(0, 3);
+            lblInfoHeader.Name = "lblInfoHeader";
+            lblInfoHeader.Size = new Size(1208, 14);
+            lblInfoHeader.TabIndex = 31;
+            lblInfoHeader.Text = "Ambiente: Produção | API Url Destino: ";
+            lblInfoHeader.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // Initial
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1213, 510);
+            Controls.Add(lblVersion);
+            Controls.Add(lblInfoHeader);
             Controls.Add(tbcInitial);
             Name = "Initial";
             StartPosition = FormStartPosition.CenterScreen;
@@ -635,5 +667,7 @@ namespace App.Forms.Forms
         private Label lblGridViewCartaoCreditoFamilia;
         private Label lblGridViewCartaoCreditoNaira;
         private Label lblGridViewTotalPago;
+        private Label lblVersion;
+        private Label lblInfoHeader;
     }
 }

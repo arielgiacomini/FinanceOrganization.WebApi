@@ -1,4 +1,5 @@
-﻿using App.Forms.DataSource;
+﻿using App.Forms.Config;
+using App.Forms.DataSource;
 using App.Forms.Enums;
 using App.Forms.Forms.Edição;
 using App.Forms.Forms.Pay;
@@ -24,14 +25,22 @@ namespace App.Forms.Forms
         public static int CurrentIndex { get; set; } = 0;
         public decimal ValorContaPagarDigitadoTextBox { get; set; } = 0;
         public int Identifier { get; set; } = 0;
+        public InfoHeader InfoHeader { get; set; } = new InfoHeader();
 
-        public Initial()
+        public Initial(InfoHeader? infoHeader)
         {
+            if (infoHeader != null)
+            {
+                InfoHeader = infoHeader;
+            }
+
             InitializeComponent();
         }
 
         private async void Initial_Load(object sender, EventArgs e)
         {
+            lblVersion.Text = InfoHeader.Version;
+            lblInfoHeader.Text = AdjusteInfoHeader();
             PreencherLabelDataCriacao();
             PreencherComboBoxContaPagarCategoria();
             PreencherComboBoxContaPagarTipoConta();
@@ -44,6 +53,30 @@ namespace App.Forms.Forms
             PreencherContaPagarTipoCadastro();
             await BuscarListaPagamentos();
             tbcInitial.SelectedTab = tbcInitial.TabPages[(tbcInitial.TabCount) - 1];
+        }
+
+        private string AdjusteInfoHeader()
+        {
+            string? lblInfoHeaderIntern;
+
+            if (InfoHeader.IsProductionEnvironment)
+            {
+                lblInfoHeader.BackColor = Color.OrangeRed;
+                lblInfoHeader.ForeColor = Color.White;
+                lblVersion.BackColor = Color.OrangeRed;
+                lblVersion.ForeColor = Color.White;
+                lblInfoHeaderIntern = string.Concat("CFM - PRODUÇÃO", " - ", InfoHeader.Url);
+            }
+            else
+            {
+                lblInfoHeader.BackColor = Color.DarkGreen;
+                lblInfoHeader.ForeColor = Color.White;
+                lblVersion.BackColor = Color.DarkGreen;
+                lblVersion.ForeColor = Color.White;
+                lblInfoHeaderIntern = string.Concat("CFM - HOMOLOGAÇÃO", " - ", InfoHeader.Url);
+            }
+
+            return lblInfoHeaderIntern;
         }
 
         private async void BtnContaPagarCadastrar_Click(object sender, EventArgs e)
