@@ -164,7 +164,7 @@ namespace App.Forms.Forms
             dgvContaPagar.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             dgvContaPagar.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             dgvContaPagar.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
-            dgvContaPagar.BackgroundColor = SystemColors.Window;
+            dgvContaPagar.BackgroundColor = SystemColors.AppWorkspace;
             dgvContaPagar.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvContaPagar.Location = new Point(25, 249);
             dgvContaPagar.Name = "dgvContaPagar";
@@ -495,8 +495,9 @@ namespace App.Forms.Forms
             // 
             // lblEfetuarPagamentoInformativoDuploCliqueGrid
             // 
+            lblEfetuarPagamentoInformativoDuploCliqueGrid.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblEfetuarPagamentoInformativoDuploCliqueGrid.AutoSize = true;
-            lblEfetuarPagamentoInformativoDuploCliqueGrid.Location = new Point(856, 57);
+            lblEfetuarPagamentoInformativoDuploCliqueGrid.Location = new Point(863, 67);
             lblEfetuarPagamentoInformativoDuploCliqueGrid.Name = "lblEfetuarPagamentoInformativoDuploCliqueGrid";
             lblEfetuarPagamentoInformativoDuploCliqueGrid.Size = new Size(334, 15);
             lblEfetuarPagamentoInformativoDuploCliqueGrid.TabIndex = 6;
@@ -504,8 +505,9 @@ namespace App.Forms.Forms
             // 
             // lblPagamentoInfo
             // 
+            lblPagamentoInfo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblPagamentoInfo.AutoSize = true;
-            lblPagamentoInfo.Location = new Point(897, 18);
+            lblPagamentoInfo.Location = new Point(910, 18);
             lblPagamentoInfo.Name = "lblPagamentoInfo";
             lblPagamentoInfo.Size = new Size(287, 15);
             lblPagamentoInfo.TabIndex = 5;
@@ -513,7 +515,8 @@ namespace App.Forms.Forms
             // 
             // btnPagamentoAvulso
             // 
-            btnPagamentoAvulso.Location = new Point(779, 6);
+            btnPagamentoAvulso.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnPagamentoAvulso.Location = new Point(792, 6);
             btnPagamentoAvulso.Name = "btnPagamentoAvulso";
             btnPagamentoAvulso.Size = new Size(112, 38);
             btnPagamentoAvulso.TabIndex = 4;
@@ -550,11 +553,12 @@ namespace App.Forms.Forms
             // 
             // dgvEfetuarPagamentoListagem
             // 
-            dgvEfetuarPagamentoListagem.AllowUserToOrderColumns = true;
+            dgvEfetuarPagamentoListagem.AllowUserToAddRows = false;
+            dgvEfetuarPagamentoListagem.AllowUserToDeleteRows = false;
             dgvEfetuarPagamentoListagem.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dgvEfetuarPagamentoListagem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvEfetuarPagamentoListagem.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dgvEfetuarPagamentoListagem.BackgroundColor = SystemColors.HighlightText;
+            dgvEfetuarPagamentoListagem.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dgvEfetuarPagamentoListagem.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;
+            dgvEfetuarPagamentoListagem.BackgroundColor = SystemColors.AppWorkspace;
             dgvEfetuarPagamentoListagem.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = SystemColors.Window;
@@ -564,10 +568,13 @@ namespace App.Forms.Forms
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
             dgvEfetuarPagamentoListagem.DefaultCellStyle = dataGridViewCellStyle1;
+            dgvEfetuarPagamentoListagem.EditMode = DataGridViewEditMode.EditProgrammatically;
             dgvEfetuarPagamentoListagem.Location = new Point(8, 85);
             dgvEfetuarPagamentoListagem.Name = "dgvEfetuarPagamentoListagem";
+            dgvEfetuarPagamentoListagem.ReadOnly = true;
             dgvEfetuarPagamentoListagem.RowTemplate.Height = 25;
-            dgvEfetuarPagamentoListagem.Size = new Size(1182, 368);
+            dgvEfetuarPagamentoListagem.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvEfetuarPagamentoListagem.Size = new Size(1189, 373);
             dgvEfetuarPagamentoListagem.TabIndex = 0;
             dgvEfetuarPagamentoListagem.CellDoubleClick += DgvEfetuarPagamentoListagem_CellDoubleClick;
             dgvEfetuarPagamentoListagem.CellMouseDown += DgvEfetuarPagamentoListagem_CellMouseDown;
@@ -575,13 +582,14 @@ namespace App.Forms.Forms
             // 
             // lblVersion
             // 
-            lblVersion.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            lblVersion.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblVersion.BackColor = Color.DarkOrange;
+            lblVersion.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             lblVersion.ForeColor = Color.DimGray;
-            lblVersion.Location = new Point(992, 3);
+            lblVersion.Location = new Point(1107, 0);
             lblVersion.Name = "lblVersion";
             lblVersion.RightToLeft = RightToLeft.Yes;
-            lblVersion.Size = new Size(214, 14);
+            lblVersion.Size = new Size(103, 21);
             lblVersion.TabIndex = 30;
             lblVersion.Text = "Versão: 1.1.0";
             // 
@@ -590,10 +598,12 @@ namespace App.Forms.Forms
             lblInfoHeader.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             lblInfoHeader.BackColor = Color.DarkOrange;
             lblInfoHeader.FlatStyle = FlatStyle.Popup;
+            lblInfoHeader.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             lblInfoHeader.ForeColor = Color.DimGray;
-            lblInfoHeader.Location = new Point(0, 3);
+            lblInfoHeader.Location = new Point(0, 0);
+            lblInfoHeader.Margin = new Padding(0);
             lblInfoHeader.Name = "lblInfoHeader";
-            lblInfoHeader.Size = new Size(1208, 14);
+            lblInfoHeader.Size = new Size(1208, 21);
             lblInfoHeader.TabIndex = 31;
             lblInfoHeader.Text = "Ambiente: Produção | API Url Destino: ";
             lblInfoHeader.TextAlign = ContentAlignment.MiddleCenter;

@@ -753,7 +753,7 @@ namespace App.Forms.Forms
 
                 if (row.Cells[2].Value.ToString() == Account.CARTAO_CREDITO && !Convert.ToBoolean(row.Cells[12].Value))
                 {
-                    SetColorRows(row, Color.DarkOrange, Color.White);
+                    SetColorRows(row, Color.DarkOrange, Color.Black);
                 }
 
                 if (!string.IsNullOrWhiteSpace(row.Cells[13].Value?.ToString())
