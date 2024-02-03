@@ -68,6 +68,7 @@ namespace Application.Feature.BillToPay.EditBillToPay
                 DueDate = updateBillToPayInput.DueDate,
                 YearMonth = updateBillToPayInput.YearMonth,
                 Frequence = updateBillToPayInput.Frequence,
+                PurchaseDate = updateBillToPayInput.PurchaseDate,
                 PayDay = updateBillToPayInput.PayDay,
                 HasPay = updateBillToPayInput.HasPay,
                 AdditionalMessage = updateBillToPayInput.AdditionalMessage,

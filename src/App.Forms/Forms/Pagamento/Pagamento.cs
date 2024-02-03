@@ -8,9 +8,12 @@ namespace App.Forms.Forms.Pay
 {
     public partial class FrmPagamento : Form
     {
+        private const string EH_CARTAO_CREDITO_NAIRA = "Cartão de Crédito Nubank Naíra";
+
         public Guid IdentificadorUnicoContaPagar { get; set; } = Guid.Empty;
         public string? Nome { get; set; } = string.Empty;
         public string? Conta { get; set; } = string.Empty;
+        public string AdditionalMessage { get; set; } = string.Empty;
         public string? AnoMes { get; set; } = string.Empty;
         public decimal? Valor { get; set; } = 0;
 
@@ -96,7 +99,7 @@ namespace App.Forms.Forms.Pay
             PayBillToPayOutput output;
             PayBillToPayViewModel request;
 
-            if (cboPagamentoConta.Text == "Cartão de Crédito")
+            if (cboPagamentoConta.Text == "Cartão de Crédito" && !(AdditionalMessage.StartsWith(EH_CARTAO_CREDITO_NAIRA)))
             {
                 if (!string.IsNullOrWhiteSpace(txtPagamentoIdContaPagar.Text))
                 {

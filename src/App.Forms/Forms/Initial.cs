@@ -573,7 +573,7 @@ namespace App.Forms.Forms
                 .Format("{0:#,##0.00}", Convert
                 .ToDecimal(dataSourceOrderBy
                 .Where(creditCardFamily => creditCardFamily.Account == Account.CARTAO_CREDITO
-                    && !(creditCardFamily.AdditionalMessage != null 
+                    && !(creditCardFamily.AdditionalMessage != null
                      && creditCardFamily.AdditionalMessage.ToString().StartsWith(EH_CARTAO_CREDITO_NAIRA)))
                 .Sum(x => x.Value))));
 
@@ -623,6 +623,7 @@ namespace App.Forms.Forms
                 var valorOfDgv = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[5].Value?.ToString()?.Replace("R$ ", "") ?? "0";
                 var valor = Convert.ToDecimal(valorOfDgv);
                 var mesAno = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[8].Value.ToString();
+                var additionalMessage = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[13].Value.ToString();
 
                 FrmPagamento frmPagamento = new()
                 {
@@ -630,7 +631,8 @@ namespace App.Forms.Forms
                     Nome = descricao,
                     Conta = conta,
                     AnoMes = mesAno,
-                    Valor = valor
+                    Valor = valor,
+                    AdditionalMessage = additionalMessage
                 };
 
                 frmPagamento.ShowDialog();

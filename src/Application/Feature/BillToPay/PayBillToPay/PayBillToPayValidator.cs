@@ -6,6 +6,8 @@ namespace Application.Feature.BillToPay.PayBillToPay
 {
     public static class PayBillToPayValidator
     {
+        private const string EH_CARTAO_CREDITO_NAIRA = "Cartão de Crédito Nubank Naíra";
+
         public static async Task<Dictionary<string, string>> ValidateInput(
             PayBillToPayInput input,
             IBillToPayRepository billToPayRepository)
@@ -22,10 +24,11 @@ namespace Application.Feature.BillToPay.PayBillToPay
 
             if (input.Id != null)
             {
-                billToPay = await billToPayRepository.GetBillToPayById(input.Id.Value);
+                billToPay = await billToPayRepository.GetBillToPayById(input.Id.Value) ?? new Domain.Entities.BillToPay();
             }
 
-            if (input.Account == Account.CARTAO_CREDITO || billToPay!.Account == Account.CARTAO_CREDITO)
+            if (input.Account == Account.CARTAO_CREDITO || (billToPay!.Account == Account.CARTAO_CREDITO
+                && !billToPay!.AdditionalMessage!.StartsWith(EH_CARTAO_CREDITO_NAIRA)))
             {
                 if (string.IsNullOrEmpty(input.YearMonth))
                 {
