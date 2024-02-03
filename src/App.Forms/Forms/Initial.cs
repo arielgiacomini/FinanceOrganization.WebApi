@@ -556,21 +556,25 @@ namespace App.Forms.Forms
         private void Consolidate(IList<DgvEfetuarPagamentoListagemDataSource> dataSourceOrderBy)
         {
             lblGridViewTotais.Text = string
-                .Concat("Total Geral: ", dataSourceOrderBy.Count, " - ", "R$ ", string
+                .Concat("Total: ", dataSourceOrderBy.Count, " - ", "R$ ", string
                 .Format("{0:#,##0.00}", Convert.ToDecimal(dataSourceOrderBy.Sum(x => x.Value))));
 
             lblGridViewTotalPago.Text = string
-                .Concat("Total Pago: ", dataSourceOrderBy.Count(pay => pay.HasPay), " - ", "R$ ", string
+                .Concat("Pago: ", dataSourceOrderBy.Count(pay => pay.HasPay), " - ", "R$ ", string
                 .Format("{0:#,##0.00}", Convert.ToDecimal(dataSourceOrderBy
                 .Where(pay => pay.HasPay)
                 .Sum(x => x.Value))));
 
             lblGridViewCartaoCreditoFamilia.Text = string
                 .Concat("Cartão de Crédito Família: ", dataSourceOrderBy
-                .Count(creditCardFamily => creditCardFamily.Account == Account.CARTAO_CREDITO), " - ", "R$ ", string
+                .Count(creditCardFamily => creditCardFamily.Account == Account.CARTAO_CREDITO
+                    && !(creditCardFamily.AdditionalMessage != null
+                     && creditCardFamily.AdditionalMessage.ToString().StartsWith(EH_CARTAO_CREDITO_NAIRA))), " - ", "R$ ", string
                 .Format("{0:#,##0.00}", Convert
                 .ToDecimal(dataSourceOrderBy
-                .Where(creditCardFamily => creditCardFamily.Account == Account.CARTAO_CREDITO)
+                .Where(creditCardFamily => creditCardFamily.Account == Account.CARTAO_CREDITO
+                    && !(creditCardFamily.AdditionalMessage != null 
+                     && creditCardFamily.AdditionalMessage.ToString().StartsWith(EH_CARTAO_CREDITO_NAIRA)))
                 .Sum(x => x.Value))));
 
             lblGridViewCartaoCreditoNaira.Text = string
