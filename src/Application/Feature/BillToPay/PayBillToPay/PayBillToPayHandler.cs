@@ -73,11 +73,14 @@ namespace Application.Feature.BillToPay.PayBillToPay
                         Name = bill.Name,
                         Category = bill.Category,
                         Value = bill.Value,
+                        PurchaseDate = bill.PurchaseDate,
                         DueDate = bill.DueDate,
                         YearMonth = bill.YearMonth,
                         Frequence = bill.Frequence,
+                        RegistrationType = bill.RegistrationType,
                         PayDay = input.PayDay,
                         HasPay = input.HasPay,
+                        AdditionalMessage = bill.AdditionalMessage,
                         CreationDate = bill.CreationDate,
                         LastChangeDate = input.LastChangeDate
                     });
