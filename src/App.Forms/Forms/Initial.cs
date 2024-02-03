@@ -206,38 +206,45 @@ namespace App.Forms.Forms
             Dictionary<int, string> categoriasContaPagar = new()
             {
                 { 0, "Nenhum" },
-                { 1, "Alimentação:Almoço" },
-                { 2, "Alimentação:Besteiras" },
-                { 3, "Alimentação:Café da Manhã" },
-                { 4, "Alimentação:Feira" },
-                { 5, "Alimentação:Jantar" },
-                { 6, "Alimentação:Mercado" },
-                { 7, "Automóvel:Combustível" },
-                { 8, "Automóvel:Estacionamento" },
-                { 9, "Automóvel:Garagem" },
-                { 10, "Automóvel:Seguro" },
-                { 11, "Casa:Essencial" },
-                { 12, "Casa:Financiamento" },
-                { 13, "Casa:Internet" },
-                { 14, "Casa:Segurança" },
-                { 15, "Dizimo" },
-                { 16, "Esporte:Helena" },
-                { 17, "Esporte:TaxaMatricula" },
-                { 18, "Filhos:Helena" },
-                { 19, "Filhos:Leo" },
-                { 20, "Gasto de Terceiros" },
-                { 21, "Serviço:Cloud" },
-                { 22, "Serviço:Produtividade" },
-                { 23, "Serviço:Streaming" },
-                { 24, "Transporte:Escolar" },
-                { 25, "Alimentação:Açougue" },
-                { 26, "Automóvel:Pedágio" },
-                { 27, "Viagem" },
-                { 28, "Automóvel:Documentação" },
-                { 29, "Cabeleleiro:Ariel" },
-                { 30, "Cabeleleiro:Naira" },
-                { 31, "Cabeleleiro:Helena" },
-                { 32, "Cabeleleiro:Leo" }
+                { 1, "Alimentação:Açougue" },
+                { 2, "Alimentação:Almoço" },
+                { 3, "Alimentação:Besteiras" },
+                { 4, "Alimentação:Café da Manhã" },
+                { 5, "Alimentação:Café da Tarde" },
+                { 6, "Alimentação:Feira" },
+                { 7, "Alimentação:Jantar" },
+                { 8, "Alimentação:Mercado" },
+                { 9, "Automóvel:Combustível" },
+                { 10, "Automóvel:Documentação" },
+                { 11, "Automóvel:Estacionamento" },
+                { 12, "Automóvel:Garagem" },
+                { 13, "Automóvel:Limpeza" },
+                { 14, "Automóvel:Manutenção" },
+                { 15, "Automóvel:Seguro" },
+                { 16, "Cabeleleiro:Ariel" },
+                { 17, "Casa:Essencial" },
+                { 18, "Casa:Financiamento" },
+                { 19, "Casa:Internet" },
+                { 20, "Casa:Segurança" },
+                { 21, "Curso:Inglês:Ariel" },
+                { 22, "Dizimo" },
+                { 23, "Esporte:Helena" },
+                { 24, "Esporte:TaxaMatricula" },
+                { 25, "Estética:Naíra" },
+                { 26, "Farmacia:Remédio" },
+                { 27, "Filhos:Helena" },
+                { 28, "Filhos:Leo" },
+                { 29, "Gasto de Terceiros" },
+                { 30, "Higiêne:Naira" },
+                { 31, "Jogos:Bingo" },
+                { 32, "Jogos:RifaOnline" },
+                { 33, "SeguroVida:Naira" },
+                { 34, "Serviço:Cloud" },
+                { 35, "Serviço:Produtividade" },
+                { 36, "Serviço:Streaming" },
+                { 37, "Transporte:Escolar" },
+                { 38, "Vestuário:Leo" },
+                { 39, "Viagem" }
             };
 
             var categoriasContaPagarOrderBy = categoriasContaPagar
@@ -623,7 +630,7 @@ namespace App.Forms.Forms
                 var valorOfDgv = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[5].Value?.ToString()?.Replace("R$ ", "") ?? "0";
                 var valor = Convert.ToDecimal(valorOfDgv);
                 var mesAno = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[8].Value.ToString();
-                var additionalMessage = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[13].Value.ToString();
+                var additionalMessage = dgvEfetuarPagamentoListagem.Rows[e.RowIndex].Cells[13].Value?.ToString();
 
                 FrmPagamento frmPagamento = new()
                 {
@@ -717,7 +724,17 @@ namespace App.Forms.Forms
 
         private static bool ContaPagarVencida(DataGridViewRow row)
         {
-            return Convert.ToDateTime(row.Cells[7].Value) <= DateTime.Now;
+            bool result = false;
+            var dataVencimento = Convert.ToDateTime(row.Cells[7].Value);
+            var hasPay = Convert.ToBoolean(row.Cells[12].Value);
+            var now = DateTime.Now;
+
+            if (dataVencimento < now && !hasPay)
+            {
+                result = true;
+            }
+
+            return result;
         }
 
         private static bool ContaPagarVencimentoProximo(DataGridViewRow row)
