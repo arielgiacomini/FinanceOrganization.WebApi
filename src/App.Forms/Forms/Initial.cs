@@ -562,39 +562,114 @@ namespace App.Forms.Forms
 
         private void Consolidate(IList<DgvEfetuarPagamentoListagemDataSource> dataSourceOrderBy)
         {
-            lblGridViewTotais.Text = string
-                .Concat("Total: ", dataSourceOrderBy.Count, " - ", "R$ ", string
-                .Format("{0:#,##0.00}", Convert.ToDecimal(dataSourceOrderBy.Sum(x => x.Value))));
+            #region TOTAL GERAL
 
-            lblGridViewTotalPago.Text = string
-                .Concat("Pago: ", dataSourceOrderBy.Count(pay => pay.HasPay), " - ", "R$ ", string
-                .Format("{0:#,##0.00}", Convert.ToDecimal(dataSourceOrderBy
+            var quantidadeTotal = dataSourceOrderBy.Count;
+            var valorTotal = Convert.ToDecimal(dataSourceOrderBy.Sum(x => x.Value));
+            ConsolidatePreencherlblGridViewTotais(quantidadeTotal, valorTotal);
+
+            #endregion TOTAL GERAL
+
+            #region TOTAL PAGO
+
+            var quantidadeTotalPago = dataSourceOrderBy.Count(pay => pay.HasPay);
+            var valorTotalPago = Convert.ToDecimal(dataSourceOrderBy
                 .Where(pay => pay.HasPay)
-                .Sum(x => x.Value))));
+                .Sum(x => x.Value));
+            ConsolidatePreencherlblGridViewTotalPago(quantidadeTotalPago, valorTotalPago);
 
-            lblGridViewCartaoCreditoFamilia.Text = string
-                .Concat("Cartão de Crédito Família: ", dataSourceOrderBy
+            #endregion TOTAL PAGO
+
+            #region CARTÃO DE CRÉDITO FAMÍLIA
+
+            var quantidadeTotalCartaoCreditoFamilia = dataSourceOrderBy
                 .Count(creditCardFamily => creditCardFamily.Account == Account.CARTAO_CREDITO
                     && !(creditCardFamily.AdditionalMessage != null
-                     && creditCardFamily.AdditionalMessage.ToString().StartsWith(EH_CARTAO_CREDITO_NAIRA))), " - ", "R$ ", string
-                .Format("{0:#,##0.00}", Convert
+                     && creditCardFamily.AdditionalMessage.ToString().StartsWith(EH_CARTAO_CREDITO_NAIRA)));
+
+            var quantidadeTotalPagoCartaoCreditoFamilia = dataSourceOrderBy
+                .Count(creditCardFamily => creditCardFamily.Account == Account.CARTAO_CREDITO
+                    && !(creditCardFamily.AdditionalMessage != null
+                     && creditCardFamily.AdditionalMessage.ToString().StartsWith(EH_CARTAO_CREDITO_NAIRA))
+                     && creditCardFamily.HasPay);
+
+            var valorTotalCartaoCreditoFamilia = Convert
                 .ToDecimal(dataSourceOrderBy
                 .Where(creditCardFamily => creditCardFamily.Account == Account.CARTAO_CREDITO
                     && !(creditCardFamily.AdditionalMessage != null
                      && creditCardFamily.AdditionalMessage.ToString().StartsWith(EH_CARTAO_CREDITO_NAIRA)))
-                .Sum(x => x.Value))));
+                .Sum(x => x.Value));
+            ConsolidatePreencherlblGridViewCartaoCreditoFamilia(
+                quantidadeTotalCartaoCreditoFamilia, valorTotalCartaoCreditoFamilia, quantidadeTotalPagoCartaoCreditoFamilia);
 
-            lblGridViewCartaoCreditoNaira.Text = string
-                .Concat("Cartão de Crédito Naíra: ", dataSourceOrderBy
+            #endregion CARTÃO DE CRÉDITO FAMÍLIA
+
+            #region CARTÃO DE CRÉDITO NAÍRA
+
+            var quantidadeTotalCartaoCreditoNaira = dataSourceOrderBy
                 .Count(creditCardNaira => creditCardNaira.Account == Account.CARTAO_CREDITO
                     && creditCardNaira.AdditionalMessage != null && creditCardNaira.AdditionalMessage.ToString()
-                .StartsWith(EH_CARTAO_CREDITO_NAIRA)), " - ", "R$ ", string
-                .Format("{0:#,##0.00}", Convert
+                .StartsWith(EH_CARTAO_CREDITO_NAIRA));
+
+            var quantidadeTotalPagoCartaoCreditoNaira = dataSourceOrderBy
+                .Count(creditCardNaira => creditCardNaira.Account == Account.CARTAO_CREDITO
+                    && creditCardNaira.AdditionalMessage != null && creditCardNaira.AdditionalMessage.ToString()
+                .StartsWith(EH_CARTAO_CREDITO_NAIRA) && creditCardNaira.HasPay);
+
+            var valorTotalCartaoCreditoNaira = Convert
                 .ToDecimal(dataSourceOrderBy
                 .Where(creditCardNaira => creditCardNaira.Account == Account.CARTAO_CREDITO
                     && creditCardNaira.AdditionalMessage != null && creditCardNaira.AdditionalMessage.ToString()
                 .StartsWith(EH_CARTAO_CREDITO_NAIRA))
-                .Sum(x => x.Value))));
+                .Sum(x => x.Value));
+            ConsolidatePreencherlblGridViewCartaoCreditoNaira(
+                quantidadeTotalCartaoCreditoNaira, valorTotalCartaoCreditoNaira, quantidadeTotalPagoCartaoCreditoNaira);
+
+            #endregion CARTÃO DE CRÉDITO NAÍRA
+        }
+
+        private void ConsolidatePreencherlblGridViewCartaoCreditoFamilia(
+            int quantidadeTotalCartaoCreditoFamilia, decimal valorTotalCartaoCreditoFamilia, int qtdTotalPago = 0)
+        {
+            string informacaoConsolidate = string
+                            .Concat("Cartão de Crédito Família: ", quantidadeTotalCartaoCreditoFamilia, " - ", "R$ ", string
+                            .Format("{0:#,##0.00}", valorTotalCartaoCreditoFamilia));
+
+            if (qtdTotalPago == quantidadeTotalCartaoCreditoFamilia)
+            {
+                informacaoConsolidate = string.Concat(informacaoConsolidate, " - Pagamento OK!");
+            }
+
+            lblGridViewCartaoCreditoFamilia.Text = informacaoConsolidate;
+        }
+
+        private void ConsolidatePreencherlblGridViewCartaoCreditoNaira(
+            int quantidadeTotalCartaoCreditoNaira, decimal valorTotalCartaoCreditoNaira, int qtdTotalPago = 0)
+        {
+            string informacaoConsolidate = string
+                           .Concat("Cartão de Crédito Naíra: ", quantidadeTotalCartaoCreditoNaira, " - ", "R$ ", string
+                           .Format("{0:#,##0.00}", valorTotalCartaoCreditoNaira));
+
+            if (qtdTotalPago == quantidadeTotalCartaoCreditoNaira)
+            {
+                informacaoConsolidate = string.Concat(informacaoConsolidate, " - Pagamento OK!");
+            }
+
+            lblGridViewCartaoCreditoNaira.Text = informacaoConsolidate;
+        }
+
+        private void ConsolidatePreencherlblGridViewTotalPago(int quantidadeTotalPago, decimal valorTotalPago)
+        {
+            lblGridViewTotalPago.Text = string
+                            .Concat("Pago: ", quantidadeTotalPago, " - ", "R$ ", string
+                            .Format("{0:#,##0.00}", valorTotalPago));
+        }
+
+        private void ConsolidatePreencherlblGridViewTotais(int quantidadeTotal, decimal valorTotal)
+        {
+            lblGridViewTotais.Text = string
+                            .Concat("Total: ", quantidadeTotal, " - ", "R$ ", string
+                            .Format("{0:#,##0.00}", valorTotal));
         }
 
         private static IList<DgvEfetuarPagamentoListagemDataSource> MapSearchResultToDataSource(SearchBillToPayOutput searchBillToPayOutput)
