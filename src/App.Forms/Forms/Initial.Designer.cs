@@ -614,7 +614,6 @@ namespace App.Forms.Forms
             // 
             // rdbAmbienteLocal
             // 
-            rdbAmbienteLocal.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             rdbAmbienteLocal.BackColor = Color.DarkOrange;
             rdbAmbienteLocal.Location = new Point(1, 0);
             rdbAmbienteLocal.Name = "rdbAmbienteLocal";
@@ -627,7 +626,6 @@ namespace App.Forms.Forms
             // 
             // rdbAmbienteHomologacao
             // 
-            rdbAmbienteHomologacao.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             rdbAmbienteHomologacao.BackColor = Color.DarkOrange;
             rdbAmbienteHomologacao.Checked = true;
             rdbAmbienteHomologacao.Location = new Point(58, 0);
@@ -642,7 +640,6 @@ namespace App.Forms.Forms
             // 
             // rdbAmbienteProducao
             // 
-            rdbAmbienteProducao.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             rdbAmbienteProducao.BackColor = Color.DarkOrange;
             rdbAmbienteProducao.Location = new Point(161, 0);
             rdbAmbienteProducao.Name = "rdbAmbienteProducao";
