@@ -24,14 +24,16 @@ namespace FinanceOrganization.UnitTests.Application.Configs.Fixtures
                 Name = "Teste",
                 Account = "Teste2",
                 Frequence = "Mensal",
+                RegistrationType = "",
                 InitialMonthYear = "Janeiro/2024",
                 FynallyMonthYear = null,
                 Category = "Teste",
                 Value = 200,
+                PurchaseDate = DateTime.Now,
                 BestPayDay = 25,
+                AdditionalMessage = "",
                 CreationDate = new DateTime(2023, 12, 31, 0, 0, 0, kind: DateTimeKind.Local),
                 LastChangeDate = null
-
             };
         }
 
@@ -85,11 +87,16 @@ namespace FinanceOrganization.UnitTests.Application.Configs.Fixtures
             return new CreateBillToPayInput()
             {
                 Name = fixedInvoice.Name,
+                Account = fixedInvoice.Account,
                 Frequence = fixedInvoice.Frequence,
+                RegistrationType = fixedInvoice.RegistrationType,
                 InitialMonthYear = fixedInvoice.InitialMonthYear,
                 FynallyMonthYear = fixedInvoice.FynallyMonthYear,
                 Category = fixedInvoice.Category,
                 Value = fixedInvoice.Value,
+                PurchaseDate = fixedInvoice.PurchaseDate,
+                BestPayDay = fixedInvoice.BestPayDay,
+                AdditionalMessage = fixedInvoice.AdditionalMessage,
                 CreationDate = fixedInvoice.CreationDate,
                 LastChangeDate = fixedInvoice.LastChangeDate
             };

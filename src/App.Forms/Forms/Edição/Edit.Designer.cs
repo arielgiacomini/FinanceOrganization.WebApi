@@ -28,7 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmEdit));
             grbTemplateContaPagar = new GroupBox();
+            rdbPagamentoNaoPago = new RadioButton();
+            rdbPagamentoPago = new RadioButton();
             txtContaPagarDataPagamento = new TextBox();
             lblContaPagarDataPagamento = new Label();
             dtpContaPagarDataVencimento = new DateTimePicker();
@@ -53,8 +56,6 @@
             lblContaPagarTipoConta = new Label();
             lblContaPagarAnoMes = new Label();
             cboContaPagarTipoConta = new ComboBox();
-            rdbPagamentoNaoPago = new RadioButton();
-            rdbPagamentoPago = new RadioButton();
             grbTemplateContaPagar.SuspendLayout();
             SuspendLayout();
             // 
@@ -92,6 +93,28 @@
             grbTemplateContaPagar.TabIndex = 16;
             grbTemplateContaPagar.TabStop = false;
             grbTemplateContaPagar.Text = "Cadastro de Conta a Pagar - Livre";
+            // 
+            // rdbPagamentoNaoPago
+            // 
+            rdbPagamentoNaoPago.AutoSize = true;
+            rdbPagamentoNaoPago.Location = new Point(710, 180);
+            rdbPagamentoNaoPago.Name = "rdbPagamentoNaoPago";
+            rdbPagamentoNaoPago.Size = new Size(77, 19);
+            rdbPagamentoNaoPago.TabIndex = 35;
+            rdbPagamentoNaoPago.Text = "Não Pago";
+            rdbPagamentoNaoPago.UseVisualStyleBackColor = true;
+            // 
+            // rdbPagamentoPago
+            // 
+            rdbPagamentoPago.AutoSize = true;
+            rdbPagamentoPago.Checked = true;
+            rdbPagamentoPago.Location = new Point(652, 180);
+            rdbPagamentoPago.Name = "rdbPagamentoPago";
+            rdbPagamentoPago.Size = new Size(52, 19);
+            rdbPagamentoPago.TabIndex = 34;
+            rdbPagamentoPago.TabStop = true;
+            rdbPagamentoPago.Text = "Pago";
+            rdbPagamentoPago.UseVisualStyleBackColor = true;
             // 
             // txtContaPagarDataPagamento
             // 
@@ -302,28 +325,6 @@
             cboContaPagarTipoConta.Size = new Size(167, 23);
             cboContaPagarTipoConta.TabIndex = 5;
             // 
-            // rdbPagamentoNaoPago
-            // 
-            rdbPagamentoNaoPago.AutoSize = true;
-            rdbPagamentoNaoPago.Location = new Point(710, 180);
-            rdbPagamentoNaoPago.Name = "rdbPagamentoNaoPago";
-            rdbPagamentoNaoPago.Size = new Size(77, 19);
-            rdbPagamentoNaoPago.TabIndex = 35;
-            rdbPagamentoNaoPago.Text = "Não Pago";
-            rdbPagamentoNaoPago.UseVisualStyleBackColor = true;
-            // 
-            // rdbPagamentoPago
-            // 
-            rdbPagamentoPago.AutoSize = true;
-            rdbPagamentoPago.Checked = true;
-            rdbPagamentoPago.Location = new Point(652, 180);
-            rdbPagamentoPago.Name = "rdbPagamentoPago";
-            rdbPagamentoPago.Size = new Size(52, 19);
-            rdbPagamentoPago.TabIndex = 34;
-            rdbPagamentoPago.TabStop = true;
-            rdbPagamentoPago.Text = "Pago";
-            rdbPagamentoPago.UseVisualStyleBackColor = true;
-            // 
             // FrmEdit
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -331,6 +332,7 @@
             BackColor = Color.Khaki;
             ClientSize = new Size(1208, 254);
             Controls.Add(grbTemplateContaPagar);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmEdit";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Edição de Conta a Pagar";

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPagamento));
             lblPagamentoIdContaPagar = new Label();
             txtPagamentoIdContaPagar = new TextBox();
             lblPagamentoData = new Label();
@@ -185,9 +186,10 @@
             Controls.Add(lblPagamentoData);
             Controls.Add(txtPagamentoIdContaPagar);
             Controls.Add(lblPagamentoIdContaPagar);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "FrmPagamento";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Informar Pagamento";
+            Text = "Realizar Pagamento";
             Load += FrmPagamento_Load;
             ResumeLayout(false);
             PerformLayout();

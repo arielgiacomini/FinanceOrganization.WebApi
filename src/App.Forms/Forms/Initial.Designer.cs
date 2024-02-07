@@ -31,6 +31,7 @@ namespace App.Forms.Forms
         private void InitializeComponent()
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Initial));
             tbcInitial = new TabControl();
             tbpContaPagarLivre = new TabPage();
             grbTemplateContaPagar = new GroupBox();
@@ -616,6 +617,7 @@ namespace App.Forms.Forms
             Controls.Add(lblVersion);
             Controls.Add(lblInfoHeader);
             Controls.Add(tbcInitial);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Initial";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Tela inicial - Organização Financeira";

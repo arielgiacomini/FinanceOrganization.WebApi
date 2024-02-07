@@ -45,6 +45,11 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
                 .Setup(walletToPay => walletToPay.GetBillToPayByFixedInvoiceId(It.IsAny<int>()))
                 .ReturnsAsync(_modelFixture.GetListBillToPay());
 
+            _mockFixedInvoiceRepository
+                .Setup(fixedInvoice => fixedInvoice
+                .GetOnlyOldRecordsAndParticipants(-1, "Conta/Fatura Fixa"))
+                .ReturnsAsync(_modelFixture.GetListFixedInvoice());
+
             _mockWalletToPayRepository
                 .Setup(walletToPay => walletToPay.SaveRange(It.IsAny<IList<BillToPay>>()))
                 .ReturnsAsync(It.IsAny<int>());
@@ -138,6 +143,11 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
             _mockWalletToPayRepository
                 .Setup(walletToPay => walletToPay.GetBillToPayByFixedInvoiceId(It.IsAny<int>()))
                 .ReturnsAsync(() => null!);
+
+            _mockFixedInvoiceRepository
+                .Setup(fixedInvoice => fixedInvoice
+                .GetOnlyOldRecordsAndParticipants(-1, "Conta/Fatura Fixa"))
+                .ReturnsAsync(_modelFixture.GetListFixedInvoice());
 
             _mockWalletToPayRepository
                 .Setup(walletToPay => walletToPay.SaveRange(It.IsAny<IList<BillToPay>>()))
