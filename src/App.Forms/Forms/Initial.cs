@@ -26,6 +26,7 @@ namespace App.Forms.Forms
         public decimal ValorContaPagarDigitadoTextBox { get; set; } = 0;
         public int Identifier { get; set; } = 0;
         public InfoHeader InfoHeader { get; set; } = new InfoHeader();
+        public string? Environment { get; set; }
 
         public Initial(InfoHeader? infoHeader)
         {
@@ -65,6 +66,12 @@ namespace App.Forms.Forms
                 lblInfoHeader.ForeColor = Color.White;
                 lblVersion.BackColor = Color.OrangeRed;
                 lblVersion.ForeColor = Color.White;
+                rdbAmbienteLocal.BackColor = Color.OrangeRed;
+                rdbAmbienteLocal.ForeColor = Color.White;
+                rdbAmbienteHomologacao.BackColor = Color.OrangeRed;
+                rdbAmbienteHomologacao.ForeColor = Color.White;
+                rdbAmbienteProducao.BackColor = Color.OrangeRed;
+                rdbAmbienteProducao.ForeColor = Color.White;
                 lblInfoHeaderIntern = string.Concat("CFM - PRODUÇÃO", " - ", InfoHeader.Url, " - ", "Última Busca: ", lastUpdate ?? DateTime.Now);
             }
             else
@@ -73,6 +80,12 @@ namespace App.Forms.Forms
                 lblInfoHeader.ForeColor = Color.White;
                 lblVersion.BackColor = Color.DarkGreen;
                 lblVersion.ForeColor = Color.White;
+                rdbAmbienteLocal.BackColor = Color.DarkGreen;
+                rdbAmbienteLocal.ForeColor = Color.White;
+                rdbAmbienteHomologacao.BackColor = Color.DarkGreen;
+                rdbAmbienteHomologacao.ForeColor = Color.White;
+                rdbAmbienteProducao.BackColor = Color.DarkGreen;
+                rdbAmbienteProducao.ForeColor = Color.White;
                 lblInfoHeaderIntern = string.Concat("CFM - HOMOLOGAÇÃO", " - ", InfoHeader.Url, " - ", "Última Busca: ", lastUpdate ?? DateTime.Now);
             }
 
@@ -105,6 +118,7 @@ namespace App.Forms.Forms
 
             UpdateDataGridView();
 
+            BillToPayServices.Environment = Environment;
             var result = await BillToPayServices.CreateBillToPay(createBillToPay);
 
             _createBillToPayViewModels[Identifier].Status = RegistrationStatus.AwaitResponseAPI;
@@ -514,6 +528,7 @@ namespace App.Forms.Forms
 
         private async Task PreencherEfetuarPagamentoDataGridViewHistory(SearchBillToPayViewModel search)
         {
+            BillToPayServices.Environment = Environment;
             var resultSearch = await BillToPayServices.SearchBillToPay(search);
 
             var dataSource = MapSearchResultToDataSource(resultSearch);
@@ -714,7 +729,8 @@ namespace App.Forms.Forms
                     Conta = conta,
                     AnoMes = mesAno,
                     Valor = valor,
-                    AdditionalMessage = additionalMessage
+                    AdditionalMessage = additionalMessage,
+                    Environment = Environment
                 };
 
                 frmPagamento.ShowDialog();
@@ -790,7 +806,8 @@ namespace App.Forms.Forms
 
                 FrmEdit frmPagamento = new()
                 {
-                    EditBillToPayViewModel = editBillToPayViewModel
+                    EditBillToPayViewModel = editBillToPayViewModel,
+                    Environment = Environment
                 };
 
                 frmPagamento.ShowDialog();
@@ -886,6 +903,48 @@ namespace App.Forms.Forms
                     SetColorRows(row, Color.DarkRed, Color.White);
                 }
             }
+        }
+
+        private void PreencheAmbienteCorretamente()
+        {
+            if (rdbAmbienteLocal.Checked)
+            {
+                Environment = "Local";
+                InfoHeader.IsProductionEnvironment = false;
+                InfoHeader.Url = UrlConfig.GetFinanceOrganizationApiUrl(Environment);
+                lblInfoHeader.Text = AdjusteInfoHeader(DateTime.Now);
+            }
+
+            if (rdbAmbienteHomologacao.Checked)
+            {
+                Environment = "Homologação";
+                InfoHeader.IsProductionEnvironment = false;
+                InfoHeader.Url = UrlConfig.GetFinanceOrganizationApiUrl(Environment);
+                lblInfoHeader.Text = AdjusteInfoHeader(DateTime.Now);
+            }
+
+            if (rdbAmbienteProducao.Checked)
+            {
+                Environment = "Produção";
+                InfoHeader.IsProductionEnvironment = true;
+                InfoHeader.Url = UrlConfig.GetFinanceOrganizationApiUrl(Environment);
+                lblInfoHeader.Text = AdjusteInfoHeader(DateTime.Now);
+            }
+        }
+
+        private void RdbAmbienteLocal_CheckedChanged(object sender, EventArgs e)
+        {
+            PreencheAmbienteCorretamente();
+        }
+
+        private void RdbAmbienteHomologacao_CheckedChanged(object sender, EventArgs e)
+        {
+            PreencheAmbienteCorretamente();
+        }
+
+        private void RdbAmbienteProducao_CheckedChanged(object sender, EventArgs e)
+        {
+            PreencheAmbienteCorretamente();
         }
     }
 }

@@ -1,6 +1,5 @@
 using App.Forms.Config;
 using App.Forms.Forms;
-using System.Configuration;
 
 namespace App.Forms
 {
@@ -15,7 +14,7 @@ namespace App.Forms
 
         private static InfoHeader? GetInfoHeader()
         {
-            var urlAPI = ConfigurationManager.AppSettings["finance-organization-api-url"];
+            var urlAPI = UrlConfig.GetFinanceOrganizationApiUrl("Homologação");
 
             if (string.IsNullOrWhiteSpace(urlAPI))
             {

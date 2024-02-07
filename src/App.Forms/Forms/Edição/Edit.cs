@@ -9,6 +9,7 @@ namespace App.Forms.Forms.Edição
     {
         public EditBillToPayViewModel EditBillToPayViewModel { get; set; } = new EditBillToPayViewModel();
         public decimal valorContaPagarDigitadoTextBox = 0;
+        public string? Environment { get; set; }
 
         public FrmEdit()
         {
@@ -51,6 +52,7 @@ namespace App.Forms.Forms.Edição
         {
             MapFormToViewModel();
 
+            BillToPayServices.Environment = Environment;
             var result = await BillToPayServices.EditBillToPay(EditBillToPayViewModel);
 
             OutputMapper(result);

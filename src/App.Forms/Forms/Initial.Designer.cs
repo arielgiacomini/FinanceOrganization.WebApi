@@ -79,6 +79,9 @@ namespace App.Forms.Forms
             dgvEfetuarPagamentoListagem = new DataGridView();
             lblVersion = new Label();
             lblInfoHeader = new Label();
+            rdbAmbienteLocal = new RadioButton();
+            rdbAmbienteHomologacao = new RadioButton();
+            rdbAmbienteProducao = new RadioButton();
             tbcInitial.SuspendLayout();
             tbpContaPagarLivre.SuspendLayout();
             grbTemplateContaPagar.SuspendLayout();
@@ -601,19 +604,63 @@ namespace App.Forms.Forms
             lblInfoHeader.FlatStyle = FlatStyle.Popup;
             lblInfoHeader.Font = new Font("Segoe UI", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
             lblInfoHeader.ForeColor = Color.DimGray;
-            lblInfoHeader.Location = new Point(0, 0);
+            lblInfoHeader.Location = new Point(231, 0);
             lblInfoHeader.Margin = new Padding(0);
             lblInfoHeader.Name = "lblInfoHeader";
-            lblInfoHeader.Size = new Size(1208, 21);
+            lblInfoHeader.Size = new Size(977, 21);
             lblInfoHeader.TabIndex = 31;
             lblInfoHeader.Text = "Ambiente: Produção | API Url Destino: ";
             lblInfoHeader.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // rdbAmbienteLocal
+            // 
+            rdbAmbienteLocal.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            rdbAmbienteLocal.BackColor = Color.DarkOrange;
+            rdbAmbienteLocal.Location = new Point(1, 0);
+            rdbAmbienteLocal.Name = "rdbAmbienteLocal";
+            rdbAmbienteLocal.Size = new Size(57, 21);
+            rdbAmbienteLocal.TabIndex = 32;
+            rdbAmbienteLocal.Text = "Local";
+            rdbAmbienteLocal.TextAlign = ContentAlignment.MiddleRight;
+            rdbAmbienteLocal.UseVisualStyleBackColor = false;
+            rdbAmbienteLocal.CheckedChanged += RdbAmbienteLocal_CheckedChanged;
+            // 
+            // rdbAmbienteHomologacao
+            // 
+            rdbAmbienteHomologacao.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            rdbAmbienteHomologacao.BackColor = Color.DarkOrange;
+            rdbAmbienteHomologacao.Checked = true;
+            rdbAmbienteHomologacao.Location = new Point(58, 0);
+            rdbAmbienteHomologacao.Name = "rdbAmbienteHomologacao";
+            rdbAmbienteHomologacao.Size = new Size(105, 21);
+            rdbAmbienteHomologacao.TabIndex = 33;
+            rdbAmbienteHomologacao.TabStop = true;
+            rdbAmbienteHomologacao.Text = "Homologação";
+            rdbAmbienteHomologacao.TextAlign = ContentAlignment.MiddleRight;
+            rdbAmbienteHomologacao.UseVisualStyleBackColor = false;
+            rdbAmbienteHomologacao.CheckedChanged += RdbAmbienteHomologacao_CheckedChanged;
+            // 
+            // rdbAmbienteProducao
+            // 
+            rdbAmbienteProducao.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            rdbAmbienteProducao.BackColor = Color.DarkOrange;
+            rdbAmbienteProducao.Location = new Point(161, 0);
+            rdbAmbienteProducao.Name = "rdbAmbienteProducao";
+            rdbAmbienteProducao.Size = new Size(80, 21);
+            rdbAmbienteProducao.TabIndex = 34;
+            rdbAmbienteProducao.Text = "Produção";
+            rdbAmbienteProducao.TextAlign = ContentAlignment.MiddleRight;
+            rdbAmbienteProducao.UseVisualStyleBackColor = false;
+            rdbAmbienteProducao.CheckedChanged += RdbAmbienteProducao_CheckedChanged;
             // 
             // Initial
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1213, 510);
+            Controls.Add(rdbAmbienteProducao);
+            Controls.Add(rdbAmbienteHomologacao);
+            Controls.Add(rdbAmbienteLocal);
             Controls.Add(lblVersion);
             Controls.Add(lblInfoHeader);
             Controls.Add(tbcInitial);
@@ -681,5 +728,8 @@ namespace App.Forms.Forms
         private Label lblGridViewTotalPago;
         private Label lblVersion;
         private Label lblInfoHeader;
+        private RadioButton rdbAmbienteLocal;
+        private RadioButton rdbAmbienteHomologacao;
+        private RadioButton rdbAmbienteProducao;
     }
 }

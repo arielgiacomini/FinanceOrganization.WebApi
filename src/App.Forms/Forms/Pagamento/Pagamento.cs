@@ -16,6 +16,7 @@ namespace App.Forms.Forms.Pay
         public string AdditionalMessage { get; set; } = string.Empty;
         public string? AnoMes { get; set; } = string.Empty;
         public decimal? Valor { get; set; } = 0;
+        public string? Environment { get; set; }
 
         public FrmPagamento()
         {
@@ -119,6 +120,7 @@ namespace App.Forms.Forms.Pay
                 request = MapPayBillToPayToRequest(idContaPagar, false);
             }
 
+            BillToPayServices.Environment = Environment;
             output = await BillToPayServices.PayBillToPay(request);
 
             SetOutput(output);
