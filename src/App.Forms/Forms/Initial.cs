@@ -33,6 +33,7 @@ namespace App.Forms.Forms
             if (infoHeader != null)
             {
                 InfoHeader = infoHeader;
+                Environment = infoHeader.Environment;
             }
 
             InitializeComponent();
@@ -54,13 +55,16 @@ namespace App.Forms.Forms
             PreencherContaPagarTipoCadastro();
             await BuscarListaPagamentos();
             tbcInitial.SelectedTab = tbcInitial.TabPages[(tbcInitial.TabCount) - 1];
+
+            ToolTip tooltipBtnPagamentoAvulso = new();
+            tooltipBtnPagamentoAvulso.SetToolTip(this.btnPagamentoAvulso, "Ideal p/ Pagamento em Massa, Ex.: Cartão de Crédito");
         }
 
         private string AdjusteInfoHeader(DateTime? lastUpdate = null)
         {
             string? lblInfoHeaderIntern;
 
-            if (InfoHeader.IsProductionEnvironment)
+            if (InfoHeader.IsProductionEnvironment || InfoHeader.Environment == "Produção")
             {
                 lblInfoHeader.BackColor = Color.OrangeRed;
                 lblInfoHeader.ForeColor = Color.White;
@@ -74,19 +78,38 @@ namespace App.Forms.Forms
                 rdbAmbienteProducao.ForeColor = Color.White;
                 lblInfoHeaderIntern = string.Concat("CFM - PRODUÇÃO", " - ", InfoHeader.Url, " - ", "Última Busca: ", lastUpdate ?? DateTime.Now);
             }
-            else
+            else if (!InfoHeader.IsProductionEnvironment && InfoHeader.Environment == "Homologação")
             {
-                lblInfoHeader.BackColor = Color.DarkGreen;
+                var colorDarkGreen = Color.DarkGreen;
+                lblInfoHeader.BackColor = colorDarkGreen;
                 lblInfoHeader.ForeColor = Color.White;
-                lblVersion.BackColor = Color.DarkGreen;
+                lblVersion.BackColor = colorDarkGreen;
                 lblVersion.ForeColor = Color.White;
-                rdbAmbienteLocal.BackColor = Color.DarkGreen;
+                rdbAmbienteLocal.BackColor = colorDarkGreen;
                 rdbAmbienteLocal.ForeColor = Color.White;
-                rdbAmbienteHomologacao.BackColor = Color.DarkGreen;
+                rdbAmbienteHomologacao.BackColor = colorDarkGreen;
                 rdbAmbienteHomologacao.ForeColor = Color.White;
-                rdbAmbienteProducao.BackColor = Color.DarkGreen;
+                rdbAmbienteProducao.BackColor = colorDarkGreen;
                 rdbAmbienteProducao.ForeColor = Color.White;
                 lblInfoHeaderIntern = string.Concat("CFM - HOMOLOGAÇÃO", " - ", InfoHeader.Url, " - ", "Última Busca: ", lastUpdate ?? DateTime.Now);
+            }
+            else if (!InfoHeader.IsProductionEnvironment && InfoHeader.Environment == "Local")
+            {
+                lblInfoHeader.BackColor = Color.DarkGray;
+                lblInfoHeader.ForeColor = Color.White;
+                lblVersion.BackColor = Color.DarkGray;
+                lblVersion.ForeColor = Color.White;
+                rdbAmbienteLocal.BackColor = Color.DarkGray;
+                rdbAmbienteLocal.ForeColor = Color.White;
+                rdbAmbienteHomologacao.BackColor = Color.DarkGray;
+                rdbAmbienteHomologacao.ForeColor = Color.White;
+                rdbAmbienteProducao.BackColor = Color.DarkGray;
+                rdbAmbienteProducao.ForeColor = Color.White;
+                lblInfoHeaderIntern = string.Concat("CFM - LOCAL", " - ", InfoHeader.Url, " - ", "Última Busca: ", lastUpdate ?? DateTime.Now);
+            }
+            else
+            {
+                lblInfoHeaderIntern = "ERRO!";
             }
 
             return lblInfoHeaderIntern;
@@ -905,12 +928,13 @@ namespace App.Forms.Forms
             }
         }
 
-        private void PreencheAmbienteCorretamente()
+        public string? PreencheAmbienteCorretamente()
         {
             if (rdbAmbienteLocal.Checked)
             {
                 Environment = "Local";
                 InfoHeader.IsProductionEnvironment = false;
+                InfoHeader.Environment = Environment;
                 InfoHeader.Url = UrlConfig.GetFinanceOrganizationApiUrl(Environment);
                 lblInfoHeader.Text = AdjusteInfoHeader(DateTime.Now);
             }
@@ -919,6 +943,7 @@ namespace App.Forms.Forms
             {
                 Environment = "Homologação";
                 InfoHeader.IsProductionEnvironment = false;
+                InfoHeader.Environment = Environment;
                 InfoHeader.Url = UrlConfig.GetFinanceOrganizationApiUrl(Environment);
                 lblInfoHeader.Text = AdjusteInfoHeader(DateTime.Now);
             }
@@ -927,9 +952,12 @@ namespace App.Forms.Forms
             {
                 Environment = "Produção";
                 InfoHeader.IsProductionEnvironment = true;
+                InfoHeader.Environment = Environment;
                 InfoHeader.Url = UrlConfig.GetFinanceOrganizationApiUrl(Environment);
                 lblInfoHeader.Text = AdjusteInfoHeader(DateTime.Now);
             }
+
+            return Environment;
         }
 
         private void RdbAmbienteLocal_CheckedChanged(object sender, EventArgs e)
@@ -945,6 +973,32 @@ namespace App.Forms.Forms
         private void RdbAmbienteProducao_CheckedChanged(object sender, EventArgs e)
         {
             PreencheAmbienteCorretamente();
+        }
+
+        private void dgvEfetuarPagamentoListagem_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+
+        }
+
+        private void dgvEfetuarPagamentoListagem_MultiSelectChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dgvEfetuarPagamentoListagem_SelectionChanged(object sender, EventArgs e)
+        {
+            decimal valorTotalItensSelecionados = 0;
+            int quantidadeTotalItensSelecionados = dgvEfetuarPagamentoListagem.SelectedRows.Count;
+
+            foreach (DataGridViewRow row in dgvEfetuarPagamentoListagem.SelectedRows)
+            {
+                bool isOk = decimal.TryParse(row.Cells[5].Value.ToString(), out decimal valor);
+
+                valorTotalItensSelecionados += isOk ? valor : 0;
+            }
+
+            lblEfetuarPagamentoItensSelecionadosDataGridView.Text = string
+                .Concat("Itens selecionados: ", quantidadeTotalItensSelecionados, " - ", valorTotalItensSelecionados.ToString("C"));
         }
     }
 }
