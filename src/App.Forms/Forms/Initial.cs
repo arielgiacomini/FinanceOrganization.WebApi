@@ -536,7 +536,7 @@ namespace App.Forms.Forms
             await BuscarListaPagamentos();
         }
 
-        private async Task BuscarListaPagamentos()
+        public async Task BuscarListaPagamentos()
         {
             _dgvEfetuarPagamentoListagemDataSource.Clear();
             cboEfetuarPagamentoCategoria.SelectedItem = "Nenhum";

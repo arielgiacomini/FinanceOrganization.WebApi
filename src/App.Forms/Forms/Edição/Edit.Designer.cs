@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmEdit));
             grbTemplateContaPagar = new GroupBox();
+            cboHabilitarDataCompra = new CheckBox();
             rdbPagamentoNaoPago = new RadioButton();
             rdbPagamentoPago = new RadioButton();
             txtContaPagarDataPagamento = new TextBox();
@@ -61,6 +62,7 @@
             // 
             // grbTemplateContaPagar
             // 
+            grbTemplateContaPagar.Controls.Add(cboHabilitarDataCompra);
             grbTemplateContaPagar.Controls.Add(rdbPagamentoNaoPago);
             grbTemplateContaPagar.Controls.Add(rdbPagamentoPago);
             grbTemplateContaPagar.Controls.Add(txtContaPagarDataPagamento);
@@ -93,6 +95,18 @@
             grbTemplateContaPagar.TabIndex = 16;
             grbTemplateContaPagar.TabStop = false;
             grbTemplateContaPagar.Text = "Cadastro de Conta a Pagar - Livre";
+            // 
+            // cboHabilitarDataCompra
+            // 
+            cboHabilitarDataCompra.AutoSize = true;
+            cboHabilitarDataCompra.Font = new Font("Segoe UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
+            cboHabilitarDataCompra.Location = new Point(725, 52);
+            cboHabilitarDataCompra.Name = "cboHabilitarDataCompra";
+            cboHabilitarDataCompra.Size = new Size(161, 17);
+            cboHabilitarDataCompra.TabIndex = 36;
+            cboHabilitarDataCompra.Text = "Habilitar Data de Compra?";
+            cboHabilitarDataCompra.UseVisualStyleBackColor = true;
+            cboHabilitarDataCompra.CheckedChanged += CboHabilitarDataCompra_CheckedChanged;
             // 
             // rdbPagamentoNaoPago
             // 
@@ -240,7 +254,7 @@
             // 
             txtContaPagarValor.Font = new Font("Calibri", 12F, FontStyle.Bold, GraphicsUnit.Point);
             txtContaPagarValor.ForeColor = Color.OrangeRed;
-            txtContaPagarValor.Location = new Point(652, 27);
+            txtContaPagarValor.Location = new Point(654, 17);
             txtContaPagarValor.Name = "txtContaPagarValor";
             txtContaPagarValor.Size = new Size(133, 27);
             txtContaPagarValor.TabIndex = 13;
@@ -251,7 +265,7 @@
             // lblContaPagarValor
             // 
             lblContaPagarValor.AutoSize = true;
-            lblContaPagarValor.Location = new Point(594, 30);
+            lblContaPagarValor.Location = new Point(596, 20);
             lblContaPagarValor.Name = "lblContaPagarValor";
             lblContaPagarValor.Size = new Size(52, 15);
             lblContaPagarValor.TabIndex = 12;
@@ -376,5 +390,6 @@
         private Label lblContaPagarDataPagamento;
         private RadioButton rdbPagamentoNaoPago;
         private RadioButton rdbPagamentoPago;
+        private CheckBox cboHabilitarDataCompra;
     }
 }

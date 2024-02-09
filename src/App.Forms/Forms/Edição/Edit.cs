@@ -34,9 +34,11 @@ namespace App.Forms.Forms.Edição
             if (EditBillToPayViewModel.PurchaseDate == null)
             {
                 dtpContaPagarDataCompra.Enabled = false;
+                dtpContaPagarDataCompra.Text = null;
             }
             else
             {
+                cboHabilitarDataCompra.Checked = true;
                 dtpContaPagarDataCompra.Text = EditBillToPayViewModel.PurchaseDate.ToString();
             }
 
@@ -98,7 +100,7 @@ namespace App.Forms.Forms.Edição
             EditBillToPayViewModel.YearMonth = cboContaPagarAnoMesInicial.Text;
             EditBillToPayViewModel.Category = cboContaPagarCategory.Text;
             EditBillToPayViewModel.Value = Convert.ToDecimal(txtContaPagarValor.Text.Replace("R$ ", ""));
-            EditBillToPayViewModel.PurchaseDate = DateServiceUtils.GetDateTimeOfString(dtpContaPagarDataCompra.Text);
+            EditBillToPayViewModel.PurchaseDate = cboHabilitarDataCompra.Checked ? DateServiceUtils.GetDateTimeOfString(dtpContaPagarDataCompra.Text) : null;
             EditBillToPayViewModel.PayDay = string.IsNullOrWhiteSpace(txtContaPagarDataPagamento.Text) ? null : txtContaPagarDataPagamento.Text;
             EditBillToPayViewModel.HasPay = rdbPagamentoPago.Checked;
             EditBillToPayViewModel.DueDate = DateServiceUtils.GetDateTimeOfString(dtpContaPagarDataVencimento.Text) ?? DateTime.Now;
@@ -118,6 +120,19 @@ namespace App.Forms.Forms.Edição
         private void TxtContaPagarValor_Enter(object sender, EventArgs e)
         {
             txtContaPagarValor.Text = "";
+        }
+
+        private void CboHabilitarDataCompra_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cboHabilitarDataCompra.Checked)
+            {
+                dtpContaPagarDataCompra.Enabled = true;
+            }
+            else
+            {
+                dtpContaPagarDataCompra.Text = string.Empty;
+                dtpContaPagarDataCompra.Enabled = false;
+            }
         }
     }
 }
