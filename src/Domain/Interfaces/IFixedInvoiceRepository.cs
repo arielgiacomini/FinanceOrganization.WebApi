@@ -4,6 +4,8 @@ namespace Domain.Interfaces
 {
     public interface IFixedInvoiceRepository
     {
+        Task<int> Delete(FixedInvoice fixedInvoice);
+        Task<int> DeleteRange(IList<FixedInvoice> fixedInvoices);
         Task<int> Edit(FixedInvoice fixedInvoice);
         Task<IList<FixedInvoice>> GetAll();
         Task<IList<FixedInvoice>> GetAutomationParticipantsOnly(string registrationType);

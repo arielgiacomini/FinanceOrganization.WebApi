@@ -1,5 +1,6 @@
 ﻿using Application.Feature;
 using Application.Feature.BillToPay.CreateBillToPay;
+using Application.Feature.BillToPay.DeleteBillToPay;
 using Application.Feature.BillToPay.EditBillToPay;
 using Application.Feature.BillToPay.PayBillToPay;
 using Application.Feature.BillToPay.SearchBillToPay;
@@ -20,6 +21,7 @@ namespace WebAPI.Controllers
         private readonly IEditBillToPayHandler _editBillToPayHandler;
         private readonly IPayBillToPayHandler _payBillToPayHandler;
         private readonly ISearchBillToPayHandler _searchBillToPayHandler;
+        private readonly IDeleteBillToPayHandler _deleteBillToPayHandler;
 
         public BillToPayController(
             Serilog.ILogger logger,
@@ -27,7 +29,8 @@ namespace WebAPI.Controllers
             ISearchFixedInvoiceHandler searchFixedInvoiceHandler,
             IEditBillToPayHandler editBillToPayHandler,
             IPayBillToPayHandler payBillToPayHandler,
-            ISearchBillToPayHandler searchBillToPayHandler)
+            ISearchBillToPayHandler searchBillToPayHandler,
+            IDeleteBillToPayHandler deleteBillToPayHandler)
         {
             _logger = logger;
             _createFixedInvoiceHandler = createFixedInvoiceHandler;
@@ -35,6 +38,7 @@ namespace WebAPI.Controllers
             _editBillToPayHandler = editBillToPayHandler;
             _payBillToPayHandler = payBillToPayHandler;
             _searchBillToPayHandler = searchBillToPayHandler;
+            _deleteBillToPayHandler = deleteBillToPayHandler;
         }
 
         /// <summary>
@@ -80,13 +84,28 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
+        /// Busca do registro de uma conta a pagar
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet("search-register")]
+        public async Task<IActionResult> GetFixedInvoice(CancellationToken cancellationToken)
+        {
+            _logger.Information($"[BillToPayController.GetFixedInvoice()] - Busca de conta/fatura fixa.");
+
+            var output = await _searchFixedInvoiceHandler.Handle();
+
+            return Ok(output);
+        }
+
+        /// <summary>
         /// Edita uma conta a pagar
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPut("edit")]
-        public async Task<IActionResult> Edit([FromBody] EditBillToPayInput input,
+        public async Task<IActionResult> EditBillToPay([FromBody] EditBillToPayInput input,
             CancellationToken cancellationToken)
         {
             _logger.Information($"[BillToPayController.Edit()] - Alteração de uma conta à pagar já cadastrada. Input: {JsonSerializeUtils.Serialize(input)}");
@@ -131,16 +150,18 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
-        /// Busca do registro de uma conta a pagar
+        /// Busca de contas a pagar
         /// </summary>
+        /// <param name="input"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        [HttpGet("register-search")]
-        public async Task<IActionResult> GetFixedInvoice(CancellationToken cancellationToken)
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteBillToPay([FromBody] DeleteBillToPayInput input,
+            CancellationToken cancellationToken)
         {
-            _logger.Information($"[BillToPayController.GetFixedInvoice()] - Busca de conta/fatura fixa.");
+            _logger.Information($"[BillToPayController.DeleteBillToPay()] - Efetuar Delete");
 
-            var output = await _searchFixedInvoiceHandler.Handle();
+            var output = await _deleteBillToPayHandler.Handle(input, cancellationToken);
 
             return Ok(output);
         }
