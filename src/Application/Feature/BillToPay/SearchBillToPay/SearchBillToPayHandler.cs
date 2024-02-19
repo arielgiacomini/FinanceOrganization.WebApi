@@ -44,6 +44,38 @@ namespace Application.Feature.BillToPay.SearchBillToPay
                 if (billToPayByYearMonth != null)
                 {
                     output.Output = OutputBaseDetails.Success("", billToPayByYearMonth, billToPayByYearMonth.Count);
+
+                    return output;
+                }
+            }
+
+            if (input.Id != null)
+            {
+                foreach (var IdBillToPay in input.Id)
+                {
+                    var billToPayById = await _billToPayRepository.GetBillToPayById(IdBillToPay);
+
+                    if (billToPayById != null)
+                    {
+                        output.Output = OutputBaseDetails.Success("", billToPayById, 1);
+
+                        return output;
+                    }
+                }
+            }
+
+            if (input.IdFixedInvoices != null)
+            {
+                foreach (var idFixedInvoice in input.IdFixedInvoices)
+                {
+                    var billToPayByIdFixedInvoice = await _billToPayRepository.GetBillToPayByFixedInvoiceId(idFixedInvoice);
+
+                    if (billToPayByIdFixedInvoice != null)
+                    {
+                        output.Output = OutputBaseDetails.Success("", billToPayByIdFixedInvoice, billToPayByIdFixedInvoice.Count);
+
+                        return output;
+                    }
                 }
             }
 
