@@ -135,5 +135,27 @@ namespace Infrastructure.Repositories
 
             return await Task.FromResult(result);
         }
+
+        public async Task<int> DeleteRange(IList<BillToPay> billToPays)
+        {
+            _context.ChangeTracker.Clear();
+
+            _context.BillToPay!.RemoveRange(billToPays);
+
+            var result = _context.SaveChanges();
+
+            return await Task.FromResult(result);
+        }
+
+        public async Task<int> Delete(BillToPay billToPay)
+        {
+            _context.ChangeTracker.Clear();
+
+            _ = _context.BillToPay!.Remove(billToPay);
+
+            var result = _context.SaveChanges();
+
+            return await Task.FromResult(result);
+        }
     }
 }

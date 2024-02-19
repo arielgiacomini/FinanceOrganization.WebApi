@@ -1,5 +1,6 @@
 ﻿using Application.EventHandlers.CreateBillToPayEvent;
 using Application.Feature.BillToPay.CreateBillToPay;
+using Application.Feature.BillToPay.DeleteBillToPay;
 using Application.Feature.BillToPay.EditBillToPay;
 using Application.Feature.BillToPay.PayBillToPay;
 using Application.Feature.BillToPay.SearchBillToPay;
@@ -20,6 +21,7 @@ namespace Application
             services.AddScoped<IEditBillToPayHandler, EditBillToPayHandler>();
             services.AddScoped<IPayBillToPayHandler, PayBillToPayHandler>();
             services.AddScoped<ISearchBillToPayHandler, SearchBillToPayHandler>();
+            services.AddScoped<IDeleteBillToPayHandler, DeleteBillToPayHandler>();
 
             return services;
         }
