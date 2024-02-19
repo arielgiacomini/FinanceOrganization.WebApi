@@ -53,11 +53,14 @@ namespace Application.Feature.BillToPay.SearchBillToPay
             {
                 foreach (var IdBillToPay in input.Id)
                 {
+                    IList<Domain.Entities.BillToPay> billToPays = new List<Domain.Entities.BillToPay>();
                     var billToPayById = await _billToPayRepository.GetBillToPayById(IdBillToPay);
 
                     if (billToPayById != null)
                     {
-                        output.Output = OutputBaseDetails.Success("", billToPayById, 1);
+                        billToPays.Add(billToPayById);
+
+                        output.Output = OutputBaseDetails.Success("", billToPays, 1);
 
                         return output;
                     }
