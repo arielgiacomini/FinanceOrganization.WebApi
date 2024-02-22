@@ -18,6 +18,7 @@ namespace Infrastructure.Repositories
         {
             var result = await _context.FixedInvoice!
                    .AsNoTracking()
+                   .Where(x => !x.Enabled.HasValue || x.Enabled.Value)
                    .ToListAsync();
 
             return result;
@@ -30,7 +31,7 @@ namespace Infrastructure.Repositories
                    .Where(fixedInvoice =>
                             (fixedInvoice.LastChangeDate == null
                          || (fixedInvoice.LastChangeDate <= DateTime.Now.AddDays(daysLater)
-                         && fixedInvoice.RegistrationType == registrationType)))
+                         && fixedInvoice.RegistrationType == registrationType)) && (!fixedInvoice.Enabled.HasValue || fixedInvoice.Enabled.Value))
                    .OrderBy(orderBy => orderBy.Id)
                    .ToListAsync();
 
@@ -41,7 +42,7 @@ namespace Infrastructure.Repositories
         {
             var result = await _context.FixedInvoice!
                 .AsNoTracking()
-                .Where(fixedInvoice => fixedInvoice.RegistrationType == registrationType)
+                .Where(fixedInvoice => fixedInvoice.RegistrationType == registrationType && (!fixedInvoice.Enabled.HasValue || fixedInvoice.Enabled.Value))
                 .ToListAsync();
 
             return result;
@@ -51,7 +52,7 @@ namespace Infrastructure.Repositories
         {
             var result = await _context.FixedInvoice!
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Name == name);
+                .FirstOrDefaultAsync(fixedInvoice => fixedInvoice.Name == name && (!fixedInvoice.Enabled.HasValue || fixedInvoice.Enabled.Value));
 
             return result;
         }

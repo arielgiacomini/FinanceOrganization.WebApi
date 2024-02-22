@@ -37,23 +37,51 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
 
             int total = 0;
             Dictionary<int, Domain.Entities.FixedInvoice?> dicFixedInvoice = new();
-            Dictionary<Guid, Domain.Entities.BillToPay?> dicBillToPay = new();
+            Dictionary<int, Domain.Entities.BillToPay?> billToPayRemoved = new();
 
             if (input.Id != null)
             {
                 foreach (var idBillToPay in input.Id)
                 {
                     var billToPayReadyRemove = await _billToPayRepository.GetBillToPayById(idBillToPay);
-                    dicBillToPay.Add(idBillToPay, billToPayReadyRemove);
 
-                    var fixedInvoiceReadyRemove = await _fixedInvoiceRepository.GetById(billToPayReadyRemove!.IdFixedInvoice);
-                    dicFixedInvoice.Add(billToPayReadyRemove!.IdFixedInvoice, fixedInvoiceReadyRemove);
+                    if (billToPayReadyRemove == null)
+                    {
+                        _logger.Error($"[DeleteBillToPayHandler.Input.Id] - Não encontrado o BillToPay pelo Id: {idBillToPay}");
+                        continue;
+                    }
+
+                    billToPayRemoved.Add(billToPayReadyRemove!.IdFixedInvoice, billToPayReadyRemove);
 
                     var resultOne = await _billToPayRepository.Delete(billToPayReadyRemove);
                     total += resultOne;
+                }
 
-                    var resultTwo = await _fixedInvoiceRepository.Delete(fixedInvoiceReadyRemove!);
-                    total += resultTwo;
+                foreach (var item in billToPayRemoved)
+                {
+                    var allBillToPay = await _billToPayRepository.GetBillToPayByFixedInvoiceId(item.Key);
+
+                    var existsBillToPayOpenAfterRemoved = allBillToPay
+                        .Where(x => !x.HasPay)
+                        .Any();
+
+                    if (!existsBillToPayOpenAfterRemoved || input.DisableFixedInvoice)
+                    {
+                        var fixedInvoicesReadyToDisabled = await _fixedInvoiceRepository.GetById(item.Key);
+
+                        if (fixedInvoicesReadyToDisabled == null)
+                        {
+                            _logger.Error($"[DeleteBillToPayHandler.Input.Id] - Não encontrado o FixedInvoice pelo Id: {item.Key}");
+                            continue;
+                        }
+
+                        dicFixedInvoice.Add(item.Key, fixedInvoicesReadyToDisabled);
+
+                        fixedInvoicesReadyToDisabled.Enabled = false;
+
+                        var resultTwo = await _fixedInvoiceRepository.Edit(fixedInvoicesReadyToDisabled!);
+                        total += resultTwo;
+                    }
                 }
             }
 
@@ -61,20 +89,28 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
             {
                 foreach (var idFixedInvoice in input.IdFixedInvoices)
                 {
-                    var fixedInvoicesReadyRemove = await _fixedInvoiceRepository.GetById(idFixedInvoice);
-                    dicFixedInvoice.Add(idFixedInvoice, fixedInvoicesReadyRemove);
+                    var fixedInvoicesReadyDisabled = await _fixedInvoiceRepository.GetById(idFixedInvoice);
+
+                    if (fixedInvoicesReadyDisabled == null)
+                    {
+                        _logger.Error($"[DeleteBillToPayHandler.Input.IdFixedInvoices] - Não encontrado o FixedInvoice pelo Id: {idFixedInvoice}");
+                        continue;
+                    }
+
+                    dicFixedInvoice.Add(idFixedInvoice, fixedInvoicesReadyDisabled);
 
                     var billToPayReadyRemove = await _billToPayRepository.GetBillToPayByFixedInvoiceId(idFixedInvoice);
 
                     foreach (var remove in billToPayReadyRemove)
                     {
-                        dicBillToPay.Add(remove.Id, remove);
+                        billToPayRemoved.Add(remove.IdFixedInvoice, remove);
                     }
 
                     var resultThree = await _billToPayRepository.DeleteRange(billToPayReadyRemove);
                     total += resultThree;
 
-                    var resultFour = await _fixedInvoiceRepository.Delete(fixedInvoicesReadyRemove!);
+                    fixedInvoicesReadyDisabled!.Enabled = false;
+                    var resultFour = await _fixedInvoiceRepository.Edit(fixedInvoicesReadyDisabled!);
                     total += resultFour;
                 }
             }
@@ -83,13 +119,13 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
             {
                 Output = OutputBaseDetails
                 .Success($"[{true}] - Delete realizado com sucesso.",
-                 SetOutputData(dicFixedInvoice, dicBillToPay), total)
+                 SetOutputData(dicFixedInvoice, billToPayRemoved), total)
             };
 
             return await Task.FromResult(output);
         }
 
-        private static string SetOutputData(Dictionary<int, Domain.Entities.FixedInvoice?> dicFixedInvoice, Dictionary<Guid, Domain.Entities.BillToPay?> dicBillToPay)
+        private static string SetOutputData(Dictionary<int, Domain.Entities.FixedInvoice?> dicFixedInvoice, Dictionary<int, Domain.Entities.BillToPay?> dicBillToPay)
         {
             return string
                 .Concat(

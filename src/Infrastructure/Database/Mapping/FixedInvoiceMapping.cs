@@ -22,6 +22,7 @@ namespace Infrastructure.Database.Mapping
             builder.Property(x => x.FynallyMonthYear).HasColumnName("IND_MES_ANO_FINAL");
             builder.Property(x => x.Frequence).HasColumnName("IND_FREQUENCIA");
             builder.Property(x => x.AdditionalMessage).HasColumnName("DSC_MENSAGEM_ADICIONAL");
+            builder.Property(x => x.Enabled).HasColumnName("IND_ATIVO");
             builder.Property(x => x.CreationDate).HasColumnName("DAT_CRIACAO_REGISTRO");
             builder.Property(x => x.LastChangeDate).HasColumnName("DAT_ULTIMA_ALTERACAO");
         }
