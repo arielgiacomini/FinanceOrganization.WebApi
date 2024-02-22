@@ -17,6 +17,7 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
             IFixedInvoiceRepository fixedInvoiceRepository, IBillToPayRepository billToPayRepository)
         {
             Dictionary<string, string> validatorBase = new();
+            int contador = 0;
 
             if (input.IdFixedInvoices != null)
             {
@@ -61,11 +62,12 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
             {
                 foreach (var idBillToPay in input.Id)
                 {
+                    contador++;
                     var billToPay = await billToPayRepository.GetBillToPayById(idBillToPay);
 
                     if (billToPay == null)
                     {
-                        validatorBase.Add("[20]", $"Não foi encontrado nenhum BillToPay para o Id informado: [{idBillToPay}]");
+                        validatorBase.Add($"[20-{contador}]", $"Não foi encontrado nenhum BillToPay para o Id informado: [{idBillToPay}]");
                     }
 
                     if (billToPay != null)
@@ -74,12 +76,12 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
 
                         if (fixedInvoice == null)
                         {
-                            validatorBase.Add("[21]", $"Não foi encontrado nenhum FixedInvoice para o Id informado: [{billToPay.IdFixedInvoice}]");
+                            validatorBase.Add($"[21-{contador}]", $"Não foi encontrado nenhum FixedInvoice para o Id informado: [{billToPay.IdFixedInvoice}]");
                         }
 
                         if (billToPay.HasPay && input.JustUnpaid)
                         {
-                            validatorBase.Add("[22]", $"Quando escolhida a opção " +
+                            validatorBase.Add($"[22-{contador}]", $"Quando escolhida a opção " +
                                 $"[JustUnpaid] no input apenas itens não pagos devem ser deletados: {billToPay}");
                         }
 
@@ -89,7 +91,7 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
 
                         if (billToPay.HasPay && !input.JustUnpaid && dateCheck < dateNowCheck)
                         {
-                            validatorBase.Add("[23]", $"Não pode ser deletado registro de um Mês/Ano fechado.");
+                            validatorBase.Add($"[23-{contador}]", $"Não pode ser deletado registro de um Mês/Ano fechado.");
                         }
                     }
                 }
