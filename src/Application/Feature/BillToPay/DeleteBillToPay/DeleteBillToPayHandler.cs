@@ -36,8 +36,9 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
             }
 
             int total = 0;
-            Dictionary<int, Domain.Entities.FixedInvoice?> dicFixedInvoice = new();
-            Dictionary<int, Domain.Entities.BillToPay?> billToPayRemoved = new();
+            int contador = 0;
+            Dictionary<string, Domain.Entities.FixedInvoice?> dicFixedInvoice = new();
+            Dictionary<string, Domain.Entities.BillToPay?> billToPayRemoved = new();
 
             if (input.Id != null)
             {
@@ -51,7 +52,10 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
                         continue;
                     }
 
-                    billToPayRemoved.Add(billToPayReadyRemove!.IdFixedInvoice, billToPayReadyRemove);
+                    contador++;
+                    var key = string.Concat(billToPayReadyRemove!.IdFixedInvoice, "-", contador);
+
+                    billToPayRemoved.Add(key, billToPayReadyRemove);
 
                     var resultOne = await _billToPayRepository.Delete(billToPayReadyRemove);
                     total += resultOne;
@@ -59,7 +63,9 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
 
                 foreach (var item in billToPayRemoved)
                 {
-                    var allBillToPay = await _billToPayRepository.GetBillToPayByFixedInvoiceId(item.Key);
+                    var keyParsed = int.TryParse(item.Key.Split("-")[0], out int key);
+
+                    var allBillToPay = await _billToPayRepository.GetBillToPayByFixedInvoiceId(key);
 
                     var existsBillToPayOpenAfterRemoved = allBillToPay
                         .Where(x => !x.HasPay)
@@ -67,7 +73,7 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
 
                     if (!existsBillToPayOpenAfterRemoved || input.DisableFixedInvoice)
                     {
-                        var fixedInvoicesReadyToDisabled = await _fixedInvoiceRepository.GetById(item.Key);
+                        var fixedInvoicesReadyToDisabled = await _fixedInvoiceRepository.GetById(key);
 
                         if (fixedInvoicesReadyToDisabled == null)
                         {
@@ -97,13 +103,19 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
                         continue;
                     }
 
-                    dicFixedInvoice.Add(idFixedInvoice, fixedInvoicesReadyDisabled);
+                    contador++;
+                    var key = string.Concat(fixedInvoicesReadyDisabled!.Id, "-", contador);
+
+                    dicFixedInvoice.Add(key, fixedInvoicesReadyDisabled);
 
                     var billToPayReadyRemove = await _billToPayRepository.GetBillToPayByFixedInvoiceId(idFixedInvoice);
 
                     foreach (var remove in billToPayReadyRemove)
                     {
-                        billToPayRemoved.Add(remove.IdFixedInvoice, remove);
+                        contador++;
+                        var KeyInter = string.Concat(remove!.IdFixedInvoice, "-", contador);
+
+                        billToPayRemoved.Add(KeyInter, remove);
                     }
 
                     var resultThree = await _billToPayRepository.DeleteRange(billToPayReadyRemove);
@@ -125,7 +137,7 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
             return await Task.FromResult(output);
         }
 
-        private static string SetOutputData(Dictionary<int, Domain.Entities.FixedInvoice?> dicFixedInvoice, Dictionary<int, Domain.Entities.BillToPay?> dicBillToPay)
+        private static string SetOutputData(Dictionary<string, Domain.Entities.FixedInvoice?> dicFixedInvoice, Dictionary<string, Domain.Entities.BillToPay?> dicBillToPay)
         {
             return string
                 .Concat(
