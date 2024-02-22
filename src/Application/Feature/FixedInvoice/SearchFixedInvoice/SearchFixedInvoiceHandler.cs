@@ -17,7 +17,7 @@ namespace Application.Feature.FixedInvoice.SearchFixedInvoice
 
             var output = new SearchFixedInvoiceOutput
             {
-                Output = OutputBaseDetails.Success("Busca realizada com sucesso.", getByAll)
+                Output = OutputBaseDetails.Success("Busca realizada com sucesso.", getByAll, getByAll.Count)
             };
 
             return output;

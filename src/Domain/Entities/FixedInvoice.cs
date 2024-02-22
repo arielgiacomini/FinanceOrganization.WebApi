@@ -17,6 +17,10 @@
         public decimal Value { get; set; }
         public int BestPayDay { get; set; }
         public string? AdditionalMessage { get; set; }
+        /// <summary>
+        /// Inativação - Delete Lógico da Tabela
+        /// </summary>
+        public bool? Enabled { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime? LastChangeDate { get; set; }
     }
