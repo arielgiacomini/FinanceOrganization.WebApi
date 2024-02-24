@@ -153,6 +153,11 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 if (considerPurchase)
                 {
                     purchase = purchasesDate.GetValueOrDefault(nextMonth.Key);
+
+                    if (purchase == DateTime.MinValue)
+                    {
+                        continue;
+                    }
                 }
                 else
                 {
