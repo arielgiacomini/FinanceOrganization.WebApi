@@ -25,6 +25,27 @@ namespace Infrastructure.Repositories
                 var result = await _context.BillToPay!
                     .AsNoTracking()
                     .Where(pay => pay.IdFixedInvoice == fixedInvoiceId)
+                    .OrderBy(pay => pay.DueDate)
+                    .ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Exception exception = new(ex.Message);
+                throw exception;
+            }
+        }
+
+        public async Task<IList<BillToPay>> GetBillToPayByYearMonthAndCategoryAndRegistrationType(string yearMonth, string category, string registationType)
+        {
+            try
+            {
+                var result = await _context.BillToPay!
+                    .AsNoTracking()
+                    .Where(pay => pay.Category == category
+                        && pay.RegistrationType == registationType && pay.YearMonth == yearMonth)
+                    .OrderBy(pay => pay.DueDate)
                     .ToListAsync();
 
                 return result;
