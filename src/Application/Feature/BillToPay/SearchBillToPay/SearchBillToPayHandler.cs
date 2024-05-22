@@ -141,6 +141,10 @@ namespace Application.Feature.BillToPay.SearchBillToPay
                                             searchBillToPayDataOutput.Add(MapDomainToData(item, list, sumValue));
                                         }
                                     }
+                                    else
+                                    {
+                                        searchBillToPayDataOutput.Add(MapDomainToData(item, null, sumValue));
+                                    }
                                 }
                             }
                         }
