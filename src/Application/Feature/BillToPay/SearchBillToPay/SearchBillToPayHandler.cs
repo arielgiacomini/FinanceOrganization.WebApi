@@ -1,4 +1,5 @@
-﻿using Domain.Interfaces;
+﻿using Domain.Entities;
+using Domain.Interfaces;
 using Serilog;
 
 namespace Application.Feature.BillToPay.SearchBillToPay
@@ -37,13 +38,54 @@ namespace Application.Feature.BillToPay.SearchBillToPay
                 Output = new OutputBaseDetails()
             };
 
+            var searchBillToPayDataOutput = new List<SearchBillToPayData>();
+
             if (input.YearMonth != null)
             {
                 var billToPayByYearMonth = await _billToPayRepository.GetBillToPayByYearMonth(input.YearMonth);
 
                 if (billToPayByYearMonth != null)
                 {
-                    output.Output = OutputBaseDetails.Success("", billToPayByYearMonth, billToPayByYearMonth.Count);
+                    if (ShowDetails(input))
+                    {
+                        foreach (var item in billToPayByYearMonth)
+                        {
+                            decimal sumValue = 0;
+                            if (item != null)
+                            {
+                                if (item.RegistrationType == RegistrationType.CONTA_FATURA_FIXA)
+                                {
+                                    var billToPayFree = await _billToPayRepository
+                                        .GetBillToPayByYearMonthAndCategoryAndRegistrationType(item.YearMonth!, item.Category!, RegistrationType.COMPRA_LIVRE);
+
+                                    if (billToPayFree != null)
+                                    {
+                                        var list = new List<Domain.Entities.BillToPay>();
+                                        foreach (var relation in billToPayFree)
+                                        {
+                                            sumValue += relation.Value;
+                                            list.Add(relation);
+                                        }
+
+                                        searchBillToPayDataOutput.Add(MapDomainToData(item, list, sumValue));
+                                    }
+                                }
+                                else
+                                {
+                                    searchBillToPayDataOutput.Add(MapDomainToData(item, null, sumValue));
+                                }
+                            }
+                        }
+                    }
+
+                    if (ShowDetails(input) && searchBillToPayDataOutput.Count > 0)
+                    {
+                        output.Output = OutputBaseDetails.Success("", searchBillToPayDataOutput, searchBillToPayDataOutput.Count);
+                    }
+                    else
+                    {
+                        output.Output = OutputBaseDetails.Success("", billToPayByYearMonth, billToPayByYearMonth.Count);
+                    }
 
                     return output;
                 }
@@ -75,14 +117,110 @@ namespace Application.Feature.BillToPay.SearchBillToPay
 
                     if (billToPayByIdFixedInvoice != null)
                     {
-                        output.Output = OutputBaseDetails.Success("", billToPayByIdFixedInvoice, billToPayByIdFixedInvoice.Count);
+                        if (ShowDetails(input))
+                        {
+                            foreach (var item in billToPayByIdFixedInvoice)
+                            {
+                                decimal sumValue = 0;
+                                if (item != null)
+                                {
+                                    if (item.RegistrationType == RegistrationType.CONTA_FATURA_FIXA)
+                                    {
+                                        var billToPayFree = await _billToPayRepository
+                                            .GetBillToPayByYearMonthAndCategoryAndRegistrationType(item.YearMonth!, item.Category!, RegistrationType.COMPRA_LIVRE);
 
-                        return output;
+                                        if (billToPayFree != null)
+                                        {
+                                            var list = new List<Domain.Entities.BillToPay>();
+                                            foreach (var relation in billToPayFree)
+                                            {
+                                                sumValue += relation.Value;
+                                                list.Add(relation);
+                                            }
+
+                                            searchBillToPayDataOutput.Add(MapDomainToData(item, list, sumValue));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (ShowDetails(input) && searchBillToPayDataOutput.Count > 0)
+                        {
+                            output.Output = OutputBaseDetails.Success("", searchBillToPayDataOutput, billToPayByIdFixedInvoice.Count);
+                        }
+                        else
+                        {
+                            output.Output = OutputBaseDetails.Success("", billToPayByIdFixedInvoice, billToPayByIdFixedInvoice.Count);
+                        }
                     }
+
+                    return output;
                 }
             }
 
             return output;
+        }
+
+        private static SearchBillToPayData MapDomainToData(Domain.Entities.BillToPay domain, List<Domain.Entities.BillToPay>? details, decimal amount)
+        {
+            IList<Details> listDetails = new List<Details>();
+
+            if (details is not null)
+            {
+                foreach (var itemDetail in details)
+                {
+                    listDetails.Add(new()
+                    {
+                        Id = itemDetail.Id,
+                        IdFixedInvoice = itemDetail.IdFixedInvoice,
+                        Account = itemDetail.Account,
+                        Name = itemDetail.Name,
+                        Category = itemDetail.Category,
+                        Value = itemDetail.Value,
+                        PurchaseDate = itemDetail.PurchaseDate,
+                        DueDate = itemDetail.DueDate,
+                        YearMonth = itemDetail.YearMonth,
+                        Frequence = itemDetail.Frequence,
+                        RegistrationType = itemDetail.RegistrationType,
+                        PayDay = itemDetail.PayDay,
+                        HasPay = itemDetail.HasPay,
+                        AdditionalMessage = itemDetail.AdditionalMessage,
+                        CreationDate = itemDetail.CreationDate,
+                        LastChangeDate = itemDetail.LastChangeDate
+                    });
+                };
+            }
+
+            SearchBillToPayData searchBillToPayData = new()
+            {
+                Id = domain.Id,
+                IdFixedInvoice = domain.IdFixedInvoice,
+                Account = domain.Account,
+                Name = domain.Name,
+                Category = domain.Category,
+                Value = domain.Value,
+                PurchaseDate = domain.PurchaseDate,
+                DueDate = domain.DueDate,
+                YearMonth = domain.YearMonth,
+                Frequence = domain.Frequence,
+                RegistrationType = domain.RegistrationType,
+                PayDay = domain.PayDay,
+                HasPay = domain.HasPay,
+                AdditionalMessage = domain.AdditionalMessage,
+                CreationDate = domain.CreationDate,
+                LastChangeDate = domain.LastChangeDate,
+                DetailsQuantity = listDetails.Count,
+                DetailsAmount = amount,
+                Details = listDetails
+            };
+
+            return searchBillToPayData;
+        }
+
+        private static bool ShowDetails(SearchBillToPayInput input)
+        {
+            return input.ShowDetails.HasValue && input.ShowDetails.Value;
         }
     }
 }

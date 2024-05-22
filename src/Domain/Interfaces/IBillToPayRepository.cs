@@ -15,5 +15,6 @@ namespace Domain.Interfaces
         Task<int> SaveRange(IList<BillToPay> billsToPay);
         Task<int> Delete(BillToPay billToPay);
         Task<int> DeleteRange(IList<BillToPay> billToPays);
+        Task<IList<BillToPay>> GetBillToPayByYearMonthAndCategoryAndRegistrationType(string yearMonth, string category, string registationType);
     }
 }

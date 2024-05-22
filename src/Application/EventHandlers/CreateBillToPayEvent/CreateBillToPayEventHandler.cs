@@ -189,18 +189,23 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     return;
                 }
 
+                if (descontar.HasPay)
+                {
+                    return;
+                }
+
                 if (descontar.Frequence == FREQUENCIA_MENSAL)
                 {
                     var valueOld = descontar.Value;
 
                     descontar.Value -= fixedInvoice.Value;
-                    descontar.AdditionalMessage += $"Retirado: [R$ {fixedInvoice.Value}] em [{DateTime.Now}] do valor que estava: [R$ {valueOld}] | ";
+                    descontar.AdditionalMessage += $"Retirado: [R$ {fixedInvoice.Value}] em [{DateTime.Now.Date}] do valor que estava: [R$ {valueOld}] pela seguinte conta: [{fixedInvoice.Name}] | ";
 
                     var edited = await _billToPayRepository.Edit(descontar);
 
                     if (edited == 1)
                     {
-                        _logger.Information("Teste já descontando quando encontrar a conta fixa relacionada.");
+                        _logger.Information($"A conta relacionada de Id [{descontar.Id}] foi descontado valores com base no gasto da conta de Id [{fixedInvoice.Id}] com a seguinte informação [{descontar.AdditionalMessage}]");
                     }
                 }
             }
