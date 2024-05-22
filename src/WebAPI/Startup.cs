@@ -54,7 +54,7 @@ namespace WebAPI
             {
                 x.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Version = "1.4",
+                    Version = "1.5",
                     Title = "Resposável por criar organizar financeiramente",
                     Description = $"Já está preparado para criar as contas a pagar - Ariel Giacomini - última versão gerada em [{DateTime.Now}]",
                     TermsOfService = URL_ARIELGIACOMINI,
