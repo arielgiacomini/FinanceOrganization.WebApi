@@ -48,8 +48,8 @@ steps:
     password: 'Passw0rdhelen@'
     rootDirectory: '$(Build.ArtifactStagingDirectory)\extract'
     filePatterns: '**'
-    #remoteDirectory: '/api.finance.hml'
-    remoteDirectory: '/teste'
+    remoteDirectory: '/api.finance.hml'
+    #remoteDirectory: '/teste'
     enableUtf8: true
     clean: false
     cleanContents: false
