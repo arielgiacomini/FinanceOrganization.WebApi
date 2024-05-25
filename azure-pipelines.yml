@@ -20,6 +20,20 @@ steps:
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
+- task: FtpUpload@2
+  inputs:
+    credentialsOption: 'inputs'
+    serverUrl: 'WIN8043.SITE4NOW.NET'
+    username: 'arielgiacomini-003'
+    password: 'Passw0rdhelen@'
+    rootDirectory: 
+    filePatterns: '**'
+    remoteDirectory: '/api.finance.hml'
+    enableUtf8: true
+    clean: false
+    cleanContents: false
+    preservePaths: false
+    trustSSL: false
 
 - task: VSBuild@1
   inputs:
