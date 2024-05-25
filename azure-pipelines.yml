@@ -33,7 +33,7 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: FtpUpload@3
+- task: FtpUpload@2
   inputs:
     credentialsOption: 'inputs'
     serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
