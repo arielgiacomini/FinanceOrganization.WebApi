@@ -35,7 +35,7 @@ steps:
 
 - task: ExtractFiles@1
   inputs:
-    archiveFilePatterns: 'FinanceOrganization.WebApi.zip'
+    archiveFilePatterns: '$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip'
     destinationFolder: '$(Build.ArtifactStagingDirectory)\extract'
     cleanDestinationFolder: true
     overwriteExistingFiles: true
