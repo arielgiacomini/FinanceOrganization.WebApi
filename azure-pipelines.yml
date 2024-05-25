@@ -20,20 +20,6 @@ steps:
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
-- task: FtpUpload@2
-  inputs:
-    credentialsOption: 'inputs'
-    serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
-    username: 'arielgiacomini-003'
-    password: 'Passw0rdhelen@'
-    rootDirectory: 
-    filePatterns: '**'
-    remoteDirectory: '/api.finance.hml'
-    enableUtf8: true
-    clean: false
-    cleanContents: false
-    preservePaths: false
-    trustSSL: false
 
 - task: VSBuild@1
   inputs:
@@ -46,3 +32,18 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+- task: FtpUpload@3
+  inputs:
+    credentialsOption: 'inputs'
+    serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
+    username: 'arielgiacomini-003'
+    password: 'Passw0rdhelen@'
+    rootDirectory: 
+    filePatterns: '*.dll'
+    remoteDirectory: '/api.finance.hml'
+    enableUtf8: true
+    clean: false
+    cleanContents: false
+    preservePaths: false
+    trustSSL: false
