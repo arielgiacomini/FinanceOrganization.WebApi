@@ -40,8 +40,9 @@ steps:
     username: 'arielgiacomini-003'
     password: 'Passw0rdhelen@'
     rootDirectory: 
-    filePatterns: '*.dll'
-    remoteDirectory: '/api.finance.hml'
+    filePatterns: '**'
+    #remoteDirectory: '/api.finance.hml'
+    remoteDirectory: '/teste'
     enableUtf8: true
     clean: false
     cleanContents: false
