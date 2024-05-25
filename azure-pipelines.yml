@@ -33,13 +33,20 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+- task: ExtractFiles@1
+  inputs:
+    archiveFilePatterns: '**/*.WebApp.zip'
+    destinationFolder: '$(Build.ArtifactStagingDirectory)\extract'
+    cleanDestinationFolder: true
+    overwriteExistingFiles: true
+
 - task: FtpUpload@2
   inputs:
     credentialsOption: 'inputs'
     serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
     username: 'arielgiacomini-003'
     password: 'Passw0rdhelen@'
-    rootDirectory: 
+    rootDirectory: '$(Build.ArtifactStagingDirectory)\extract'
     filePatterns: '**'
     #remoteDirectory: '/api.finance.hml'
     remoteDirectory: '/teste'
