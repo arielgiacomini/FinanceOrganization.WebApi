@@ -4,6 +4,7 @@ using Application.Feature.BillToPay.DeleteBillToPay;
 using Application.Feature.BillToPay.EditBillToPay;
 using Application.Feature.BillToPay.PayBillToPay;
 using Application.Feature.BillToPay.SearchBillToPay;
+using Application.Feature.BillToPay.SearchMonthlyAverageAnalysis;
 using Application.Feature.FixedInvoice.SearchFixedInvoice;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
@@ -22,6 +23,7 @@ namespace Application
             services.AddScoped<IPayBillToPayHandler, PayBillToPayHandler>();
             services.AddScoped<ISearchBillToPayHandler, SearchBillToPayHandler>();
             services.AddScoped<IDeleteBillToPayHandler, DeleteBillToPayHandler>();
+            services.AddScoped<ISearchMonthlyAverageAnalysisHandler, SearchMonthlyAverageAnalysisHandler>();
 
             return services;
         }

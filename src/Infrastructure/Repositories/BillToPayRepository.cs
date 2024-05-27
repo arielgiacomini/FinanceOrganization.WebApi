@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Entities.Extern;
 using Domain.Interfaces;
 using Infrastructure.Database.Context;
 using Microsoft.EntityFrameworkCore;
@@ -177,6 +178,30 @@ namespace Infrastructure.Repositories
             var result = _context.SaveChanges();
 
             return await Task.FromResult(result);
+        }
+
+        /// <summary>
+        /// Trás os resultos de contas a pagar dos últimos meses com base nos parâmetros informados
+        /// </summary>
+        /// <param name="initialDate"></param>
+        /// <param name="finallyDate"></param>
+        /// <param name="qtyMonth"></param>
+        /// <returns></returns>
+        public async Task<IList<MonthlyAverageAnalysis>> GetMonthlyAverageAnalysesAsync(DateTime initialDate, DateTime finallyDate, int qtyMonth)
+        {
+            try
+            {
+                var result = _context
+                    .MonthlyAverageAnalysis!
+                    .FromSqlInterpolated($"EXECUTE [dbo].[STP_CONTA_PAGAR_MEDIAS_MENSAIS] @DATA_INICIAL = {initialDate}, @DATA_FINAL = {finallyDate}, @QUANTIDADE_MESES_ANALISE_MEDIA = {qtyMonth}")
+                    .ToArray();
+
+                return await Task.FromResult(result);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }
