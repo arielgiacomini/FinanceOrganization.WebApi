@@ -53,14 +53,6 @@ stages:
        runOnce:
          deploy:      
            steps:
-           - task: ExtractFiles@1
-             displayName: Extract zip
-             inputs:
-               archiveFilePatterns: '$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip'
-               destinationFolder: '$(Build.ArtifactStagingDirectory)\extract'
-               cleanDestinationFolder: true
-               overwriteExistingFiles: true
-   
            - task: FtpUpload@2
              displayName: Send FTP
              inputs:
@@ -68,7 +60,7 @@ stages:
                serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
                username: 'finance-organization-hml'
                password: 'finance-organization-hml'
-               rootDirectory: '$(Build.ArtifactStagingDirectory)\extract'
+               rootDirectory: '$(Build.ArtifactStagingDirectory)'
                filePatterns: '**'
                remoteDirectory: '/api.finance.hml'
                #remoteDirectory: '/teste'
