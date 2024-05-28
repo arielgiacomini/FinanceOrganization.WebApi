@@ -44,10 +44,10 @@ stages:
 
  - stage: DeployOnHml
    displayName: Deploy on hml
+   enviroment: Approvers
    jobs:
    - job: "DeployOnHml"  
      displayName: deployment
-     enviroment: Approvers
      steps:
      - task: ExtractFiles@1
        displayName: Extract zip
