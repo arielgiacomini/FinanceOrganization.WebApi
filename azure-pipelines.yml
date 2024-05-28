@@ -27,12 +27,18 @@ stages:
        inputs:
          restoreSolution: '$(solution)'
    
-     - task: VSBuild@1
+     # - task: VSBuild@1
+     #   inputs:
+     #     solution: '$(solution)'
+     #     msbuildArgs: '/p:DeployOnBuild=false /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip" /p:DeployIisAppPath="Default Web Site"'
+     #     platform: '$(buildPlatform)'
+     #     configuration: '$(buildConfiguration)'
+
+     - task: DotNetCoreCLI@2
+       displayName: 'dotnet build $(buildConfiguration)'
        inputs:
-         solution: '$(solution)'
-         msbuildArgs: '/p:DeployOnBuild=false /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip" /p:DeployIisAppPath="Default Web Site"'
-         platform: '$(buildPlatform)'
-         configuration: '$(buildConfiguration)'
+         command: 'build'
+         arguments: '--configuration $(buildConfiguration)'
 
    - job: "UnitTesting"
      dependsOn: Build
