@@ -56,15 +56,9 @@ stages:
                username: 'finance-organization-hml'
                password: 'finance-organization-hml'
                rootDirectory: '$(Build.ArtifactStagingDirectory)'
-               filePatterns: '*
-                             !*.json'
+               filePatterns: "**"
                remoteDirectory: '/api.finance.hml'
-               #remoteDirectory: '/teste'
                enableUtf8: true
-               clean: false
-               cleanContents: false
-               preservePaths: false
-               trustSSL: false
 
  - stage: DeployOnPrd
    displayName: Deploy on prd
@@ -88,12 +82,6 @@ stages:
                username: 'finance-organization-prd'
                password: 'finance-organization-prd'
                rootDirectory: '$(Build.ArtifactStagingDirectory)'
-               filePatterns: '*
-                             !*.json'
+               filePatterns: '**'
                remoteDirectory: '/api.finance.prd'
-               #remoteDirectory: '/teste'
                enableUtf8: true
-               clean: false
-               cleanContents: false
-               preservePaths: false
-               trustSSL: false
