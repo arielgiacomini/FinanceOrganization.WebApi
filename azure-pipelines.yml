@@ -45,6 +45,7 @@ stages:
 
    - job: "DeployOnHml"
      dependsOn: UnitTesting
+     enviroment: "Approvers"
      displayName: Deploy on hml
      steps:
      - task: ExtractFiles@1
