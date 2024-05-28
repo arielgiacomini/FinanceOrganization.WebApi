@@ -29,6 +29,21 @@ stages:
          arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
      - task: DotNetCoreCLI@2
+       displayName: 'Publish Binaries'
+       inputs:
+         command: 'publish'
+         publishWebProjects: false
+         arguments: '--configuration $(buildConfiguration) --no-restore -o $(Build.ArtifactStagingDirectory)'
+         zipAfterPublish: false
+         modifyOutputPath: false
+
+     - task: PublishBuildArtifacts@1
+       inputs:
+         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+         ArtifactName: 'drop'
+         publishLocation: 'Container'
+
+     - task: DotNetCoreCLI@2
        displayName: 'dotnet run unit testing'
        inputs:
          command: 'test'
