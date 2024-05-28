@@ -32,8 +32,6 @@ stages:
          platform: '$(buildPlatform)'
          configuration: '$(buildConfiguration)'
 
- - stage: UnitTesting
-   jobs:  
    - job: "UnitTesting"
      steps:
      - task: VSTest@2
