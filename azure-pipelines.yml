@@ -46,7 +46,8 @@ stages:
  - stage: DeployOnHml
    displayName: Deploy on hml
    jobs:
-   - deployment: "hml"
+   - deployment:
+     displayName: "Tasks to deploy"
      environment: "Approvers"
      pool: 
         vmImage: 'windows-latest'
