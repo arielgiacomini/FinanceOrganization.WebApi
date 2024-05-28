@@ -16,6 +16,7 @@ variables:
 
 jobs:
 - job: "Build"
+  steps:
   - task: NuGetToolInstaller@1
 
   - task: NuGetCommand@2
@@ -30,6 +31,7 @@ jobs:
       configuration: '$(buildConfiguration)'
 
 - job: "Unit Testing"
+  steps:
   - task: VSTest@2
     displayName: Run unit testing
     inputs:
@@ -37,6 +39,7 @@ jobs:
       configuration: '$(buildConfiguration)'
 
 - job: "Deploy on hml"
+  steps:
   - task: ExtractFiles@1
     displayName: Extract zip
     inputs:
