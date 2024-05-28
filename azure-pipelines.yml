@@ -7,7 +7,7 @@ trigger:
 - main
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'DESKTOP-6MDL4B5'
 
 variables:
   solution: '**/*.sln'
