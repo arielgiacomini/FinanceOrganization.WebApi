@@ -47,7 +47,7 @@ stages:
      - task: DotNetCoreCLI@2
        inputs:
          command: 'test'
-         arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/TestResults'
+         arguments: '--configuration $(buildConfiguration) --output TestResults/$(Build.ArtifactStagingDirectory)'
 
  - stage: DeployOnHml
    displayName: Deploy on hml
