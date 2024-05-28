@@ -44,7 +44,6 @@ stages:
 
  - stage: DeployOnHml
    displayName: Deploy on hml
-   enviroment: Approvers
    jobs:
    - job: "DeployOnHml"  
      displayName: deployment
