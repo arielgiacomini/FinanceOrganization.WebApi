@@ -7,7 +7,7 @@ trigger:
 - main
 
 parameters:
-  pool:
+ - pool:
     name: 'windows-latest'
 
 pool:
