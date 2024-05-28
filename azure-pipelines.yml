@@ -26,13 +26,6 @@ stages:
      - task: NuGetCommand@2
        inputs:
          restoreSolution: '$(solution)'
-   
-     # - task: VSBuild@1
-     #   inputs:
-     #     solution: '$(solution)'
-     #     msbuildArgs: '/p:DeployOnBuild=false /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip" /p:DeployIisAppPath="Default Web Site"'
-     #     platform: '$(buildPlatform)'
-     #     configuration: '$(buildConfiguration)'
 
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build $(buildConfiguration)'
@@ -44,7 +37,7 @@ stages:
        displayName: 'dotnet run unit testing'
        inputs:
          command: 'test'
-         arguments: '--configuration $(buildConfiguration) --output TestResults/$(Build.ArtifactStagingDirectory)'
+         arguments: '--configuration $(buildConfiguration) --output $(Common.TestResultsDirectory)'
 
  - stage: DeployOnHml
    displayName: Deploy on hml
