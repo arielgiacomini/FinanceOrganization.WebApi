@@ -45,8 +45,9 @@ stages:
  - stage: DeployOnHml
    displayName: Deploy on hml
    jobs:
+   enviroment: Approvers
    - job: "DeployOnHml"
-     displayName: Pre-deployment
+     displayName: deployment
      steps:
      - task: ExtractFiles@1
        displayName: Extract zip
