@@ -6,10 +6,6 @@
 trigger:
 - main
 
-parameters:
- - pool:
-    name: 'windows-latest'
-
 pool:
   vmImage: 'windows-latest'
 
@@ -52,7 +48,7 @@ stages:
    jobs:
    - deployment: "hml"
      environment: "Approvers"
-     pool: ${{ parameters.pool }}
+     pool: 'windows-latest'
      continueOnError: 'false'
      strategy:
        runOnce:
