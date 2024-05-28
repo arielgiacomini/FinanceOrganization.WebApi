@@ -30,7 +30,7 @@ jobs:
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
 
-- job: "Unit Testing"
+- job: "UnitTesting"
   steps:
   - task: VSTest@2
     displayName: Run unit testing
@@ -38,7 +38,7 @@ jobs:
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
 
-- job: "Deploy on hml"
+- job: "DeployOnHml"
   steps:
   - task: ExtractFiles@1
     displayName: Extract zip
