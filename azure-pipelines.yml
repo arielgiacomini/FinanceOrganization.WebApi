@@ -56,7 +56,8 @@ stages:
                username: 'finance-organization-hml'
                password: 'finance-organization-hml'
                rootDirectory: '$(Build.ArtifactStagingDirectory)'
-               filePatterns: '**'
+               filePatterns: '*
+                             !*.json'
                remoteDirectory: '/api.finance.hml'
                #remoteDirectory: '/teste'
                enableUtf8: true
