@@ -2,8 +2,8 @@ trigger:
 - main
 
 pool:
-  # name: 'Default'
-  vmImage: 'windows-latest'
+  name: 'Default'
+  # vmImage: 'windows-latest'
 
 variables:
   solution: '**/*.sln'
@@ -41,8 +41,8 @@ stages:
      displayName: "Tasks to deploy on hml"
      environment: "Approvers HML"
      pool: 
-        vmImage: 'windows-latest'
-        # name: 'Default'
+        # vmImage: 'windows-latest'
+        name: 'Default'
      continueOnError: 'false'
      strategy:
        runOnce:
