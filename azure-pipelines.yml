@@ -6,6 +6,10 @@
 trigger:
 - main
 
+parameters:
+  pool:
+    name: 'windows-latest'
+
 pool:
   vmImage: 'windows-latest'
 
@@ -43,63 +47,38 @@ stages:
          platform: '$(buildPlatform)'
          configuration: '$(buildConfiguration)'
 
-   - job: "DeployOnHml"
-     dependsOn: UnitTesting
-     enviroment: "Approvers"
-     displayName: Deploy on hml
-     steps:
-     - task: ExtractFiles@1
-       displayName: Extract zip
-       inputs:
-         archiveFilePatterns: '$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip'
-         destinationFolder: '$(Build.ArtifactStagingDirectory)\extract'
-         cleanDestinationFolder: true
-         overwriteExistingFiles: true
+ - stage: DeployOnHml
+   displayName: Deploy on hml
+   jobs:
+   - deployment: "hml"
+     environment: "Approvers"
+     pool: ${{ parameters.pool }}
+     continueOnError: 'false'
+     strategy:
+       runOnce:
+         deploy:      
+           steps:
+           - task: ExtractFiles@1
+             displayName: Extract zip
+             inputs:
+               archiveFilePatterns: '$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip'
+               destinationFolder: '$(Build.ArtifactStagingDirectory)\extract'
+               cleanDestinationFolder: true
+               overwriteExistingFiles: true
    
-     - task: FtpUpload@2
-       displayName: Send FTP
-       inputs:
-         credentialsOption: 'inputs'
-         serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
-         username: 'finance-organization-hml'
-         password: 'finance-organization-hml'
-         rootDirectory: '$(Build.ArtifactStagingDirectory)\extract'
-         filePatterns: '**'
-         remoteDirectory: '/api.finance.hml'
-         #remoteDirectory: '/teste'
-         enableUtf8: true
-         clean: false
-         cleanContents: false
-         preservePaths: false
-         trustSSL: false
-
- # - stage: DeployOnHml
- #   displayName: Deploy on hml
- #   jobs:
- #   - job: "DeployOnHml"  
- #     displayName: deployment
- #     steps:
- #     - task: ExtractFiles@1
- #       displayName: Extract zip
- #       inputs:
- #         archiveFilePatterns: '$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip'
- #         destinationFolder: '$(Build.ArtifactStagingDirectory)\extract'
- #         cleanDestinationFolder: true
- #         overwriteExistingFiles: true
-   
- #     - task: FtpUpload@2
- #       displayName: Send FTP
- #       inputs:
- #         credentialsOption: 'inputs'
- #         serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
- #         username: 'finance-organization-hml'
- #         password: 'finance-organization-hml'
- #         rootDirectory: '$(Build.ArtifactStagingDirectory)\extract'
- #         filePatterns: '**'
- #         remoteDirectory: '/api.finance.hml'
- #         #remoteDirectory: '/teste'
- #         enableUtf8: true
- #         clean: false
- #         cleanContents: false
- #         preservePaths: false
- #         trustSSL: false
+           - task: FtpUpload@2
+             displayName: Send FTP
+             inputs:
+               credentialsOption: 'inputs'
+               serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
+               username: 'finance-organization-hml'
+               password: 'finance-organization-hml'
+               rootDirectory: '$(Build.ArtifactStagingDirectory)\extract'
+               filePatterns: '**'
+               remoteDirectory: '/api.finance.hml'
+               #remoteDirectory: '/teste'
+               enableUtf8: true
+               clean: false
+               cleanContents: false
+               preservePaths: false
+               trustSSL: false
