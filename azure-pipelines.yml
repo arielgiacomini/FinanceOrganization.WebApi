@@ -16,6 +16,7 @@ variables:
 
 stages:
  - stage: Build
+   displayName: Build and Unit Testing  
    jobs:
    - job: "Build"
      steps:
@@ -33,6 +34,7 @@ stages:
          configuration: '$(buildConfiguration)'
 
    - job: "UnitTesting"
+     displayName: Unit Testing
      steps:
      - task: VSTest@2
        displayName: Run unit testing
@@ -41,8 +43,10 @@ stages:
          configuration: '$(buildConfiguration)'
 
  - stage: DeployOnHml
-   jobs:  
+   displayName: Deploy on hml
+   jobs:
    - job: "DeployOnHml"
+     displayName: Pre-deployment
      steps:
      - task: ExtractFiles@1
        displayName: Extract zip
@@ -53,7 +57,7 @@ stages:
          overwriteExistingFiles: true
    
      - task: FtpUpload@2
-       displayName: Deploy
+       displayName: Send FTP
        inputs:
          credentialsOption: 'inputs'
          serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
