@@ -48,7 +48,8 @@ stages:
    jobs:
    - deployment: "hml"
      environment: "Approvers"
-     pool: 'windows-latest'
+     pool: 
+        vmImage: 'windows-latest'
      continueOnError: 'false'
      strategy:
        runOnce:
