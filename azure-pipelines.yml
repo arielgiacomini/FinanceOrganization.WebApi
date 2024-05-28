@@ -7,7 +7,7 @@ trigger:
 - main
 
 pool:
-  name: 'DESKTOP-6MDL4B5'
+  name: 'Default'
   # vmImage: 'windows-latest'
 
 variables:
