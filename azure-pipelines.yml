@@ -38,7 +38,7 @@ stages:
        displayName: 'dotnet build $(buildConfiguration)'
        inputs:
          command: 'build'
-         arguments: '--configuration $(buildConfiguration)'
+         arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
    - job: "UnitTesting"
      dependsOn: Build
