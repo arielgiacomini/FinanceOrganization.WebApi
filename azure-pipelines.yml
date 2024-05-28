@@ -38,8 +38,8 @@ stages:
    displayName: Deploy on hml
    jobs:
    - deployment:
-     displayName: "Tasks to deploy"
-     environment: "Approvers"
+     displayName: "Tasks to deploy on hml"
+     environment: "Approvers HML"
      pool: 
         vmImage: 'windows-latest'
         # name: 'Default'
@@ -59,6 +59,38 @@ stages:
                filePatterns: '*
                              !*.json'
                remoteDirectory: '/api.finance.hml'
+               #remoteDirectory: '/teste'
+               enableUtf8: true
+               clean: false
+               cleanContents: false
+               preservePaths: false
+               trustSSL: false
+
+ - stage: DeployOnPrd
+   displayName: Deploy on prd
+   jobs:
+   - deployment:
+     displayName: "Tasks to deploy on prd"
+     environment: "Approvers PRD"
+     pool: 
+        vmImage: 'windows-latest'
+        # name: 'Default'
+     continueOnError: 'false'
+     strategy:
+       runOnce:
+         deploy:      
+           steps:
+           - task: FtpUpload@2
+             displayName: Send FTP
+             inputs:
+               credentialsOption: 'inputs'
+               serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
+               username: 'finance-organization-prd'
+               password: 'finance-organization-prd'
+               rootDirectory: '$(Build.ArtifactStagingDirectory)'
+               filePatterns: '*
+                             !*.json'
+               remoteDirectory: '/api.finance.prd'
                #remoteDirectory: '/teste'
                enableUtf8: true
                clean: false
