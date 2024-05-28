@@ -34,6 +34,7 @@ stages:
          configuration: '$(buildConfiguration)'
 
    - job: "UnitTesting"
+     dependsOn: Build
      displayName: Unit Testing
      steps:
      - task: VSTest@2
