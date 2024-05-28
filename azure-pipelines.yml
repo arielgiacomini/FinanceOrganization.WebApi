@@ -40,11 +40,8 @@ stages:
          command: 'build'
          arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
-   - job: "UnitTesting"
-     dependsOn: Build
-     displayName: Unit Testing
-     steps:
      - task: DotNetCoreCLI@2
+       displayName: 'dotnet run unit testing'
        inputs:
          command: 'test'
          arguments: '--configuration $(buildConfiguration) --output TestResults/$(Build.ArtifactStagingDirectory)'
