@@ -14,44 +14,53 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
-steps:
-- task: NuGetToolInstaller@1
+stages:
+- stage: "Build"
+  jobs:
+  - job: NuGetToolInstaller@1
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
+  - job: NuGetCommand@2
+    inputs:
+      restoreSolution: '$(solution)'
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+  - job: VSBuild@1
+    inputs:
+      solution: '$(solution)'
+      msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip" /p:DeployIisAppPath="Default Web Site"'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
 
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+- stage: "Unit Testing"
+  jobs:
+  - job: VSTest@2
+    displayName: Run unit testing
+    inputs:
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
 
-- task: ExtractFiles@1
-  inputs:
-    archiveFilePatterns: '$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip'
-    destinationFolder: '$(Build.ArtifactStagingDirectory)\extract'
-    cleanDestinationFolder: true
-    overwriteExistingFiles: true
+- stage: "Deploy on hml"
+  jobs:
+  - job: ExtractFiles@1
+    displayName: Extract zip
+    inputs:
+      archiveFilePatterns: '$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip'
+      destinationFolder: '$(Build.ArtifactStagingDirectory)\extract'
+      cleanDestinationFolder: true
+      overwriteExistingFiles: true
 
-- task: FtpUpload@2
-  inputs:
-    credentialsOption: 'inputs'
-    serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
-    username: 'arielgiacomini-003'
-    password: 'Passw0rdhelen@'
-    rootDirectory: '$(Build.ArtifactStagingDirectory)\extract'
-    filePatterns: '**'
-    remoteDirectory: '/api.finance.hml'
-    #remoteDirectory: '/teste'
-    enableUtf8: true
-    clean: false
-    cleanContents: false
-    preservePaths: false
-    trustSSL: false
+  - job: FtpUpload@2
+    displayName: Deploy
+    inputs:
+      credentialsOption: 'inputs'
+      serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
+      username: 'finance-organization-hml'
+      password: 'finance-organization-hml'
+      rootDirectory: '$(Build.ArtifactStagingDirectory)\extract'
+      filePatterns: '**'
+      remoteDirectory: '/api.finance.hml'
+      #remoteDirectory: '/teste'
+      enableUtf8: true
+      clean: false
+      cleanContents: false
+      preservePaths: false
+      trustSSL: false
