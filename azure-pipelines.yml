@@ -44,11 +44,10 @@ stages:
      dependsOn: Build
      displayName: Unit Testing
      steps:
-     - task: VSTest@2
-       displayName: Run unit testing
+     - task: DotNetCoreCLI@2
        inputs:
-         platform: '$(buildPlatform)'
-         configuration: '$(buildConfiguration)'
+         command: 'test'
+         arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/TestResults'
 
  - stage: DeployOnHml
    displayName: Deploy on hml
