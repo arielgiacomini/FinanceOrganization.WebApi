@@ -28,19 +28,10 @@ stages:
          command: 'build'
          arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
-     - task: DotNetCoreCLI@2
-       displayName: 'Publish Binaries'
-       inputs:
-         command: 'publish'
-         publishWebProjects: false
-         arguments: '--configuration $(buildConfiguration) --no-restore -o $(Build.ArtifactStagingDirectory)'
-         zipAfterPublish: false
-         modifyOutputPath: false
-
      - task: PublishBuildArtifacts@1
        inputs:
          PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-         ArtifactName: 'drop'
+         ArtifactName: 'FinanceOrganization.WebApi'
          publishLocation: 'Container'
 
      - task: DotNetCoreCLI@2
@@ -70,7 +61,7 @@ stages:
                serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
                username: 'finance-organization-hml'
                password: 'finance-organization-hml'
-               rootDirectory: '$(Build.ArtifactStagingDirectory)'
+               rootDirectory: '$(Pipeline.Workspace)/$(Build.BuildId)/FinanceOrganization.WebApi'
                filePatterns: "**"
                remoteDirectory: '/api.finance.hml'
                enableUtf8: true
