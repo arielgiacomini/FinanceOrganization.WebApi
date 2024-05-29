@@ -9,7 +9,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  projectName: 'WebAPI.zip'
+  projectName: 'WebAPI'
   websiteName: 'api.finance.hml'
   appPoolName: 'arielgiacomini-003'
 
