@@ -58,7 +58,7 @@ stages:
              displayName: Send FTP
              inputs:
                credentialsOption: 'inputs'
-               serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
+               serverUrl: 'ftp://arielgiacomini-003@WIN8043.SITE4NOW.NET'
                username: 'finance-organization-hml'
                password: 'finance-organization-hml'
                rootDirectory: '$(Pipeline.Workspace)/FinanceOrganization.WebApi'
