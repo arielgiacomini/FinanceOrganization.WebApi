@@ -61,7 +61,7 @@ stages:
                serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
                username: 'finance-organization-hml'
                password: 'finance-organization-hml'
-               rootDirectory: '$(Pipeline.Workspace)/$(Build.BuildId)/FinanceOrganization.WebApi'
+               rootDirectory: '$(Pipeline.Workspace)/FinanceOrganization.WebApi'
                filePatterns: "**"
                remoteDirectory: '/api.finance.hml'
                enableUtf8: true
