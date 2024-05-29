@@ -79,38 +79,37 @@ stages:
        runOnce:
          deploy:      
            steps:
-
-          - task: IISWebAppManagementOnMachineGroup@0
-            inputs:            
-              IISDeploymentType: 'IISWebsite'
-              ActionIISWebsite: 'CreateOrUpdateWebsite'
-              WebsiteName: '$(websiteName)'
-              WebsitePhysicalPath: '$(websitePhysicalPath)'
-              WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
-              CreateOrUpdateAppPoolForWebsite: true
-              AppPoolNameForWebsite: '$(appPoolName)'
-              DotNetVersionForWebsite: 'No Managed Code'
-              PipeLineModeForWebsite: 'Integrated'
-              AppPoolIdentityForWebsite: 'ApplicationPoolIdentity'
-              AddBinding: true
-              Bindings: |
-                  {
-                      bindings:[
-                          {
-                              "protocol":"http",
-                              "ipAddress":"",
-                              "hostname":"",
-                              "port":"80",
-                              "sslThumbprint":"",
-                              "sniFlag":false
-                          }
-                      ]
-                  }
-
-          - task: IISWebAppDeploymentOnMachineGroup@0
-            inputs:
-              WebSiteName: '$(websiteName)'
-              Package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(projectName).zip'
+           - task: IISWebAppManagementOnMachineGroup@0
+             inputs:            
+               IISDeploymentType: 'IISWebsite'
+               ActionIISWebsite: 'CreateOrUpdateWebsite'
+               WebsiteName: '$(websiteName)'
+               WebsitePhysicalPath: '$(websitePhysicalPath)'
+               WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
+               CreateOrUpdateAppPoolForWebsite: true
+               AppPoolNameForWebsite: '$(appPoolName)'
+               DotNetVersionForWebsite: 'No Managed Code'
+               PipeLineModeForWebsite: 'Integrated'
+               AppPoolIdentityForWebsite: 'ApplicationPoolIdentity'
+               AddBinding: true
+               Bindings: |
+                   {
+                       bindings:[
+                           {
+                               "protocol":"http",
+                               "ipAddress":"",
+                               "hostname":"",
+                               "port":"80",
+                               "sslThumbprint":"",
+                               "sniFlag":false
+                           }
+                       ]
+                   }
+           
+           - task: IISWebAppDeploymentOnMachineGroup@0
+             inputs:
+               WebSiteName: '$(websiteName)'
+               Package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(projectName).zip'
 
  # - stage: DeployOnPrd
  #   displayName: Deploy on prd
