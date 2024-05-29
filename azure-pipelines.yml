@@ -15,7 +15,7 @@ variables:
 
 stages:
  - stage: Build
-   displayName: Build and Unit Testing  
+   displayName: Build  
    jobs:
    - job: "Build"
      steps:
@@ -50,17 +50,6 @@ stages:
 
         - publish: '$(Build.ArtifactStagingDirectory)'
           artifact: drop
-
- - stage: RunTests
-   displayName: Run tests
-   jobs:
-   - job: "Build"
-     steps:
-     - task: DotNetCoreCLI@2
-       displayName: 'dotnet run unit testing'
-       inputs:
-         command: 'test'
-         arguments: '--configuration $(buildConfiguration) --output $(Common.TestResultsDirectory)'
 
  - stage: DeployOnHml
    displayName: Deploy on hml
@@ -110,29 +99,3 @@ stages:
              inputs:
                WebSiteName: '$(websiteName)'
                Package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(projectName).zip'
-
- # - stage: DeployOnPrd
- #   displayName: Deploy on prd
- #   jobs:
- #   - deployment:
- #     displayName: "Tasks to deploy on prd"
- #     environment: "Approvers PRD"
- #     pool: 
- #        vmImage: 'windows-latest'
- #        # name: 'Default'
- #     continueOnError: 'false'
- #     strategy:
- #       runOnce:
- #         deploy:      
- #           steps:
-           # - task: FtpUpload@2
-           #   displayName: Send FTP
-           #   inputs:
-           #     credentialsOption: 'inputs'
-           #     serverUrl: 'ftp://finance-organization-hml@WIN8130.SITE4NOW.NET'
-           #     username: 'finance-organization-hml'
-           #     password: 'finance-organization-hml'
-           #     rootDirectory: '$(Pipeline.Workspace)/FinanceOrganization.WebApi'
-           #     filePatterns: "**"
-           #     remoteDirectory: '/'
-           #     enableUtf8: true
