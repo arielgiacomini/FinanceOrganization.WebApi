@@ -2,8 +2,8 @@ trigger:
 - main
 
 pool:
-  name: 'Default'
-  # vmImage: 'windows-latest'
+  # name: 'Default'
+  vmImage: 'windows-latest'
 
 variables:
   solution: '**/*.sln'
@@ -47,8 +47,8 @@ stages:
      displayName: "Tasks to deploy on hml"
      environment: "Approvers HML"
      pool: 
-        # vmImage: 'windows-latest'
-        name: 'Default'
+        vmImage: 'windows-latest'
+        # name: 'Default'
      continueOnError: 'false'
      strategy:
        runOnce:
@@ -66,28 +66,28 @@ stages:
                remoteDirectory: ''
                enableUtf8: true
 
- - stage: DeployOnPrd
-   displayName: Deploy on prd
-   jobs:
-   - deployment:
-     displayName: "Tasks to deploy on prd"
-     environment: "Approvers PRD"
-     pool: 
-        vmImage: 'windows-latest'
-        # name: 'Default'
-     continueOnError: 'false'
-     strategy:
-       runOnce:
-         deploy:      
-           steps:
-           - task: FtpUpload@2
-             displayName: Send FTP
-             inputs:
-               credentialsOption: 'inputs'
-               serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
-               username: 'finance-organization-prd'
-               password: 'finance-organization-prd'
-               rootDirectory: '$(Build.ArtifactStagingDirectory)'
-               filePatterns: '**'
-               remoteDirectory: '/api.finance.prd'
-               enableUtf8: true
+ # - stage: DeployOnPrd
+ #   displayName: Deploy on prd
+ #   jobs:
+ #   - deployment:
+ #     displayName: "Tasks to deploy on prd"
+ #     environment: "Approvers PRD"
+ #     pool: 
+ #        vmImage: 'windows-latest'
+ #        # name: 'Default'
+ #     continueOnError: 'false'
+ #     strategy:
+ #       runOnce:
+ #         deploy:      
+ #           steps:
+ #           - task: FtpUpload@2
+ #             displayName: Send FTP
+ #             inputs:
+ #               credentialsOption: 'inputs'
+ #               serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
+ #               username: 'finance-organization-prd'
+ #               password: 'finance-organization-prd'
+ #               rootDirectory: '$(Build.ArtifactStagingDirectory)'
+ #               filePatterns: '**'
+ #               remoteDirectory: '/api.finance.prd'
+ #               enableUtf8: true
