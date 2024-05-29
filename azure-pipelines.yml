@@ -63,7 +63,7 @@ stages:
                password: 'finance-organization-hml'
                rootDirectory: '$(Pipeline.Workspace)/FinanceOrganization.WebApi'
                filePatterns: "!**/*.json"
-               remoteDirectory: ''
+               remoteDirectory: '/'
                enableUtf8: true
 
  # - stage: DeployOnPrd
