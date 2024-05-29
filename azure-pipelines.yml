@@ -62,7 +62,7 @@ stages:
                username: 'finance-organization-hml'
                password: 'finance-organization-hml'
                rootDirectory: '$(Pipeline.Workspace)/FinanceOrganization.WebApi'
-               filePatterns: "**[!**\*.json]"
+               filePatterns: "**[!**/*.json]"
                remoteDirectory: '/'
                enableUtf8: true
 
