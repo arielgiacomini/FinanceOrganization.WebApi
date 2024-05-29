@@ -9,6 +9,9 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  projectName: 'FinanceOrganization.WebApi'
+  websiteName: 'api.finance.hml'
+  appPoolName: 'arielgiacomini-003'
 
 stages:
  - stage: Build
@@ -16,24 +19,43 @@ stages:
    jobs:
    - job: "Build"
      steps:
-     - task: NuGetToolInstaller@1
-   
-     - task: NuGetCommand@2
-       inputs:
-         restoreSolution: '$(solution)'
+        - task: DotNetCoreCLI@2
+          displayName: 'dotnet restore'
+          inputs:
+            command: 'restore'
+            projects: '*.sln'
 
-     - task: DotNetCoreCLI@2
-       displayName: 'dotnet build $(buildConfiguration)'
-       inputs:
-         command: 'build'
-         arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+        - task: DotNetCoreCLI@2
+          displayName: Build
+          inputs:
+            command: 'build'
+            projects: '*.sln'
+            arguments: --configuration Release
 
-     - task: PublishBuildArtifacts@1
-       inputs:
-         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-         ArtifactName: 'FinanceOrganization.WebApi'
-         publishLocation: 'Container'
+        - task: DotNetCoreCLI@2
+          displayName: Test
+          inputs:
+            command: test
+            projects: '*.sln'
+            arguments: '--configuration $(BuildConfiguration)'
+       
+        - task: DotNetCoreCLI@2
+          displayName: 'Publish the project - $(buildConfiguration)'
+          inputs:
+            command: 'publish'
+            projects: '**/*.csproj'
+            publishWebProjects: false
+            arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
+            zipAfterPublish: true
 
+        - publish: '$(Build.ArtifactStagingDirectory)'
+          artifact: drop
+
+ - stage: RunTests
+   displayName: Run tests
+   jobs:
+   - job: "Build"
+     steps:
      - task: DotNetCoreCLI@2
        displayName: 'dotnet run unit testing'
        inputs:
@@ -50,21 +72,45 @@ stages:
         vmImage: 'windows-latest'
         # name: 'Default'
      continueOnError: 'false'
+     variables:
+     - name: websitePhysicalPath
+       value: '%SystemDrive%\inetpub\wwwroot\$(websiteName)'
      strategy:
        runOnce:
          deploy:      
            steps:
-           - task: FtpUpload@2
-             displayName: Send FTP
-             inputs:
-               credentialsOption: 'inputs'
-               serverUrl: 'ftp://finance-organization-hml@WIN8130.SITE4NOW.NET'
-               username: 'finance-organization-hml'
-               password: 'finance-organization-hml'
-               rootDirectory: '$(Pipeline.Workspace)/FinanceOrganization.WebApi'
-               filePatterns: "**"
-               remoteDirectory: '/'
-               enableUtf8: true
+
+          - task: IISWebAppManagementOnMachineGroup@0
+            inputs:            
+              IISDeploymentType: 'IISWebsite'
+              ActionIISWebsite: 'CreateOrUpdateWebsite'
+              WebsiteName: '$(websiteName)'
+              WebsitePhysicalPath: '$(websitePhysicalPath)'
+              WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
+              CreateOrUpdateAppPoolForWebsite: true
+              AppPoolNameForWebsite: '$(appPoolName)'
+              DotNetVersionForWebsite: 'No Managed Code'
+              PipeLineModeForWebsite: 'Integrated'
+              AppPoolIdentityForWebsite: 'ApplicationPoolIdentity'
+              AddBinding: true
+              Bindings: |
+                  {
+                      bindings:[
+                          {
+                              "protocol":"http",
+                              "ipAddress":"",
+                              "hostname":"",
+                              "port":"80",
+                              "sslThumbprint":"",
+                              "sniFlag":false
+                          }
+                      ]
+                  }
+
+          - task: IISWebAppDeploymentOnMachineGroup@0
+            inputs:
+              WebSiteName: '$(websiteName)'
+              Package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/$(projectName).zip'
 
  # - stage: DeployOnPrd
  #   displayName: Deploy on prd
@@ -80,14 +126,14 @@ stages:
  #       runOnce:
  #         deploy:      
  #           steps:
- #           - task: FtpUpload@2
- #             displayName: Send FTP
- #             inputs:
- #               credentialsOption: 'inputs'
- #               serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
- #               username: 'finance-organization-prd'
- #               password: 'finance-organization-prd'
- #               rootDirectory: '$(Build.ArtifactStagingDirectory)'
- #               filePatterns: '**'
- #               remoteDirectory: '/api.finance.prd'
- #               enableUtf8: true
+           # - task: FtpUpload@2
+           #   displayName: Send FTP
+           #   inputs:
+           #     credentialsOption: 'inputs'
+           #     serverUrl: 'ftp://finance-organization-hml@WIN8130.SITE4NOW.NET'
+           #     username: 'finance-organization-hml'
+           #     password: 'finance-organization-hml'
+           #     rootDirectory: '$(Pipeline.Workspace)/FinanceOrganization.WebApi'
+           #     filePatterns: "**"
+           #     remoteDirectory: '/'
+           #     enableUtf8: true
