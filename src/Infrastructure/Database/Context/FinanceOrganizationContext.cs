@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Entities.Extern;
 using Infrastructure.Database.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,10 +26,13 @@ namespace Infrastructure.Database.Context
         /// </summary>
         public DbSet<BillToPay>? BillToPay { get; set; }
 
+        public DbSet<MonthlyAverageAnalysis>? MonthlyAverageAnalysis { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new FixedInvoiceMapping());
             modelBuilder.ApplyConfiguration(new BillToPayToPayMapping());
+            modelBuilder.ApplyConfiguration(new MonthlyAverageAnalysisMapping());
 
             base.OnModelCreating(modelBuilder);
         }

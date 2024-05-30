@@ -4,6 +4,7 @@ using Application.Feature.BillToPay.DeleteBillToPay;
 using Application.Feature.BillToPay.EditBillToPay;
 using Application.Feature.BillToPay.PayBillToPay;
 using Application.Feature.BillToPay.SearchBillToPay;
+using Application.Feature.BillToPay.SearchMonthlyAverageAnalysis;
 using Application.Feature.FixedInvoice.SearchFixedInvoice;
 using Domain.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,7 @@ namespace WebAPI.Controllers
         private readonly IPayBillToPayHandler _payBillToPayHandler;
         private readonly ISearchBillToPayHandler _searchBillToPayHandler;
         private readonly IDeleteBillToPayHandler _deleteBillToPayHandler;
+        private readonly ISearchMonthlyAverageAnalysisHandler _searchMonthlyAverageAnalysisHandler;
 
         public BillToPayController(
             Serilog.ILogger logger,
@@ -30,7 +32,8 @@ namespace WebAPI.Controllers
             IEditBillToPayHandler editBillToPayHandler,
             IPayBillToPayHandler payBillToPayHandler,
             ISearchBillToPayHandler searchBillToPayHandler,
-            IDeleteBillToPayHandler deleteBillToPayHandler)
+            IDeleteBillToPayHandler deleteBillToPayHandler,
+            ISearchMonthlyAverageAnalysisHandler searchMonthlyAverageAnalysisHandler)
         {
             _logger = logger;
             _createFixedInvoiceHandler = createFixedInvoiceHandler;
@@ -39,6 +42,7 @@ namespace WebAPI.Controllers
             _payBillToPayHandler = payBillToPayHandler;
             _searchBillToPayHandler = searchBillToPayHandler;
             _deleteBillToPayHandler = deleteBillToPayHandler;
+            _searchMonthlyAverageAnalysisHandler = searchMonthlyAverageAnalysisHandler;
         }
 
         /// <summary>
@@ -162,6 +166,23 @@ namespace WebAPI.Controllers
             _logger.Information($"[BillToPayController.DeleteBillToPay()] - Efetuar Delete");
 
             var output = await _deleteBillToPayHandler.Handle(input, cancellationToken);
+
+            return Ok(output);
+        }
+
+        /// <summary>
+        /// Análise média mensal
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost("SearchMonthlyAverageAnalysis")]
+        public async Task<IActionResult> PostSearchMonthlyAverageAnalysis([FromBody] SearchMonthlyAverageAnalysisInput input,
+            CancellationToken cancellationToken)
+        {
+            _logger.Information($"[BillToPayController.PostSearchMonthlyAverageAnalysis()] - Buscas de analises para tomadas de decisões");
+
+            var output = await _searchMonthlyAverageAnalysisHandler.Handle(input, cancellationToken);
 
             return Ok(output);
         }

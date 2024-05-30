@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Entities.Extern;
 
 namespace Domain.Interfaces
 {
@@ -16,5 +17,6 @@ namespace Domain.Interfaces
         Task<int> Delete(BillToPay billToPay);
         Task<int> DeleteRange(IList<BillToPay> billToPays);
         Task<IList<BillToPay>> GetBillToPayByYearMonthAndCategoryAndRegistrationType(string yearMonth, string category, string registationType);
+        Task<IList<MonthlyAverageAnalysis>> GetMonthlyAverageAnalysesAsync(DateTime initialDate, DateTime finallyDate, int qtyMonth);
     }
 }
