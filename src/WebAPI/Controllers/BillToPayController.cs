@@ -1,5 +1,6 @@
 ﻿using Application.Feature;
 using Application.Feature.BillToPay.CreateBillToPay;
+using Application.Feature.BillToPay.CreateCreditCardNFCMobileBillToPay;
 using Application.Feature.BillToPay.DeleteBillToPay;
 using Application.Feature.BillToPay.EditBillToPay;
 using Application.Feature.BillToPay.PayBillToPay;
@@ -24,6 +25,7 @@ namespace WebAPI.Controllers
         private readonly ISearchBillToPayHandler _searchBillToPayHandler;
         private readonly IDeleteBillToPayHandler _deleteBillToPayHandler;
         private readonly ISearchMonthlyAverageAnalysisHandler _searchMonthlyAverageAnalysisHandler;
+        private readonly ICreateCreditCardNFCMobileBillToPayHandler _createCreditCardNFCMobileBillToPayHandler;
 
         public BillToPayController(
             Serilog.ILogger logger,
@@ -33,7 +35,8 @@ namespace WebAPI.Controllers
             IPayBillToPayHandler payBillToPayHandler,
             ISearchBillToPayHandler searchBillToPayHandler,
             IDeleteBillToPayHandler deleteBillToPayHandler,
-            ISearchMonthlyAverageAnalysisHandler searchMonthlyAverageAnalysisHandler)
+            ISearchMonthlyAverageAnalysisHandler searchMonthlyAverageAnalysisHandler,
+            ICreateCreditCardNFCMobileBillToPayHandler createCreditCardNFCMobileBillToPayHandler)
         {
             _logger = logger;
             _createFixedInvoiceHandler = createFixedInvoiceHandler;
@@ -43,6 +46,7 @@ namespace WebAPI.Controllers
             _searchBillToPayHandler = searchBillToPayHandler;
             _deleteBillToPayHandler = deleteBillToPayHandler;
             _searchMonthlyAverageAnalysisHandler = searchMonthlyAverageAnalysisHandler;
+            _createCreditCardNFCMobileBillToPayHandler = createCreditCardNFCMobileBillToPayHandler;
         }
 
         /// <summary>
@@ -83,6 +87,23 @@ namespace WebAPI.Controllers
             }
 
             output.Output = OutputBaseDetails.Success("A lista de contas a pagar para cadastro teve exito.", outputList, outputList.Count);
+
+            return Ok(output);
+        }
+
+        /// <summary>
+        /// Registrar uma conta a pagar
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost("register-creditcard-nfc-mobile")]
+        public async Task<IActionResult> CreateFixedInvoiceCreditCardNFCMobile([FromBody] CreateCreditCardNFCMobileBillToPayInput input,
+            CancellationToken cancellationToken)
+        {
+            _logger.Information($"[BillToPayController.CreateFixedInvoiceCreditCardNFCMobile()] - Cadastro de uma nova conta especifica quando ocorre a compra via Apple Pay Input: {JsonSerializeUtils.Serialize(input)}");
+
+            var output = await _createCreditCardNFCMobileBillToPayHandler.Handle(input, cancellationToken);
 
             return Ok(output);
         }

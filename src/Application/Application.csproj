@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="11.8.1" />
+    <PackageReference Include="Giacomini.DateServiceUtils" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
   </ItemGroup>
