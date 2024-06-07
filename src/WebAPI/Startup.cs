@@ -29,6 +29,9 @@ namespace WebAPI
             services.Configure<BillToPayOptions>(options =>
             Configuration.GetSection("BillToPayOptions").Bind(options));
 
+            services.Configure<CategoryOptions>(options =>
+            Configuration.GetSection("CategoryOptions").Bind(options));
+
             services.AddHostedServices();
             services.AddApplication();
             services.AddInfrastructure();

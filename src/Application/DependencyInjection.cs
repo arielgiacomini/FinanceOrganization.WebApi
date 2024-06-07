@@ -1,4 +1,5 @@
 ﻿using Application.EventHandlers.CreateBillToPayEvent;
+using Application.EventHandlers.CreateCategoryEvent;
 using Application.Feature.BillToPay.CreateBillToPay;
 using Application.Feature.BillToPay.CreateCreditCardNFCMobileBillToPay;
 using Application.Feature.BillToPay.DeleteBillToPay;
@@ -28,6 +29,7 @@ namespace Application
             services.AddScoped<ISearchMonthlyAverageAnalysisHandler, SearchMonthlyAverageAnalysisHandler>();
             services.AddScoped<ICreateCreditCardNFCMobileBillToPayHandler, CreateCreditCardNFCMobileBillToPayHandler>();
             services.AddScoped<ISearchCategoryHandler, SearchCategoryHandler>();
+            services.AddScoped<ICreateCategoryEventHandler, CreateCategoryEventHandler>();
 
             return services;
         }
