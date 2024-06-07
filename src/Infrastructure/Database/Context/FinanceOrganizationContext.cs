@@ -26,12 +26,21 @@ namespace Infrastructure.Database.Context
         /// </summary>
         public DbSet<BillToPay>? BillToPay { get; set; }
 
+        /// <summary>
+        /// Categoria
+        /// </summary>
+        public DbSet<Category>? Category { get; set; }
+
+        /// <summary>
+        /// Resultado da Stored Procedure: STP_CONTA_PAGAR_MEDIAS_MENSAIS
+        /// </summary>
         public DbSet<MonthlyAverageAnalysis>? MonthlyAverageAnalysis { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new FixedInvoiceMapping());
             modelBuilder.ApplyConfiguration(new BillToPayToPayMapping());
+            modelBuilder.ApplyConfiguration(new CategoryMapping());
             modelBuilder.ApplyConfiguration(new MonthlyAverageAnalysisMapping());
 
             base.OnModelCreating(modelBuilder);

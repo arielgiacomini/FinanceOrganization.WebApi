@@ -6,6 +6,7 @@ using Application.Feature.BillToPay.EditBillToPay;
 using Application.Feature.BillToPay.PayBillToPay;
 using Application.Feature.BillToPay.SearchBillToPay;
 using Application.Feature.BillToPay.SearchMonthlyAverageAnalysis;
+using Application.Feature.Category.SearchCategory;
 using Application.Feature.FixedInvoice.SearchFixedInvoice;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
@@ -26,6 +27,7 @@ namespace Application
             services.AddScoped<IDeleteBillToPayHandler, DeleteBillToPayHandler>();
             services.AddScoped<ISearchMonthlyAverageAnalysisHandler, SearchMonthlyAverageAnalysisHandler>();
             services.AddScoped<ICreateCreditCardNFCMobileBillToPayHandler, CreateCreditCardNFCMobileBillToPayHandler>();
+            services.AddScoped<ISearchCategoryHandler, SearchCategoryHandler>();
 
             return services;
         }

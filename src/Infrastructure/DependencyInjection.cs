@@ -14,6 +14,7 @@ namespace Infrastructure
             services.AddDbContext<FinanceOrganizationContext>();
             services.AddScoped<IFixedInvoiceRepository, FixedInvoiceRepository>();
             services.AddScoped<IBillToPayRepository, BillToPayRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
 
             return services;
         }
