@@ -8,6 +8,7 @@ namespace Application.Feature.BillToPay.PayBillToPay
     {
         private readonly ILogger _logger;
         private readonly IBillToPayRepository _billToPayRepository;
+        private const string EH_CARTAO_CREDITO_NAIRA = "Cartão de Crédito Nubank Naíra";
 
         public PayBillToPayHandler(ILogger logger, IBillToPayRepository billToPayRepository)
         {
@@ -110,7 +111,24 @@ namespace Application.Feature.BillToPay.PayBillToPay
 
                 if (listNotPaidYet != null)
                 {
-                    listPay.AddRange(listNotPaidYet);
+                    if (input.ConsiderAllCreditCard.HasValue && input.ConsiderAllCreditCard.Value)
+                    {
+                        listPay.AddRange(listNotPaidYet);
+                    }
+                    else
+                    {
+                        var filtered = listNotPaidYet;
+
+                        var creditCardNaira = listNotPaidYet
+                            .Where(filterCreditCardNaira => filterCreditCardNaira.AdditionalMessage != null && filterCreditCardNaira.AdditionalMessage.StartsWith(EH_CARTAO_CREDITO_NAIRA)).ToList();
+
+                        foreach (var item in creditCardNaira)
+                        {
+                            filtered.Remove(item);
+                        }
+
+                        listPay.AddRange(filtered);
+                    }
                 }
             }
 

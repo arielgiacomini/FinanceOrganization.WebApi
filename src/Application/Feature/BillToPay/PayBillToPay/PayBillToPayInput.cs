@@ -8,5 +8,6 @@
         public DateTime LastChangeDate { get; set; }
         public string? YearMonth { get; set; }
         public string? Account { get; set; }
+        public bool? ConsiderAllCreditCard { get; set; }
     }
 }
