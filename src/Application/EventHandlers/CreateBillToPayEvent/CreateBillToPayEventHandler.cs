@@ -383,7 +383,6 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             fixedInvoice.LastChangeDate = DateTime.Now;
         }
 
-
         private static BillToPay? GetLastRegistrationBillToPay(IList<BillToPay> billsToPay)
         {
             if (billsToPay == null)
