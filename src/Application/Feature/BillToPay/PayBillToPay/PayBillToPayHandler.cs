@@ -37,7 +37,7 @@ namespace Application.Feature.BillToPay.PayBillToPay
 
             if (listToPay == null || listToPay!.Count == 0)
             {
-                output.Output = OutputBaseDetails.Error("Não foram encontradas nenhuma conta a pagar no período e/ou ID informado.", new Dictionary<string, string>());
+                output.Output = OutputBaseDetails.Error($"Não foram encontradas nenhuma conta a pagar do tipo conta [{input.Account}] no período [{input.YearMonth}] e/ou ID [{input.Id}] informado.", new Dictionary<string, string>());
 
                 return output;
             }
@@ -111,23 +111,18 @@ namespace Application.Feature.BillToPay.PayBillToPay
 
                 if (listNotPaidYet != null)
                 {
-                    if (input.ConsiderAllCreditCard.HasValue && input.ConsiderAllCreditCard.Value)
+                    if (input.ConsiderNairaCreditCard.HasValue && input.ConsiderNairaCreditCard.Value)
                     {
-                        listPay.AddRange(listNotPaidYet);
+                        var creditCardNaira = listNotPaidYet
+                            .Where(filterCreditCardNaira => filterCreditCardNaira.AdditionalMessage != null
+                            && filterCreditCardNaira.AdditionalMessage.StartsWith(EH_CARTAO_CREDITO_NAIRA))
+                            .ToList();
+
+                        listPay.AddRange(creditCardNaira);
                     }
                     else
                     {
-                        var filtered = listNotPaidYet;
-
-                        var creditCardNaira = listNotPaidYet
-                            .Where(filterCreditCardNaira => filterCreditCardNaira.AdditionalMessage != null && filterCreditCardNaira.AdditionalMessage.StartsWith(EH_CARTAO_CREDITO_NAIRA)).ToList();
-
-                        foreach (var item in creditCardNaira)
-                        {
-                            filtered.Remove(item);
-                        }
-
-                        listPay.AddRange(filtered);
+                        listPay.AddRange(listNotPaidYet);
                     }
                 }
             }
