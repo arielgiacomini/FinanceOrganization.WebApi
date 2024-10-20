@@ -2,16 +2,16 @@
 using Domain.Utils;
 using Serilog;
 
-namespace Application.Feature.BillToPay.CreateCreditCardNFCMobileBillToPay
+namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBillToPayRegistration
 {
-    public class CreateCreditCardNFCMobileBillToPayHandler : ICreateCreditCardNFCMobileBillToPayHandler
+    public class CreateCreditCardNFCMobileBillToPayRegistrationHandler : ICreateCreditCardNFCMobileBillToPayRegistrationHandler
     {
         private readonly ILogger _logger;
-        private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
+        private readonly IBillToPayRegistrationRepository _fixedInvoiceRepository;
         private readonly IBillToPayRepository _billToPayRepository;
 
-        public CreateCreditCardNFCMobileBillToPayHandler(ILogger logger,
-            IFixedInvoiceRepository fixedInvoiceRepository,
+        public CreateCreditCardNFCMobileBillToPayRegistrationHandler(ILogger logger,
+            IBillToPayRegistrationRepository fixedInvoiceRepository,
             IBillToPayRepository billToPayRepository)
         {
             _logger = logger;
@@ -19,18 +19,18 @@ namespace Application.Feature.BillToPay.CreateCreditCardNFCMobileBillToPay
             _billToPayRepository = billToPayRepository;
         }
 
-        public async Task<CreateCreditCardNFCMobileBillToPayOutput> Handle(CreateCreditCardNFCMobileBillToPayInput input,
+        public async Task<CreateCreditCardNFCMobileBillToPayRegistrationOutput> Handle(CreateCreditCardNFCMobileBillToPayRegistrationInput input,
             CancellationToken cancellationToken = default)
         {
             _logger.Information("Está sendo criado a conta a pagar de nome: {Name}", input.Name);
 
-            var validate = await CreateCreditCardNFCMobileBillToPayValidator.ValidateInput(input, _fixedInvoiceRepository, _billToPayRepository);
+            var validate = await CreateCreditCardNFCMobileBillToPayRegistrationValidator.ValidateInput(input, _fixedInvoiceRepository, _billToPayRepository);
 
             if (validate.Any())
             {
                 _logger.Warning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
 
-                var outputValidator = new CreateCreditCardNFCMobileBillToPayOutput
+                var outputValidator = new CreateCreditCardNFCMobileBillToPayRegistrationOutput
                 {
                     Output = OutputBaseDetails.Validation("Houve erro de validação", validate)
                 };
@@ -40,7 +40,7 @@ namespace Application.Feature.BillToPay.CreateCreditCardNFCMobileBillToPay
 
             var isSaved = await _fixedInvoiceRepository.Save(MapInputFixedInvoiceToDomain(input));
 
-            var output = new CreateCreditCardNFCMobileBillToPayOutput
+            var output = new CreateCreditCardNFCMobileBillToPayRegistrationOutput
             {
                 Output = OutputBaseDetails.Success($"[{isSaved}] - Cadastro realizado com sucesso.", new object(), 1)
             };
@@ -48,9 +48,9 @@ namespace Application.Feature.BillToPay.CreateCreditCardNFCMobileBillToPay
             return await Task.FromResult(output);
         }
 
-        private static Domain.Entities.FixedInvoice MapInputFixedInvoiceToDomain(CreateCreditCardNFCMobileBillToPayInput input)
+        private static Domain.Entities.BillToPayRegistration MapInputFixedInvoiceToDomain(CreateCreditCardNFCMobileBillToPayRegistrationInput input)
         {
-            return new Domain.Entities.FixedInvoice
+            return new Domain.Entities.BillToPayRegistration
             {
                 Name = input.Name,
                 Category = input.Category,

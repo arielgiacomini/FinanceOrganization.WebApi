@@ -7,14 +7,14 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
     {
         public static async Task<Dictionary<string, string>> ValidateInput(
             DeleteBillToPayInput input,
-            IFixedInvoiceRepository fixedInvoiceRepository,
+            IBillToPayRegistrationRepository fixedInvoiceRepository,
             IBillToPayRepository billToPayRepository)
         {
             return await DeleteValidateBaseInput(input, fixedInvoiceRepository, billToPayRepository);
         }
 
         public static async Task<Dictionary<string, string>> DeleteValidateBaseInput(DeleteBillToPayInput input,
-            IFixedInvoiceRepository fixedInvoiceRepository, IBillToPayRepository billToPayRepository)
+            IBillToPayRegistrationRepository fixedInvoiceRepository, IBillToPayRepository billToPayRepository)
         {
             Dictionary<string, string> validatorBase = new();
             int contador = 0;

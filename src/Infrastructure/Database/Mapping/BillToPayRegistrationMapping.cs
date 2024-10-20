@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Database.Mapping
 {
-    public class FixedInvoiceMapping : IEntityTypeConfiguration<FixedInvoice>
+    public class BillToPayRegistrationMapping : IEntityTypeConfiguration<BillToPayRegistration>
     {
-        public void Configure(EntityTypeBuilder<FixedInvoice> builder)
+        public void Configure(EntityTypeBuilder<BillToPayRegistration> builder)
         {
             builder.ToTable("CONTA_PAGAR_CADASTRO");
             builder.HasKey(x => x.Id);

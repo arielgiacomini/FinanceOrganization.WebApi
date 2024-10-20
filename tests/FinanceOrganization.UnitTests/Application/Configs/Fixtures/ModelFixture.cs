@@ -1,4 +1,4 @@
-﻿using Application.Feature.BillToPay.CreateBillToPay;
+﻿using Application.Feature.BillToPayRegistration.CreateBillToPayRegistration;
 using Domain.Entities;
 using Domain.Options;
 
@@ -6,9 +6,9 @@ namespace FinanceOrganization.UnitTests.Application.Configs.Fixtures
 {
     public class ModelFixture
     {
-        public IList<FixedInvoice> GetListFixedInvoice()
+        public IList<BillToPayRegistration> GetListFixedInvoice()
         {
-            List<FixedInvoice> listFixedInvoice = new()
+            List<BillToPayRegistration> listFixedInvoice = new()
             {
                 GetFixedInvoice()
             };
@@ -16,9 +16,9 @@ namespace FinanceOrganization.UnitTests.Application.Configs.Fixtures
             return listFixedInvoice;
         }
 
-        public FixedInvoice GetFixedInvoice()
+        public BillToPayRegistration GetFixedInvoice()
         {
-            return new FixedInvoice()
+            return new BillToPayRegistration()
             {
                 Id = 0,
                 Name = "Teste",
@@ -80,11 +80,11 @@ namespace FinanceOrganization.UnitTests.Application.Configs.Fixtures
             };
         }
 
-        public CreateBillToPayInput GetCreateFixedInvoiceInput()
+        public CreateBillToPayRegistrationInput GetCreateFixedInvoiceInput()
         {
             var fixedInvoice = GetFixedInvoice();
 
-            return new CreateBillToPayInput()
+            return new CreateBillToPayRegistrationInput()
             {
                 Name = fixedInvoice.Name,
                 Account = fixedInvoice.Account,

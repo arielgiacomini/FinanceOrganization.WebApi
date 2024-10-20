@@ -1,12 +1,12 @@
 ﻿using Application.Feature;
-using Application.Feature.BillToPay.CreateBillToPay;
-using Application.Feature.BillToPay.CreateCreditCardNFCMobileBillToPay;
 using Application.Feature.BillToPay.DeleteBillToPay;
 using Application.Feature.BillToPay.EditBillToPay;
 using Application.Feature.BillToPay.PayBillToPay;
 using Application.Feature.BillToPay.SearchBillToPay;
 using Application.Feature.BillToPay.SearchMonthlyAverageAnalysis;
-using Application.Feature.FixedInvoice.SearchFixedInvoice;
+using Application.Feature.BillToPayRegistration.CreateBillToPayRegistration;
+using Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBillToPayRegistration;
+using Application.Feature.BillToPayRegistration.SearchBillToPayRegistration;
 using Domain.Utils;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,25 +18,25 @@ namespace WebAPI.Controllers
     public class BillToPayController : ControllerBase
     {
         private readonly Serilog.ILogger _logger;
-        private readonly ICreateBillToPayHandler _createFixedInvoiceHandler;
-        private readonly ISearchFixedInvoiceHandler _searchFixedInvoiceHandler;
+        private readonly ICreateBillToPayRegistrationHandler _createFixedInvoiceHandler;
+        private readonly ISearchBillToPayRegistrationHandler _searchFixedInvoiceHandler;
         private readonly IEditBillToPayHandler _editBillToPayHandler;
         private readonly IPayBillToPayHandler _payBillToPayHandler;
         private readonly ISearchBillToPayHandler _searchBillToPayHandler;
         private readonly IDeleteBillToPayHandler _deleteBillToPayHandler;
         private readonly ISearchMonthlyAverageAnalysisHandler _searchMonthlyAverageAnalysisHandler;
-        private readonly ICreateCreditCardNFCMobileBillToPayHandler _createCreditCardNFCMobileBillToPayHandler;
+        private readonly ICreateCreditCardNFCMobileBillToPayRegistrationHandler _createCreditCardNFCMobileBillToPayHandler;
 
         public BillToPayController(
             Serilog.ILogger logger,
-            ICreateBillToPayHandler createFixedInvoiceHandler,
-            ISearchFixedInvoiceHandler searchFixedInvoiceHandler,
+            ICreateBillToPayRegistrationHandler createFixedInvoiceHandler,
+            ISearchBillToPayRegistrationHandler searchFixedInvoiceHandler,
             IEditBillToPayHandler editBillToPayHandler,
             IPayBillToPayHandler payBillToPayHandler,
             ISearchBillToPayHandler searchBillToPayHandler,
             IDeleteBillToPayHandler deleteBillToPayHandler,
             ISearchMonthlyAverageAnalysisHandler searchMonthlyAverageAnalysisHandler,
-            ICreateCreditCardNFCMobileBillToPayHandler createCreditCardNFCMobileBillToPayHandler)
+            ICreateCreditCardNFCMobileBillToPayRegistrationHandler createCreditCardNFCMobileBillToPayHandler)
         {
             _logger = logger;
             _createFixedInvoiceHandler = createFixedInvoiceHandler;
@@ -56,7 +56,7 @@ namespace WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost("register")]
-        public async Task<IActionResult> CreateFixedInvoice([FromBody] CreateBillToPayInput input,
+        public async Task<IActionResult> CreateFixedInvoice([FromBody] CreateBillToPayRegistrationInput input,
             CancellationToken cancellationToken)
         {
             _logger.Information($"[BillToPayController.CreateFixedInvoice()] - Cadastro de uma nova conta/fatura fixa. Input: {JsonSerializeUtils.Serialize(input)}");
@@ -73,13 +73,13 @@ namespace WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost("register-basket")]
-        public async Task<IActionResult> CreateBasketFixedInvoice([FromBody] IList<CreateBillToPayInput> input,
+        public async Task<IActionResult> CreateBasketFixedInvoice([FromBody] IList<CreateBillToPayRegistrationInput> input,
             CancellationToken cancellationToken)
         {
             _logger.Information("[BillToPayController.CreateBasketFixedInvoice()] - Cadastro de uma nova conta/fatura fixa via basket. Input: {@Input}", JsonSerializeUtils.Serialize(input));
 
-            List<CreateBillToPayOutput> outputList = new();
-            CreateBillToPayOutput output = new();
+            List<CreateBillToPayRegistrationOutput> outputList = new();
+            CreateBillToPayRegistrationOutput output = new();
 
             foreach (var fixedInvoice in input)
             {
@@ -98,7 +98,7 @@ namespace WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost("register-creditcard-nfc-mobile")]
-        public async Task<IActionResult> CreateFixedInvoiceCreditCardNFCMobile([FromBody] CreateCreditCardNFCMobileBillToPayInput input,
+        public async Task<IActionResult> CreateFixedInvoiceCreditCardNFCMobile([FromBody] CreateCreditCardNFCMobileBillToPayRegistrationInput input,
             CancellationToken cancellationToken)
         {
             _logger.Information($"[BillToPayController.CreateFixedInvoiceCreditCardNFCMobile()] - Cadastro de uma nova conta especifica quando ocorre a compra via Apple Pay Input: {JsonSerializeUtils.Serialize(input)}");

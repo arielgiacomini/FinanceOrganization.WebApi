@@ -8,9 +8,9 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
     {
         private readonly ILogger _logger;
         private readonly IBillToPayRepository _billToPayRepository;
-        private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
+        private readonly IBillToPayRegistrationRepository _fixedInvoiceRepository;
 
-        public DeleteBillToPayHandler(ILogger logger, IBillToPayRepository billToPayRepository, IFixedInvoiceRepository fixedInvoiceRepository)
+        public DeleteBillToPayHandler(ILogger logger, IBillToPayRepository billToPayRepository, IBillToPayRegistrationRepository fixedInvoiceRepository)
         {
             _logger = logger;
             _billToPayRepository = billToPayRepository;
@@ -37,7 +37,7 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
 
             int total = 0;
             int contador = 0;
-            Dictionary<string, Domain.Entities.FixedInvoice?> dicFixedInvoice = new();
+            Dictionary<string, Domain.Entities.BillToPayRegistration?> dicFixedInvoice = new();
             Dictionary<string, Domain.Entities.BillToPay?> billToPayRemoved = new();
 
             if (input.Id != null)
@@ -137,7 +137,7 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
             return await Task.FromResult(output);
         }
 
-        private static string SetOutputData(Dictionary<string, Domain.Entities.FixedInvoice?> dicFixedInvoice, Dictionary<string, Domain.Entities.BillToPay?> dicBillToPay)
+        private static string SetOutputData(Dictionary<string, Domain.Entities.BillToPayRegistration?> dicFixedInvoice, Dictionary<string, Domain.Entities.BillToPay?> dicBillToPay)
         {
             return string
                 .Concat(

@@ -17,9 +17,9 @@ namespace Infrastructure.Database.Context
         }
 
         /// <summary>
-        /// Conta/Fatura fixa.
+        /// Registro inicial de uma conta a pagar
         /// </summary>
-        public DbSet<FixedInvoice>? FixedInvoice { get; set; }
+        public DbSet<BillToPayRegistration>? BillToPayRegistration { get; set; }
 
         /// <summary>
         /// Conta a pagar
@@ -32,15 +32,21 @@ namespace Infrastructure.Database.Context
         public DbSet<Category>? Category { get; set; }
 
         /// <summary>
+        /// Registro inicial de uma conta a receber
+        /// </summary>
+        public DbSet<CashReceivableRegistration>? CashReceivableRegistration { get; set; }
+
+        /// <summary>
         /// Resultado da Stored Procedure: STP_CONTA_PAGAR_MEDIAS_MENSAIS
         /// </summary>
         public DbSet<MonthlyAverageAnalysis>? MonthlyAverageAnalysis { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new FixedInvoiceMapping());
+            modelBuilder.ApplyConfiguration(new BillToPayRegistrationMapping());
             modelBuilder.ApplyConfiguration(new BillToPayToPayMapping());
             modelBuilder.ApplyConfiguration(new CategoryMapping());
+            modelBuilder.ApplyConfiguration(new CashReceivableRegistrationMapping());
             modelBuilder.ApplyConfiguration(new MonthlyAverageAnalysisMapping());
 
             base.OnModelCreating(modelBuilder);

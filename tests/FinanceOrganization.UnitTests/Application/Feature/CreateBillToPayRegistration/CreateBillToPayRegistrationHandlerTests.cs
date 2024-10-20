@@ -1,5 +1,5 @@
 ﻿using Application.Feature;
-using Application.Feature.BillToPay.CreateBillToPay;
+using Application.Feature.BillToPayRegistration.CreateBillToPayRegistration;
 using Domain.Interfaces;
 using FinanceOrganization.UnitTests.Application.Configs.Collections;
 using FinanceOrganization.UnitTests.Application.Configs.Fixtures;
@@ -8,20 +8,20 @@ using Moq;
 using Serilog;
 using Xunit;
 
-namespace FinanceOrganization.UnitTests.Application.Feature.CreateFixedInvoice
+namespace FinanceOrganization.UnitTests.Application.Feature.CreateBillToPayRegistration
 {
     [Collection(nameof(UnitTestCollection))]
-    public class CreateFixedInvoiceHandlerTests
+    public class CreateBillToPayRegistrationHandlerTests
     {
         private readonly ModelFixture _modelFixture;
-        private readonly Mock<IFixedInvoiceRepository> _mockFixedInvoiceRepository;
+        private readonly Mock<IBillToPayRegistrationRepository> _mockBillToPayRegistrationRepository;
         private readonly Mock<IBillToPayRepository> _mockBillToPayRepository;
         private readonly Mock<ILogger> _mockLogger;
 
-        public CreateFixedInvoiceHandlerTests(ModelFixture modelFixture)
+        public CreateBillToPayRegistrationHandlerTests(ModelFixture modelFixture)
         {
             _modelFixture = modelFixture;
-            _mockFixedInvoiceRepository = new Mock<IFixedInvoiceRepository>();
+            _mockBillToPayRegistrationRepository = new Mock<IBillToPayRegistrationRepository>();
             _mockBillToPayRepository = new Mock<IBillToPayRepository>();
             _mockLogger = new Mock<ILogger>();
         }
@@ -31,14 +31,14 @@ namespace FinanceOrganization.UnitTests.Application.Feature.CreateFixedInvoice
         {
             // Setup
 
-            _mockFixedInvoiceRepository
+            _mockBillToPayRegistrationRepository
                 .Setup(repo => repo.Save(_modelFixture.GetFixedInvoice()))
                 .ReturnsAsync(1);
 
             // Action
 
             var handle =
-                new CreateBillToPayHandler(_mockLogger.Object, _mockFixedInvoiceRepository.Object, _mockBillToPayRepository.Object);
+                new CreateBillToPayRegistrationHandler(_mockLogger.Object, _mockBillToPayRegistrationRepository.Object, _mockBillToPayRepository.Object);
 
             var input = _modelFixture.GetCreateFixedInvoiceInput();
 

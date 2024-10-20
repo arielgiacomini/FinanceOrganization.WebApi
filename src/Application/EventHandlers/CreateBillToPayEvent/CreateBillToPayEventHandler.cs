@@ -11,7 +11,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
     {
         private readonly ILogger _logger;
         private readonly BillToPayOptions _billToPayOptions;
-        private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
+        private readonly IBillToPayRegistrationRepository _fixedInvoiceRepository;
         private readonly IBillToPayRepository _billToPayRepository;
         private const string FREQUENCIA_MENSAL_RECORRENTE = "Mensal:Recorrente";
         private const string FREQUENCIA_MENSAL = "Mensal";
@@ -24,7 +24,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         public CreateBillToPayEventHandler(
             ILogger logger,
             IOptions<BillToPayOptions> options,
-            IFixedInvoiceRepository fixedInvoiceRepository,
+            IBillToPayRegistrationRepository fixedInvoiceRepository,
             IBillToPayRepository billToPayRepository)
         {
             _logger = logger;
@@ -66,7 +66,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         /// </summary>
         /// <param name="fixedInvoice"></param>
         /// <returns></returns>
-        private async Task StartRegistration(FixedInvoice fixedInvoice, BillToPay? billToPay)
+        private async Task StartRegistration(BillToPayRegistration fixedInvoice, BillToPay? billToPay)
         {
             await LogicRegistration(fixedInvoice, billToPay);
         }
@@ -75,7 +75,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         /// Contempla a lógica para cadastro de novas contas a pagar de acordo com o tempo que ela se encontra.
         /// </summary>
         /// <param name="fixedInvoice"></param>
-        public async Task LogicRegistration(FixedInvoice fixedInvoice, BillToPay? billToPay)
+        public async Task LogicRegistration(BillToPayRegistration fixedInvoice, BillToPay? billToPay)
         {
             if (billToPay != null)
             {
@@ -87,7 +87,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             }
         }
 
-        private async Task LogicByFixedInvoice(FixedInvoice fixedInvoice)
+        private async Task LogicByFixedInvoice(BillToPayRegistration fixedInvoice)
         {
             List<BillToPay> listBillToPay = new();
 
@@ -176,7 +176,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             await _billToPayRepository.SaveRange(listBillToPay);
         }
 
-        private async Task DebitFixedAccount(FixedInvoice fixedInvoice, int qtdMonthAdd)
+        private async Task DebitFixedAccount(BillToPayRegistration fixedInvoice, int qtdMonthAdd)
         {
             if (IsValidToDebit(fixedInvoice, qtdMonthAdd))
             {
@@ -211,7 +211,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             }
         }
 
-        private static bool IsValidToDebit(FixedInvoice fixedInvoice, int qtdMonthAdd)
+        private static bool IsValidToDebit(BillToPayRegistration fixedInvoice, int qtdMonthAdd)
         {
             var isTrue = fixedInvoice.RegistrationType == TIPO_REGISTRO_COMPRA_LIVRE
                       && qtdMonthAdd == 0
@@ -220,7 +220,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             return isTrue;
         }
 
-        public static bool EnterPaid(FixedInvoice? fixedInvoice)
+        public static bool EnterPaid(BillToPayRegistration? fixedInvoice)
         {
             bool considerPaid = false;
 
@@ -291,7 +291,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         }
 
         public static BillToPay MapBillToPay(
-            BillToPay? billToPay, FixedInvoice? fixedInvoice, DateTime dueDate, string yearMonth, DateTime? purchaseDate = null)
+            BillToPay? billToPay, BillToPayRegistration? fixedInvoice, DateTime dueDate, string yearMonth, DateTime? purchaseDate = null)
         {
             if (billToPay is not null)
             {
@@ -357,7 +357,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 return;
             }
 
-            var fixedInvoice = new FixedInvoice()
+            var fixedInvoice = new BillToPayRegistration()
             {
                 Id = fixedInvoiceByDb!.Id,
                 Name = fixedInvoiceByDb.Name,
@@ -378,7 +378,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             await _fixedInvoiceRepository.Edit(fixedInvoice);
         }
 
-        private static void EditFixedInvoice(FixedInvoice fixedInvoice)
+        private static void EditFixedInvoice(BillToPayRegistration fixedInvoice)
         {
             fixedInvoice.LastChangeDate = DateTime.Now;
         }

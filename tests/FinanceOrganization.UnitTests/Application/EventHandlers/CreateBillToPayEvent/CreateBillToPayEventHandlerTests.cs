@@ -17,7 +17,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
         private readonly ModelFixture _modelFixture;
         private readonly Mock<ILogger> _dummyLogger;
         private readonly Mock<IOptions<BillToPayOptions>> _mockOptions;
-        private readonly Mock<IFixedInvoiceRepository> _mockFixedInvoiceRepository;
+        private readonly Mock<IBillToPayRegistrationRepository> _mockFixedInvoiceRepository;
         private readonly Mock<IBillToPayRepository> _mockWalletToPayRepository;
 
         public CreateBillToPayEventHandlerTests(ModelFixture modelFixture)
@@ -25,7 +25,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
             _modelFixture = modelFixture;
             _dummyLogger = new Mock<ILogger>();
             _mockOptions = new Mock<IOptions<BillToPayOptions>>();
-            _mockFixedInvoiceRepository = new Mock<IFixedInvoiceRepository>();
+            _mockFixedInvoiceRepository = new Mock<IBillToPayRegistrationRepository>();
             _mockWalletToPayRepository = new Mock<IBillToPayRepository>();
 
             _mockOptions
