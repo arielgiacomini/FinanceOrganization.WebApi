@@ -32,7 +32,7 @@ namespace Application.Feature.CashReceivableRegistration.CreateCashReceivableReg
                 return outputValidator;
             }
 
-            var isSaved = await _cashReceivableRepository.Save(MapInputCashReceivableToDomain(input));
+            var isSaved = await _cashReceivableRepository.Save(MapInputCashReceivableRegistrationToDomain(input));
 
             var output = new CreateCashReceivableRegistrationOutput
             {
@@ -42,7 +42,7 @@ namespace Application.Feature.CashReceivableRegistration.CreateCashReceivableReg
             return await Task.FromResult(new CreateCashReceivableRegistrationOutput());
         }
 
-        private static Domain.Entities.CashReceivableRegistration MapInputCashReceivableToDomain(CreateCashReceivableRegistrationInput input)
+        private static Domain.Entities.CashReceivableRegistration MapInputCashReceivableRegistrationToDomain(CreateCashReceivableRegistrationInput input)
         {
             return new Domain.Entities.CashReceivableRegistration
             {
@@ -50,6 +50,10 @@ namespace Application.Feature.CashReceivableRegistration.CreateCashReceivableReg
                 Category = input.Category,
                 Account = input.Account,
                 Value = input.Value,
+                AgreementDate = input.AgreementDate,
+                BestReceivingDay = input.BestReceivingDay ?? input.AgreementDate!.Value.Day,
+                InitialMonthYear = input.InitialMonthYear,
+                FynallyMonthYear = input.FynallyMonthYear,
                 Frequence = input.Frequence,
                 RegistrationType = input.RegistrationType,
                 AdditionalMessage = input.AdditionalMessage,

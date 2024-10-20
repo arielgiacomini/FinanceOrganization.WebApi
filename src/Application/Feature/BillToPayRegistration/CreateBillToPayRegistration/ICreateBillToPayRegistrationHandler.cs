@@ -1,6 +1,7 @@
-﻿namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration;
-
-public interface ICreateBillToPayRegistrationHandler
+﻿namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
 {
-    Task<CreateBillToPayRegistrationOutput> Handle(CreateBillToPayRegistrationInput input, CancellationToken cancellationToken = default);
+    public interface ICreateBillToPayRegistrationHandler
+    {
+        Task<CreateBillToPayRegistrationOutput> Handle(CreateBillToPayRegistrationInput input, CancellationToken cancellationToken = default);
+    }
 }
