@@ -10,7 +10,7 @@ namespace Infrastructure.Database.Mapping
         {
             builder.ToTable("CONTA_RECEBER_CADASTRO");
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Id).HasColumnName("ID_CONTA_PAGAR_CADASTRO").IsRequired().ValueGeneratedOnAdd();
+            builder.Property(x => x.Id).HasColumnName("ID_CONTA_RECEBER_CADASTRO").IsRequired().ValueGeneratedOnAdd();
             builder.Property(x => x.Name).HasColumnName("DSC_DESCRICAO");
             builder.Property(x => x.Account).HasColumnName("DSC_CONTA");
             builder.Property(x => x.Category).HasColumnName("DSC_CATEGORIA");

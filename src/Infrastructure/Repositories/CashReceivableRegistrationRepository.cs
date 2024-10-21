@@ -1,16 +1,15 @@
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Database.Context;
-using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Repositories;
 
 public class CashReceivableRegistrationRepository : ICashReceivableRegistrationRepository
 {
     private readonly FinanceOrganizationContext _context;
-    private readonly ILogger _logger;
+    private readonly Serilog.ILogger _logger;
 
-    public CashReceivableRegistrationRepository(ILogger logger,
+    public CashReceivableRegistrationRepository(Serilog.ILogger logger,
             FinanceOrganizationContext context)
     {
         _logger = logger;
@@ -19,9 +18,19 @@ public class CashReceivableRegistrationRepository : ICashReceivableRegistrationR
 
     public async Task<int> Save(CashReceivableRegistration cashReceivable)
     {
-        _context.Add(cashReceivable);
-        var qtdEntry = await _context.SaveChangesAsync();
+        int qtd = 0;
+        try
+        {
+            _context.Add(cashReceivable);
+            qtd = await _context.SaveChangesAsync();
 
-        return qtdEntry;
+            return qtd;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, ex.Message);
+
+            return qtd;
+        }
     }
 }

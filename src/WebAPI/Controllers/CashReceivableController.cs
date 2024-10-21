@@ -14,7 +14,8 @@ namespace WebAPI.Controllers
         private readonly ICreateCashReceivableRegistrationHandler _createCashReceivableHandler;
 
         public CashReceivableController(
-            Serilog.ILogger logger, ICreateCashReceivableRegistrationHandler createCashReceivableHandler)
+            Serilog.ILogger logger,
+            ICreateCashReceivableRegistrationHandler createCashReceivableHandler)
         {
             _logger = logger;
             _createCashReceivableHandler = createCashReceivableHandler;

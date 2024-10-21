@@ -5,10 +5,10 @@ namespace Application.Feature.CashReceivableRegistration.CreateCashReceivableReg
 {
     public class CreateCashReceivableRegistrationHandler : ICreateCashReceivableRegistrationHandler
     {
-        private readonly ILogger _logger;
+        private readonly Serilog.ILogger _logger;
         private readonly ICashReceivableRegistrationRepository _cashReceivableRepository;
 
-        public CreateCashReceivableRegistrationHandler(ILogger logger,
+        public CreateCashReceivableRegistrationHandler(Serilog.ILogger logger,
             ICashReceivableRegistrationRepository cashReceivableRepository)
         {
             _logger = logger;
@@ -17,13 +17,13 @@ namespace Application.Feature.CashReceivableRegistration.CreateCashReceivableReg
 
         public async Task<CreateCashReceivableRegistrationOutput> Handle(CreateCashReceivableRegistrationInput input, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Está sendo criado a conta a receber de nome: {Name}", input.Name);
+            _logger.Information("Está sendo criado a conta a receber de nome: {Name}", input.Name);
 
             var validate = await CreateCashReceivableRegistrationValidator.ValidateInput(input, _cashReceivableRepository);
 
             if (validate.Any())
             {
-                _logger.LogWarning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
+                _logger.Warning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
 
                 var outputValidator = new CreateCashReceivableRegistrationOutput
                 {
