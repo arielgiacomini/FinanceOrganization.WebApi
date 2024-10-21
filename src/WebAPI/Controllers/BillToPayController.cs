@@ -18,8 +18,8 @@ namespace WebAPI.Controllers
     public class BillToPayController : ControllerBase
     {
         private readonly Serilog.ILogger _logger;
-        private readonly ICreateBillToPayRegistrationHandler _createFixedInvoiceHandler;
-        private readonly ISearchBillToPayRegistrationHandler _searchFixedInvoiceHandler;
+        private readonly ICreateBillToPayRegistrationHandler _createBillToPayRegistrationHandler;
+        private readonly ISearchBillToPayRegistrationHandler _searchBillToPayRegistrationHandler;
         private readonly IEditBillToPayHandler _editBillToPayHandler;
         private readonly IPayBillToPayHandler _payBillToPayHandler;
         private readonly ISearchBillToPayHandler _searchBillToPayHandler;
@@ -29,8 +29,8 @@ namespace WebAPI.Controllers
 
         public BillToPayController(
             Serilog.ILogger logger,
-            ICreateBillToPayRegistrationHandler createFixedInvoiceHandler,
-            ISearchBillToPayRegistrationHandler searchFixedInvoiceHandler,
+            ICreateBillToPayRegistrationHandler createBillToPayRegistrationHandler,
+            ISearchBillToPayRegistrationHandler searchBillToPayRegistrationHandler,
             IEditBillToPayHandler editBillToPayHandler,
             IPayBillToPayHandler payBillToPayHandler,
             ISearchBillToPayHandler searchBillToPayHandler,
@@ -39,8 +39,8 @@ namespace WebAPI.Controllers
             ICreateCreditCardNFCMobileBillToPayRegistrationHandler createCreditCardNFCMobileBillToPayHandler)
         {
             _logger = logger;
-            _createFixedInvoiceHandler = createFixedInvoiceHandler;
-            _searchFixedInvoiceHandler = searchFixedInvoiceHandler;
+            _createBillToPayRegistrationHandler = createBillToPayRegistrationHandler;
+            _searchBillToPayRegistrationHandler = searchBillToPayRegistrationHandler;
             _editBillToPayHandler = editBillToPayHandler;
             _payBillToPayHandler = payBillToPayHandler;
             _searchBillToPayHandler = searchBillToPayHandler;
@@ -56,12 +56,12 @@ namespace WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost("register")]
-        public async Task<IActionResult> CreateFixedInvoice([FromBody] CreateBillToPayRegistrationInput input,
+        public async Task<IActionResult> CreateBillToPayRegistration([FromBody] CreateBillToPayRegistrationInput input,
             CancellationToken cancellationToken)
         {
-            _logger.Information($"[BillToPayController.CreateFixedInvoice()] - Cadastro de uma nova conta/fatura fixa. Input: {JsonSerializeUtils.Serialize(input)}");
+            _logger.Information($"[BillToPayController.CreateBillToPayRegistration()] - Cadastro de uma nova conta/fatura fixa. Input: {JsonSerializeUtils.Serialize(input)}");
 
-            var output = await _createFixedInvoiceHandler.Handle(input, cancellationToken);
+            var output = await _createBillToPayRegistrationHandler.Handle(input, cancellationToken);
 
             return Ok(output);
         }
@@ -73,17 +73,17 @@ namespace WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost("register-basket")]
-        public async Task<IActionResult> CreateBasketFixedInvoice([FromBody] IList<CreateBillToPayRegistrationInput> input,
+        public async Task<IActionResult> CreateBasketBillToPayRegistration([FromBody] IList<CreateBillToPayRegistrationInput> input,
             CancellationToken cancellationToken)
         {
-            _logger.Information("[BillToPayController.CreateBasketFixedInvoice()] - Cadastro de uma nova conta/fatura fixa via basket. Input: {@Input}", JsonSerializeUtils.Serialize(input));
+            _logger.Information("[BillToPayController.CreateBasketBillToPayRegistration()] - Cadastro de uma nova conta/fatura fixa via basket. Input: {@Input}", JsonSerializeUtils.Serialize(input));
 
             List<CreateBillToPayRegistrationOutput> outputList = new();
             CreateBillToPayRegistrationOutput output = new();
 
-            foreach (var fixedInvoice in input)
+            foreach (var billToPayRegistration in input)
             {
-                outputList.Add(await _createFixedInvoiceHandler.Handle(fixedInvoice, cancellationToken));
+                outputList.Add(await _createBillToPayRegistrationHandler.Handle(billToPayRegistration, cancellationToken));
             }
 
             output.Output = OutputBaseDetails.Success("A lista de contas a pagar para cadastro teve exito.", outputList, outputList.Count);
@@ -98,10 +98,10 @@ namespace WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost("register-creditcard-nfc-mobile")]
-        public async Task<IActionResult> CreateFixedInvoiceCreditCardNFCMobile([FromBody] CreateCreditCardNFCMobileBillToPayRegistrationInput input,
+        public async Task<IActionResult> CreateBillToPayRegistrationCreditCardNFCMobile([FromBody] CreateCreditCardNFCMobileBillToPayRegistrationInput input,
             CancellationToken cancellationToken)
         {
-            _logger.Information($"[BillToPayController.CreateFixedInvoiceCreditCardNFCMobile()] - Cadastro de uma nova conta especifica quando ocorre a compra via Apple Pay Input: {JsonSerializeUtils.Serialize(input)}");
+            _logger.Information($"[BillToPayController.CreateBillToPayRegistrationCreditCardNFCMobile()] - Cadastro de uma nova conta especifica quando ocorre a compra via Apple Pay Input: {JsonSerializeUtils.Serialize(input)}");
 
             var output = await _createCreditCardNFCMobileBillToPayHandler.Handle(input, cancellationToken);
 
@@ -114,11 +114,11 @@ namespace WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("search-register")]
-        public async Task<IActionResult> GetFixedInvoice(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetBillToPayRegistration(CancellationToken cancellationToken)
         {
-            _logger.Information($"[BillToPayController.GetFixedInvoice()] - Busca de conta/fatura fixa.");
+            _logger.Information($"[BillToPayController.GetBillToPayRegistration()] - Busca de conta/fatura fixa.");
 
-            var output = await _searchFixedInvoiceHandler.Handle();
+            var output = await _searchBillToPayRegistrationHandler.Handle();
 
             return Ok(output);
         }

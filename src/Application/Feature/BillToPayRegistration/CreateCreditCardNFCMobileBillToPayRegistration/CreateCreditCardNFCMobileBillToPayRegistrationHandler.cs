@@ -7,15 +7,15 @@ namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBil
     public class CreateCreditCardNFCMobileBillToPayRegistrationHandler : ICreateCreditCardNFCMobileBillToPayRegistrationHandler
     {
         private readonly ILogger _logger;
-        private readonly IBillToPayRegistrationRepository _fixedInvoiceRepository;
+        private readonly IBillToPayRegistrationRepository _billToPayRegistrationRepository;
         private readonly IBillToPayRepository _billToPayRepository;
 
         public CreateCreditCardNFCMobileBillToPayRegistrationHandler(ILogger logger,
-            IBillToPayRegistrationRepository fixedInvoiceRepository,
+            IBillToPayRegistrationRepository billToPayRegistrationRepository,
             IBillToPayRepository billToPayRepository)
         {
             _logger = logger;
-            _fixedInvoiceRepository = fixedInvoiceRepository;
+            _billToPayRegistrationRepository = billToPayRegistrationRepository;
             _billToPayRepository = billToPayRepository;
         }
 
@@ -24,7 +24,7 @@ namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBil
         {
             _logger.Information("Está sendo criado a conta a pagar de nome: {Name}", input.Name);
 
-            var validate = await CreateCreditCardNFCMobileBillToPayRegistrationValidator.ValidateInput(input, _fixedInvoiceRepository, _billToPayRepository);
+            var validate = await CreateCreditCardNFCMobileBillToPayRegistrationValidator.ValidateInput(input, _billToPayRegistrationRepository, _billToPayRepository);
 
             if (validate.Any())
             {
@@ -38,7 +38,7 @@ namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBil
                 return outputValidator;
             }
 
-            var isSaved = await _fixedInvoiceRepository.Save(MapInputFixedInvoiceToDomain(input));
+            var isSaved = await _billToPayRegistrationRepository.Save(MapInputBillToPayRegistrationToDomain(input));
 
             var output = new CreateCreditCardNFCMobileBillToPayRegistrationOutput
             {
@@ -48,7 +48,7 @@ namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBil
             return await Task.FromResult(output);
         }
 
-        private static Domain.Entities.BillToPayRegistration MapInputFixedInvoiceToDomain(CreateCreditCardNFCMobileBillToPayRegistrationInput input)
+        private static Domain.Entities.BillToPayRegistration MapInputBillToPayRegistrationToDomain(CreateCreditCardNFCMobileBillToPayRegistrationInput input)
         {
             return new Domain.Entities.BillToPayRegistration
             {

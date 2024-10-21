@@ -27,12 +27,12 @@ namespace FinanceOrganization.UnitTests.Application.Feature.CreateBillToPayRegis
         }
 
         [Fact]
-        public async Task Handle_DeveExecutarCriacaoDeFixedInvoice_Sucesso()
+        public async Task Handle_DeveExecutarCriacaoDeBillToPayRegistration_Sucesso()
         {
             // Setup
 
             _mockBillToPayRegistrationRepository
-                .Setup(repo => repo.Save(_modelFixture.GetFixedInvoice()))
+                .Setup(repo => repo.Save(_modelFixture.GetBillToPayRegistration()))
                 .ReturnsAsync(1);
 
             // Action
@@ -40,7 +40,7 @@ namespace FinanceOrganization.UnitTests.Application.Feature.CreateBillToPayRegis
             var handle =
                 new CreateBillToPayRegistrationHandler(_mockLogger.Object, _mockBillToPayRegistrationRepository.Object, _mockBillToPayRepository.Object);
 
-            var input = _modelFixture.GetCreateFixedInvoiceInput();
+            var input = _modelFixture.GetCreateBillToPayRegistrationInput();
 
             var result = await handle.Handle(input);
 

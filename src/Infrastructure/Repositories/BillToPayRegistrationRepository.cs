@@ -48,7 +48,7 @@ namespace Infrastructure.Repositories
             return result;
         }
 
-        public async Task<BillToPayRegistration?> GetFixedInvoiceByName(string? name)
+        public async Task<BillToPayRegistration?> GetBillToPayRegistrationByName(string? name)
         {
             var result = await _context.BillToPayRegistration!
                 .AsNoTracking()

@@ -11,14 +11,14 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
 
         public static async Task<Dictionary<string, string>> ValidateInput(
             CreateBillToPayRegistrationInput input,
-            IBillToPayRegistrationRepository fixedInvoiceRepository,
+            IBillToPayRegistrationRepository billToPayRegistrationRepository,
             IBillToPayRepository billToPayRepository)
         {
-            return await CreateValidateBaseInput(input, fixedInvoiceRepository, billToPayRepository);
+            return await CreateValidateBaseInput(input, billToPayRegistrationRepository, billToPayRepository);
         }
 
         public static async Task<Dictionary<string, string>> CreateValidateBaseInput(CreateBillToPayRegistrationInput input,
-            IBillToPayRegistrationRepository fixedInvoiceRepository, IBillToPayRepository billToPayRepository)
+            IBillToPayRegistrationRepository billToPayRegistrationRepository, IBillToPayRepository billToPayRepository)
         {
             Dictionary<string, string> validatorBase = new();
 

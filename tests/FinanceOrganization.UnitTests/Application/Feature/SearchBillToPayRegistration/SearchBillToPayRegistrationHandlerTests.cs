@@ -21,13 +21,13 @@ namespace FinanceOrganization.UnitTests.Application.Feature.SearchBillToPayRegis
         }
 
         [Fact]
-        public async Task Hanle_DeveExecutarBuscaDeFixedInvoice_Sucesso()
+        public async Task Hanle_DeveExecutarBuscaDeBillToPayRegistration_Sucesso()
         {
             // Setup
 
             _mockBillToPayRegistrationRepository
                 .Setup(repo => repo.GetAll())
-                .ReturnsAsync(_modelFixture.GetListFixedInvoice());
+                .ReturnsAsync(_modelFixture.GetListBillToPayRegistration());
 
             // Action
 

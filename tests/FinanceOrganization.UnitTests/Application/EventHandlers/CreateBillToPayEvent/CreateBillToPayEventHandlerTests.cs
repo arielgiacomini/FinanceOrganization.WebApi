@@ -17,7 +17,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
         private readonly ModelFixture _modelFixture;
         private readonly Mock<ILogger> _dummyLogger;
         private readonly Mock<IOptions<BillToPayOptions>> _mockOptions;
-        private readonly Mock<IBillToPayRegistrationRepository> _mockFixedInvoiceRepository;
+        private readonly Mock<IBillToPayRegistrationRepository> _mockBillToPayRegistrationRepository;
         private readonly Mock<IBillToPayRepository> _mockWalletToPayRepository;
 
         public CreateBillToPayEventHandlerTests(ModelFixture modelFixture)
@@ -25,7 +25,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
             _modelFixture = modelFixture;
             _dummyLogger = new Mock<ILogger>();
             _mockOptions = new Mock<IOptions<BillToPayOptions>>();
-            _mockFixedInvoiceRepository = new Mock<IBillToPayRegistrationRepository>();
+            _mockBillToPayRegistrationRepository = new Mock<IBillToPayRegistrationRepository>();
             _mockWalletToPayRepository = new Mock<IBillToPayRepository>();
 
             _mockOptions
@@ -37,18 +37,18 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
         public void Handle_DeveExecutarHandleComBillToPayPreenchido_Sucesso()
         {
             // Setup
-            _mockFixedInvoiceRepository
-                .Setup(fixedInvoice => fixedInvoice.GetAll())
-                .ReturnsAsync(_modelFixture.GetListFixedInvoice());
+            _mockBillToPayRegistrationRepository
+                .Setup(billToPayRegistration => billToPayRegistration.GetAll())
+                .ReturnsAsync(_modelFixture.GetListBillToPayRegistration());
 
             _mockWalletToPayRepository
-                .Setup(walletToPay => walletToPay.GetBillToPayByFixedInvoiceId(It.IsAny<int>()))
+                .Setup(walletToPay => walletToPay.GetBillToPayByBillToPayRegistrationId(It.IsAny<int>()))
                 .ReturnsAsync(_modelFixture.GetListBillToPay());
 
-            _mockFixedInvoiceRepository
-                .Setup(fixedInvoice => fixedInvoice
+            _mockBillToPayRegistrationRepository
+                .Setup(billToPayRegistration => billToPayRegistration
                 .GetOnlyOldRecordsAndParticipants(-1, "Conta/Fatura Fixa"))
-                .ReturnsAsync(_modelFixture.GetListFixedInvoice());
+                .ReturnsAsync(_modelFixture.GetListBillToPayRegistration());
 
             _mockWalletToPayRepository
                 .Setup(walletToPay => walletToPay.SaveRange(It.IsAny<IList<BillToPay>>()))
@@ -59,7 +59,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
             var handler = new CreateBillToPayEventHandler(
                 _dummyLogger.Object,
                 _mockOptions.Object,
-                _mockFixedInvoiceRepository.Object,
+                _mockBillToPayRegistrationRepository.Object,
                 _mockWalletToPayRepository.Object);
 
             var input = new CreateBillToPayEventInput
@@ -79,12 +79,12 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
         public void Handle_DeveRetornarQuantidadeMesesAddMenorIgualZeroBillToPay_Sucesso()
         {
             // Setup
-            _mockFixedInvoiceRepository
-                .Setup(fixedInvoice => fixedInvoice.GetAll())
-                .ReturnsAsync(_modelFixture.GetListFixedInvoice());
+            _mockBillToPayRegistrationRepository
+                .Setup(billToPayRegistration => billToPayRegistration.GetAll())
+                .ReturnsAsync(_modelFixture.GetListBillToPayRegistration());
 
             _mockWalletToPayRepository
-                .Setup(walletToPay => walletToPay.GetBillToPayByFixedInvoiceId(It.IsAny<int>()))
+                .Setup(walletToPay => walletToPay.GetBillToPayByBillToPayRegistrationId(It.IsAny<int>()))
                 .ReturnsAsync(_modelFixture.GetListBillToPay());
 
             _mockWalletToPayRepository
@@ -103,7 +103,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
             var handler = new CreateBillToPayEventHandler(
                 _dummyLogger.Object,
                 _mockOptions.Object,
-                _mockFixedInvoiceRepository.Object,
+                _mockBillToPayRegistrationRepository.Object,
                 _mockWalletToPayRepository.Object);
 
             var input = new CreateBillToPayEventInput
@@ -133,21 +133,21 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
         }
 
         [Fact]
-        public void Handle_DeveExecutarHandleComFixedInvoicePreenchido_Sucesso()
+        public void Handle_DeveExecutarHandleComBillToPayRegistrationPreenchido_Sucesso()
         {
             // Setup
-            _mockFixedInvoiceRepository
-                .Setup(fixedInvoice => fixedInvoice.GetAll())
-                .ReturnsAsync(_modelFixture.GetListFixedInvoice());
+            _mockBillToPayRegistrationRepository
+                .Setup(billToPayRegistration => billToPayRegistration.GetAll())
+                .ReturnsAsync(_modelFixture.GetListBillToPayRegistration());
 
             _mockWalletToPayRepository
-                .Setup(walletToPay => walletToPay.GetBillToPayByFixedInvoiceId(It.IsAny<int>()))
+                .Setup(walletToPay => walletToPay.GetBillToPayByBillToPayRegistrationId(It.IsAny<int>()))
                 .ReturnsAsync(() => null!);
 
-            _mockFixedInvoiceRepository
-                .Setup(fixedInvoice => fixedInvoice
+            _mockBillToPayRegistrationRepository
+                .Setup(billToPayRegistration => billToPayRegistration
                 .GetOnlyOldRecordsAndParticipants(-1, "Conta/Fatura Fixa"))
-                .ReturnsAsync(_modelFixture.GetListFixedInvoice());
+                .ReturnsAsync(_modelFixture.GetListBillToPayRegistration());
 
             _mockWalletToPayRepository
                 .Setup(walletToPay => walletToPay.SaveRange(It.IsAny<IList<BillToPay>>()))
@@ -158,7 +158,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
             var handler = new CreateBillToPayEventHandler(
                 _dummyLogger.Object,
                 _mockOptions.Object,
-                _mockFixedInvoiceRepository.Object,
+                _mockBillToPayRegistrationRepository.Object,
                 _mockWalletToPayRepository.Object);
 
             var input = new CreateBillToPayEventInput
@@ -175,15 +175,15 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
         }
 
         [Fact]
-        public void Handle_DeveRetornarQuantidadeMesesAddMenorIgualZeroFixedInvoice_Sucesso()
+        public void Handle_DeveRetornarQuantidadeMesesAddMenorIgualZeroBillToPayRegistration_Sucesso()
         {
             // Setup
-            _mockFixedInvoiceRepository
-                .Setup(fixedInvoice => fixedInvoice.GetAll())
-                .ReturnsAsync(_modelFixture.GetListFixedInvoice());
+            _mockBillToPayRegistrationRepository
+                .Setup(billToPayRegistration => billToPayRegistration.GetAll())
+                .ReturnsAsync(_modelFixture.GetListBillToPayRegistration());
 
             _mockWalletToPayRepository
-                .Setup(walletToPay => walletToPay.GetBillToPayByFixedInvoiceId(It.IsAny<int>()))
+                .Setup(walletToPay => walletToPay.GetBillToPayByBillToPayRegistrationId(It.IsAny<int>()))
                 .ReturnsAsync(() => null!);
 
             _mockWalletToPayRepository
@@ -202,7 +202,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
             var handler = new CreateBillToPayEventHandler(
                 _dummyLogger.Object,
                 _mockOptions.Object,
-                _mockFixedInvoiceRepository.Object,
+                _mockBillToPayRegistrationRepository.Object,
                 _mockWalletToPayRepository.Object);
 
             var input = new CreateBillToPayEventInput

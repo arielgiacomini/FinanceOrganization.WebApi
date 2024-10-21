@@ -7,32 +7,32 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
     {
         public static async Task<Dictionary<string, string>> ValidateInput(
             DeleteBillToPayInput input,
-            IBillToPayRegistrationRepository fixedInvoiceRepository,
+            IBillToPayRegistrationRepository billToPayRegistrationRepository,
             IBillToPayRepository billToPayRepository)
         {
-            return await DeleteValidateBaseInput(input, fixedInvoiceRepository, billToPayRepository);
+            return await DeleteValidateBaseInput(input, billToPayRegistrationRepository, billToPayRepository);
         }
 
         public static async Task<Dictionary<string, string>> DeleteValidateBaseInput(DeleteBillToPayInput input,
-            IBillToPayRegistrationRepository fixedInvoiceRepository, IBillToPayRepository billToPayRepository)
+            IBillToPayRegistrationRepository billToPayRegistrationRepository, IBillToPayRepository billToPayRepository)
         {
             Dictionary<string, string> validatorBase = new();
             int contador = 0;
 
-            if (input.IdFixedInvoices != null)
+            if (input.IdBillToPayRegistrations != null)
             {
-                foreach (var idFixedInvoice in input.IdFixedInvoices)
+                foreach (var idBillToPayRegistration in input.IdBillToPayRegistrations)
                 {
-                    var fixedInvoice = await fixedInvoiceRepository.GetById(idFixedInvoice);
+                    var billToPayRegistration = await billToPayRegistrationRepository.GetById(idBillToPayRegistration);
 
-                    if (fixedInvoice == null)
+                    if (billToPayRegistration == null)
                     {
-                        validatorBase.Add("[17]", $"Não foi encontrado o IdFixedInvoice informado: {idFixedInvoice}");
+                        validatorBase.Add("[17]", $"Não foi encontrado o IdBillToPayRegistration informado: {idBillToPayRegistration}");
                     }
 
-                    if (fixedInvoice != null)
+                    if (billToPayRegistration != null)
                     {
-                        var billToPays = await billToPayRepository.GetBillToPayByFixedInvoiceId(idFixedInvoice);
+                        var billToPays = await billToPayRepository.GetBillToPayByBillToPayRegistrationId(idBillToPayRegistration);
 
                         if (billToPays != null && billToPays!.Count > 0)
                         {
@@ -72,11 +72,11 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
 
                     if (billToPay != null)
                     {
-                        var fixedInvoice = await fixedInvoiceRepository.GetById(billToPay.IdFixedInvoice);
+                        var billToPayRegistration = await billToPayRegistrationRepository.GetById(billToPay.IdBillToPayRegistration);
 
-                        if (fixedInvoice == null)
+                        if (billToPayRegistration == null)
                         {
-                            validatorBase.Add($"[21-{contador}]", $"Não foi encontrado nenhum FixedInvoice para o Id informado: [{billToPay.IdFixedInvoice}]");
+                            validatorBase.Add($"[21-{contador}]", $"Não foi encontrado nenhum BillToPayRegistration para o Id informado: [{billToPay.IdBillToPayRegistration}]");
                         }
 
                         if (billToPay.HasPay && input.JustUnpaid)

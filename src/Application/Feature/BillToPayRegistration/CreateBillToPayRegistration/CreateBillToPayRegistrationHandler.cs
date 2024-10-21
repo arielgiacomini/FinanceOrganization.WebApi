@@ -6,15 +6,15 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
     public class CreateBillToPayRegistrationHandler : ICreateBillToPayRegistrationHandler
     {
         private readonly ILogger _logger;
-        private readonly IBillToPayRegistrationRepository _fixedInvoiceRepository;
+        private readonly IBillToPayRegistrationRepository _billToPayRegistrationRepository;
         private readonly IBillToPayRepository _billToPayRepository;
 
         public CreateBillToPayRegistrationHandler(ILogger logger,
-            IBillToPayRegistrationRepository fixedInvoiceRepository,
+            IBillToPayRegistrationRepository billToPayRegistrationRepository,
             IBillToPayRepository billToPayRepository)
         {
             _logger = logger;
-            _fixedInvoiceRepository = fixedInvoiceRepository;
+            _billToPayRegistrationRepository = billToPayRegistrationRepository;
             _billToPayRepository = billToPayRepository;
         }
 
@@ -23,7 +23,7 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
         {
             _logger.Information("Está sendo criado a conta a pagar de nome: {Name}", input.Name);
 
-            var validate = await CreateBillToPayRegistrationValidator.ValidateInput(input, _fixedInvoiceRepository, _billToPayRepository);
+            var validate = await CreateBillToPayRegistrationValidator.ValidateInput(input, _billToPayRegistrationRepository, _billToPayRepository);
 
             if (validate.Any())
             {
@@ -37,7 +37,7 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
                 return outputValidator;
             }
 
-            var isSaved = await _fixedInvoiceRepository.Save(MapInputFixedInvoiceToDomain(input));
+            var isSaved = await _billToPayRegistrationRepository.Save(MapInputBillToPayRegistrationToDomain(input));
 
             var output = new CreateBillToPayRegistrationOutput
             {
@@ -47,7 +47,7 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
             return await Task.FromResult(output);
         }
 
-        private static Domain.Entities.BillToPayRegistration MapInputFixedInvoiceToDomain(CreateBillToPayRegistrationInput input)
+        private static Domain.Entities.BillToPayRegistration MapInputBillToPayRegistrationToDomain(CreateBillToPayRegistrationInput input)
         {
             return new Domain.Entities.BillToPayRegistration
             {
