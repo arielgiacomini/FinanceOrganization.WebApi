@@ -7,6 +7,7 @@ namespace Application.Feature.CashReceivableRegistration.CreateCashReceivableReg
     {
         private readonly ILogger _logger;
         private readonly ICashReceivableRegistrationRepository _cashReceivableRepository;
+
         public CreateCashReceivableRegistrationHandler(ILogger logger,
             ICashReceivableRegistrationRepository cashReceivableRepository)
         {
