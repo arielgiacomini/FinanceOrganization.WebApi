@@ -1,35 +1,35 @@
 ﻿using Domain.Interfaces;
 using Serilog;
 
-namespace Application.Feature.BillToPay.CreateBillToPay
+namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
 {
-    public class CreateBillToPayHandler : ICreateBillToPayHandler
+    public class CreateBillToPayRegistrationHandler : ICreateBillToPayRegistrationHandler
     {
         private readonly ILogger _logger;
-        private readonly IFixedInvoiceRepository _fixedInvoiceRepository;
+        private readonly IBillToPayRegistrationRepository _billToPayRegistrationRepository;
         private readonly IBillToPayRepository _billToPayRepository;
 
-        public CreateBillToPayHandler(ILogger logger,
-            IFixedInvoiceRepository fixedInvoiceRepository,
+        public CreateBillToPayRegistrationHandler(ILogger logger,
+            IBillToPayRegistrationRepository billToPayRegistrationRepository,
             IBillToPayRepository billToPayRepository)
         {
             _logger = logger;
-            _fixedInvoiceRepository = fixedInvoiceRepository;
+            _billToPayRegistrationRepository = billToPayRegistrationRepository;
             _billToPayRepository = billToPayRepository;
         }
 
-        public async Task<CreateBillToPayOutput> Handle(CreateBillToPayInput input,
+        public async Task<CreateBillToPayRegistrationOutput> Handle(CreateBillToPayRegistrationInput input,
             CancellationToken cancellationToken = default)
         {
             _logger.Information("Está sendo criado a conta a pagar de nome: {Name}", input.Name);
 
-            var validate = await CreateBillToPayValidator.ValidateInput(input, _fixedInvoiceRepository, _billToPayRepository);
+            var validate = await CreateBillToPayRegistrationValidator.ValidateInput(input, _billToPayRegistrationRepository, _billToPayRepository);
 
             if (validate.Any())
             {
                 _logger.Warning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
 
-                var outputValidator = new CreateBillToPayOutput
+                var outputValidator = new CreateBillToPayRegistrationOutput
                 {
                     Output = OutputBaseDetails.Validation("Houve erro de validação", validate)
                 };
@@ -37,9 +37,9 @@ namespace Application.Feature.BillToPay.CreateBillToPay
                 return outputValidator;
             }
 
-            var isSaved = await _fixedInvoiceRepository.Save(MapInputFixedInvoiceToDomain(input));
+            var isSaved = await _billToPayRegistrationRepository.Save(MapInputBillToPayRegistrationToDomain(input));
 
-            var output = new CreateBillToPayOutput
+            var output = new CreateBillToPayRegistrationOutput
             {
                 Output = OutputBaseDetails.Success($"[{isSaved}] - Cadastro realizado com sucesso.", new object(), 1)
             };
@@ -47,9 +47,9 @@ namespace Application.Feature.BillToPay.CreateBillToPay
             return await Task.FromResult(output);
         }
 
-        private static Domain.Entities.FixedInvoice MapInputFixedInvoiceToDomain(CreateBillToPayInput input)
+        private static Domain.Entities.BillToPayRegistration MapInputBillToPayRegistrationToDomain(CreateBillToPayRegistrationInput input)
         {
-            return new Domain.Entities.FixedInvoice
+            return new Domain.Entities.BillToPayRegistration
             {
                 Name = input.Name,
                 Category = input.Category,

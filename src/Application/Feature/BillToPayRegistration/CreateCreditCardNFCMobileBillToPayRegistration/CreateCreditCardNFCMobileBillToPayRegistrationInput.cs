@@ -1,6 +1,6 @@
-﻿namespace Application.Feature.BillToPay.CreateCreditCardNFCMobileBillToPay
+﻿namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBillToPayRegistration
 {
-    public class CreateCreditCardNFCMobileBillToPayInput
+    public class CreateCreditCardNFCMobileBillToPayRegistrationInput
     {
         public string? Name { get; set; }
         /// <summary>

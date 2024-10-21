@@ -1,8 +1,8 @@
 ﻿using Domain.Interfaces;
 
-namespace Application.Feature.BillToPay.CreateBillToPay
+namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
 {
-    public static class CreateBillToPayValidator
+    public static class CreateBillToPayRegistrationValidator
     {
         private const string CARTAO_CREDITO = "Cartão de Crédito";
         private const string CARTAO_DEBITO = "Cartão de Débito";
@@ -10,15 +10,15 @@ namespace Application.Feature.BillToPay.CreateBillToPay
         private const string CARTAO_VALE_REFEICAO = "Cartão VR";
 
         public static async Task<Dictionary<string, string>> ValidateInput(
-            CreateBillToPayInput input,
-            IFixedInvoiceRepository fixedInvoiceRepository,
+            CreateBillToPayRegistrationInput input,
+            IBillToPayRegistrationRepository billToPayRegistrationRepository,
             IBillToPayRepository billToPayRepository)
         {
-            return await CreateValidateBaseInput(input, fixedInvoiceRepository, billToPayRepository);
+            return await CreateValidateBaseInput(input, billToPayRegistrationRepository, billToPayRepository);
         }
 
-        public static async Task<Dictionary<string, string>> CreateValidateBaseInput(CreateBillToPayInput input,
-            IFixedInvoiceRepository fixedInvoiceRepository, IBillToPayRepository billToPayRepository)
+        public static async Task<Dictionary<string, string>> CreateValidateBaseInput(CreateBillToPayRegistrationInput input,
+            IBillToPayRegistrationRepository billToPayRegistrationRepository, IBillToPayRepository billToPayRepository)
         {
             Dictionary<string, string> validatorBase = new();
 

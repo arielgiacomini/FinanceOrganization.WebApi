@@ -11,7 +11,7 @@ namespace Infrastructure.Database.Mapping
             builder.ToTable("CONTA_PAGAR");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).HasColumnName("ID_CONTA_PAGAR").IsRequired();
-            builder.Property(x => x.IdFixedInvoice).HasColumnName("ID_CONTA_PAGAR_CADASTRO");
+            builder.Property(x => x.IdBillToPayRegistration).HasColumnName("ID_CONTA_PAGAR_CADASTRO");
             builder.Property(x => x.Account).HasColumnName("DSC_CONTA");
             builder.Property(x => x.Name).HasColumnName("DSC_DESCRICAO");
             builder.Property(x => x.Category).HasColumnName("DSC_CATEGORIA");

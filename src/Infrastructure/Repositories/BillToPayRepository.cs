@@ -19,13 +19,13 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IList<BillToPay>> GetBillToPayByFixedInvoiceId(int fixedInvoiceId)
+        public async Task<IList<BillToPay>> GetBillToPayByBillToPayRegistrationId(int billToPayRegistrationId)
         {
             try
             {
                 var result = await _context.BillToPay!
                     .AsNoTracking()
-                    .Where(pay => pay.IdFixedInvoice == fixedInvoiceId)
+                    .Where(pay => pay.IdBillToPayRegistration == billToPayRegistrationId)
                     .OrderBy(pay => pay.DueDate)
                     .ToListAsync();
 

@@ -15,15 +15,15 @@
 
             if (input.YearMonth == null)
             {
-                if (input.IdFixedInvoices?.Length == 0 && input.Id?.Length == 0)
+                if (input.IdBillToPayRegistrations?.Length == 0 && input.Id?.Length == 0)
                 {
-                    validatorBase.Add("[01]", "Se não for informado um Mês/Ano um dos Ids [IdFixedInvoice ou Id] deve ser informado.");
+                    validatorBase.Add("[01]", "Se não for informado um Mês/Ano um dos Ids [IdBillToPayRegistration ou Id] deve ser informado.");
                 }
             }
 
             if (input.YearMonth != null)
             {
-                if (input.IdFixedInvoices?.Length > 0 || input.Id?.Length > 0)
+                if (input.IdBillToPayRegistrations?.Length > 0 || input.Id?.Length > 0)
                 {
                     validatorBase.Add("[02]", "Deve ser informado apenas o Mês/Ano");
                 }

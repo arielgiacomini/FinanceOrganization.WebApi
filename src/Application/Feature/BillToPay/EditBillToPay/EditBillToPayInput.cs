@@ -3,7 +3,7 @@
     public class EditBillToPayInput
     {
         public Guid Id { get; set; }
-        public int IdFixedInvoice { get; set; }
+        public int IdBillToPayRegistration { get; set; }
         public string? Account { get; set; }
         public string? Name { get; set; }
         public string? Category { get; set; }
