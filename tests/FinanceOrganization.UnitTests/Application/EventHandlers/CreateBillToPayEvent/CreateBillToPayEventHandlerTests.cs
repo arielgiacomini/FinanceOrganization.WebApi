@@ -11,7 +11,6 @@ using Xunit;
 
 namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPayEvent
 {
-    [Collection(nameof(UnitTestCollection))]
     public class CreateBillToPayEventHandlerTests
     {
         private readonly ModelFixture _modelFixture;
