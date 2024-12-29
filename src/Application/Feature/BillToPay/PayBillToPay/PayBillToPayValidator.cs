@@ -27,7 +27,7 @@ namespace Application.Feature.BillToPay.PayBillToPay
                 billToPay = await billToPayRepository.GetBillToPayById(input.Id.Value) ?? new Domain.Entities.BillToPay();
             }
 
-            if (input.Account == Account.CARTAO_CREDITO || (billToPay!.Account == Account.CARTAO_CREDITO
+            if (input.Account == AccountFixed.CARTAO_CREDITO || (billToPay!.Account == AccountFixed.CARTAO_CREDITO
                 && !billToPay!.AdditionalMessage!.StartsWith(EH_CARTAO_CREDITO_NAIRA)))
             {
                 if (string.IsNullOrEmpty(input.YearMonth))

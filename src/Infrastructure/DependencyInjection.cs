@@ -16,6 +16,7 @@ namespace Infrastructure
             services.AddScoped<IBillToPayRepository, BillToPayRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICashReceivableRegistrationRepository, CashReceivableRegistrationRepository>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
 
             return services;
         }

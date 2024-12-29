@@ -1,6 +1,6 @@
-﻿namespace Domain.Entities
+﻿namespace Application.Feature.Account.SearchAccount
 {
-    public class Account
+    public class SearchAccountOutput
     {
         /// <summary>
         /// Identificador único da conta

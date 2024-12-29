@@ -41,6 +41,11 @@ namespace Infrastructure.Database.Context
         /// </summary>
         public DbSet<MonthlyAverageAnalysis>? MonthlyAverageAnalysis { get; set; }
 
+        /// <summary>
+        /// Tabela de Contas
+        /// </summary>
+        public DbSet<Account>? Accounts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new BillToPayRegistrationMapping());
@@ -48,6 +53,7 @@ namespace Infrastructure.Database.Context
             modelBuilder.ApplyConfiguration(new CategoryMapping());
             modelBuilder.ApplyConfiguration(new CashReceivableRegistrationMapping());
             modelBuilder.ApplyConfiguration(new MonthlyAverageAnalysisMapping());
+            modelBuilder.ApplyConfiguration(new AccountMapping());
 
             base.OnModelCreating(modelBuilder);
         }

@@ -87,6 +87,11 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             }
         }
 
+        /// <summary>
+        /// Caso seja um cadastro efetuado recente, ao chegar no time para cadastro ele seguirá por aqui.
+        /// </summary>
+        /// <param name="billToPayRegistration"></param>
+        /// <returns></returns>
         private async Task LogicByBillToPayRegistration(BillToPayRegistration billToPayRegistration)
         {
             List<BillToPay> listBillToPay = new();
@@ -113,7 +118,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             bool addMonthForDueDate = false;
 
-            if (billToPayRegistration.Account == Account.CARTAO_CREDITO)
+            if (billToPayRegistration.Account == AccountFixed.CARTAO_CREDITO)
             {
                 addMonthForDueDate = true;
             }
@@ -121,7 +126,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             Dictionary<string, DateTime> purchasesDate = new();
             bool considerPurchase = false;
 
-            if (billToPayRegistration.Account == Account.CARTAO_CREDITO)
+            if (billToPayRegistration.Account == AccountFixed.CARTAO_CREDITO)
             {
                 // Cartão de Crédito
 
@@ -231,9 +236,9 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             switch (billToPayRegistration.Account)
             {
-                case Account.CARTAO_VALE_ALIMENTACAO:
-                case Account.CARTAO_VALE_REFEICAO:
-                case Account.CARTAO_DEBITO:
+                case AccountFixed.CARTAO_VALE_ALIMENTACAO:
+                case AccountFixed.CARTAO_VALE_REFEICAO:
+                case AccountFixed.CARTAO_DEBITO:
                     if (billToPayRegistration.RegistrationType != TIPO_REGISTRO_FATURA_FIXA)
                     {
                         considerPaid = true;

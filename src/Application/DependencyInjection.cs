@@ -1,5 +1,7 @@
 ﻿using Application.EventHandlers.CreateBillToPayEvent;
 using Application.EventHandlers.CreateCategoryEvent;
+using Application.Feature.Account.SearchAccount;
+using Application.Feature.Account.SearchAccountOnlyName;
 using Application.Feature.BillToPay.DeleteBillToPay;
 using Application.Feature.BillToPay.EditBillToPay;
 using Application.Feature.BillToPay.PayBillToPay;
@@ -32,6 +34,8 @@ namespace Application
             services.AddScoped<ISearchCategoryHandler, SearchCategoryHandler>();
             services.AddScoped<ICreateCategoryEventHandler, CreateCategoryEventHandler>();
             services.AddScoped<ICreateCashReceivableRegistrationHandler, CreateCashReceivableRegistrationHandler>();
+            services.AddScoped<ISearchAccountOnlyNameHandler, SearchAccountOnlyNameHandler>();
+            services.AddScoped<ISearchAccountHandler, SearchAccountHandler>();
 
             return services;
         }
