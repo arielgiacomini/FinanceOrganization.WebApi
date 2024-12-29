@@ -57,9 +57,9 @@ namespace WebAPI
             {
                 x.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Version = "1.8",
-                    Title = "Resposável por criar organizar financeiramente",
-                    Description = $"Com novo Endpoint de Categorias - Ariel Giacomini - última versão gerada em [{DateTime.Now}]",
+                    Version = "1.9",
+                    Title = "Controle Financeiro Residencial",
+                    Description = $"Último restart da aplicação: [{DateTime.Now}]",
                     TermsOfService = URL_ARIELGIACOMINI,
                     Contact = new OpenApiContact
                     {

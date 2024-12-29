@@ -1,4 +1,5 @@
-﻿using Domain.Interfaces;
+﻿using Domain.Entities;
+using Domain.Interfaces;
 using Domain.Utils;
 using Serilog;
 
@@ -57,7 +58,7 @@ namespace Application.Feature.BillToPay.CreateCreditCardNFCMobileBillToPay
                 Account = input.Account,
                 Value = input.Value,
                 PurchaseDate = input.PurchaseDate,
-                BestPayDay = 9,
+                BestPayDay = input.Account == Account.CARTAO_CREDITO ? 9 : DateTime.Now.ToLocalTime().Day,
                 InitialMonthYear = DateServiceUtils.GetYearMonthPortugueseByDateTime(DateTime.Now.ToLocalTime()),
                 FynallyMonthYear = DateServiceUtils.GetYearMonthPortugueseByDateTime(DateTime.Now.ToLocalTime()),
                 Frequence = input.Frequence,
