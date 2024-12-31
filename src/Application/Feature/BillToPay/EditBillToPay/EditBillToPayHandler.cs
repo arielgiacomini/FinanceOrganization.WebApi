@@ -59,7 +59,7 @@ namespace Application.Feature.BillToPay.EditBillToPay
             return new Domain.Entities.BillToPay()
             {
                 Id = updateBillToPayInput.Id,
-                IdFixedInvoice = updateBillToPayInput.IdFixedInvoice,
+                IdBillToPayRegistration = updateBillToPayInput.IdBillToPayRegistration,
                 Account = updateBillToPayInput.Account,
                 Name = updateBillToPayInput.Name,
                 Category = updateBillToPayInput.Category,

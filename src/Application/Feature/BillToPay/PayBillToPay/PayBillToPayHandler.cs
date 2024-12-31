@@ -69,7 +69,7 @@ namespace Application.Feature.BillToPay.PayBillToPay
                     mapBillsToPay.Add(new D.BillToPay()
                     {
                         Id = bill.Id,
-                        IdFixedInvoice = bill.IdFixedInvoice,
+                        IdBillToPayRegistration = bill.IdBillToPayRegistration,
                         Account = bill.Account,
                         Name = bill.Name,
                         Category = bill.Category,

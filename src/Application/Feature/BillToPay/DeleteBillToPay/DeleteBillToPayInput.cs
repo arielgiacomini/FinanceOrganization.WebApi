@@ -3,7 +3,7 @@
     public class DeleteBillToPayInput
     {
         public Guid[]? Id { get; set; }
-        public int[]? IdFixedInvoices { get; set; }
+        public int[]? IdBillToPayRegistrations { get; set; }
 
         /// <summary>
         /// Se TRUE Apenas os registros não pagos
@@ -12,6 +12,6 @@
         /// <summary>
         /// Caso marcada como TRUE é para desconsiderar em eventos futuros que podem ser criados.
         /// </summary>
-        public bool DisableFixedInvoice { get; set; }
+        public bool DisableBillToPayRegistration { get; set; }
     }
 }
