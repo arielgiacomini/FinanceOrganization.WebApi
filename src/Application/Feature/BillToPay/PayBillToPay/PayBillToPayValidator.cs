@@ -1,5 +1,4 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
+﻿using Domain.Interfaces;
 using Domain.Utils;
 
 namespace Application.Feature.BillToPay.PayBillToPay
@@ -10,25 +9,40 @@ namespace Application.Feature.BillToPay.PayBillToPay
 
         public static async Task<Dictionary<string, string>> ValidateInput(
             PayBillToPayInput input,
-            IBillToPayRepository billToPayRepository)
+            IBillToPayRepository billToPayRepository,
+            IAccountRepository accountRepository)
         {
-            return await CreateValidateBaseInput(input, billToPayRepository);
+            return await CreateValidateBaseInput(input, billToPayRepository, accountRepository);
         }
 
-        private static async Task<Dictionary<string, string>> CreateValidateBaseInput(PayBillToPayInput input,
-            IBillToPayRepository billToPayRepository)
+        private static async Task<Dictionary<string, string>> CreateValidateBaseInput(
+            PayBillToPayInput input,
+            IBillToPayRepository billToPayRepository,
+            IAccountRepository accountRepository)
         {
             Dictionary<string, string> validatorBase = new();
 
             Domain.Entities.BillToPay billToPay = new();
+
+            if (string.IsNullOrEmpty(input.Account))
+            {
+                validatorBase.Add("[30]", $"A conta [{input.Account}] deve ser informada.");
+            }
+
+            var validateAccount = await accountRepository.GetAccountByName(input.Account!);
+
+            if (validateAccount == null)
+            {
+                validatorBase.Add("[31]", $"Não foi encontrada essa conta [{input.Account}] em nossos registros.");
+            }
 
             if (input.Id != null)
             {
                 billToPay = await billToPayRepository.GetBillToPayById(input.Id.Value) ?? new Domain.Entities.BillToPay();
             }
 
-            if (input.Account == AccountFixed.CARTAO_CREDITO || (billToPay!.Account == AccountFixed.CARTAO_CREDITO
-                && !billToPay!.AdditionalMessage!.StartsWith(EH_CARTAO_CREDITO_NAIRA)))
+            //TODO: VALIDAR E TESTES
+            if (validateAccount!.IsCreditCard && billToPay.Id == Guid.Empty)
             {
                 if (string.IsNullOrEmpty(input.YearMonth))
                 {

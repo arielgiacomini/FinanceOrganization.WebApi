@@ -182,7 +182,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     purchase = billToPayRegistration.PurchaseDate;
                 }
 
-                listBillToPay.Add(MapBillToPay(null, billToPayRegistration, nextMonth.Value, nextMonth.Key, purchase));
+                listBillToPay.Add(MapBillToPay(null, billToPayRegistration, account, nextMonth.Value, nextMonth.Key, purchase));
             }
 
             await DebitFixedAccount(billToPayRegistration, qtdMonthAdd);
@@ -238,7 +238,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             return isTrue;
         }
 
-        public static bool EnterPaid(BillToPayRegistration? billToPayRegistration)
+        public static bool EnterPaid(BillToPayRegistration? billToPayRegistration, Account account)
         {
             bool considerPaid = false;
 
@@ -247,19 +247,19 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 return considerPaid;
             }
 
-            switch (billToPayRegistration.Account)
+            if (account.ConsiderPaid.HasValue
+                && account.ConsiderPaid.Value
+                && IsNotFaturaFixa(billToPayRegistration))
             {
-                case AccountFixed.CARTAO_VALE_ALIMENTACAO:
-                case AccountFixed.CARTAO_VALE_REFEICAO:
-                case AccountFixed.CARTAO_DEBITO:
-                    if (billToPayRegistration.RegistrationType != TIPO_REGISTRO_FATURA_FIXA)
-                    {
-                        considerPaid = true;
-                    }
-                    break;
+                considerPaid = true;
             }
 
             return considerPaid;
+        }
+
+        private static bool IsNotFaturaFixa(BillToPayRegistration billToPayRegistration)
+        {
+            return billToPayRegistration.RegistrationType != TIPO_REGISTRO_FATURA_FIXA;
         }
 
         private async Task LogicByBillToPay(BillToPay billToPay)
@@ -309,7 +309,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         }
 
         public static BillToPay MapBillToPay(
-            BillToPay? billToPay, BillToPayRegistration? billToPayRegistration, DateTime dueDate, string yearMonth, DateTime? purchaseDate = null)
+            BillToPay? billToPay, BillToPayRegistration? billToPayRegistration, Account account, DateTime dueDate, string yearMonth, DateTime? purchaseDate = null)
         {
             if (billToPay is not null)
             {
@@ -355,7 +355,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     LastChangeDate = new DateTime(1753, 01, 01, 12, 0, 0, DateTimeKind.Local)
                 };
 
-                if (EnterPaid(billToPayRegistration))
+                if (EnterPaid(billToPayRegistration, account))
                 {
                     newBillToPay.HasPay = true;
                     newBillToPay.PayDay = purchaseDate.ToString();

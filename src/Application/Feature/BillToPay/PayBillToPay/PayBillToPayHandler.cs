@@ -8,12 +8,14 @@ namespace Application.Feature.BillToPay.PayBillToPay
     {
         private readonly ILogger _logger;
         private readonly IBillToPayRepository _billToPayRepository;
+        private readonly IAccountRepository _accountRepository;
         private const string EH_CARTAO_CREDITO_NAIRA = "Cartão de Crédito Nubank Naíra";
 
-        public PayBillToPayHandler(ILogger logger, IBillToPayRepository billToPayRepository)
+        public PayBillToPayHandler(ILogger logger, IBillToPayRepository billToPayRepository, IAccountRepository accountRepository)
         {
             _logger = logger;
             _billToPayRepository = billToPayRepository;
+            _accountRepository = accountRepository;
         }
 
         public async Task<PayBillToPayOutput> Handle(PayBillToPayInput input, CancellationToken cancellationToken)
