@@ -12,15 +12,31 @@ namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBil
         public static async Task<Dictionary<string, string>> ValidateInput(
             CreateCreditCardNFCMobileBillToPayRegistrationInput input,
             IBillToPayRegistrationRepository billToPayRegistrationRepository,
-            IBillToPayRepository billToPayRepository)
+            IBillToPayRepository billToPayRepository,
+            IAccountRepository accountRepository)
         {
-            return await CreateValidateBaseInput(input, billToPayRegistrationRepository, billToPayRepository);
+            return await CreateValidateBaseInput(input, billToPayRegistrationRepository, billToPayRepository, accountRepository);
         }
 
-        public static async Task<Dictionary<string, string>> CreateValidateBaseInput(CreateCreditCardNFCMobileBillToPayRegistrationInput input,
-            IBillToPayRegistrationRepository billToPayRegistrationRepository, IBillToPayRepository billToPayRepository)
+        public static async Task<Dictionary<string, string>> CreateValidateBaseInput(
+            CreateCreditCardNFCMobileBillToPayRegistrationInput input,
+            IBillToPayRegistrationRepository billToPayRegistrationRepository,
+            IBillToPayRepository billToPayRepository,
+            IAccountRepository accountRepository)
         {
             Dictionary<string, string> validatorBase = new();
+
+            if (string.IsNullOrEmpty(input.Account))
+            {
+                validatorBase.Add("001", $"A conta [{input.Account}] deve ser informada.");
+            }
+
+            var validateAccount = await accountRepository.GetAccountByName(input.Account!);
+
+            if (validateAccount == null)
+            {
+                validatorBase.Add("002", $"Não foi encontrada essa conta [{input.Account}] em nossos registros.");
+            }
 
             return validatorBase;
         }

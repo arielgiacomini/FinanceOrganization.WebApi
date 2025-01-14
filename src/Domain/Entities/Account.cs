@@ -54,5 +54,24 @@
         /// Data de alteração do registro
         /// </summary>
         public DateTime? LastChangeDate { get; set; }
+
+        /// <summary>
+        /// Indica se a conta registrada é um Cartão de Crédito.
+        /// </summary>
+        public bool IsCreditCard
+        {
+            get
+            {
+                var nameContainsCredit = Name?.Contains("Crédito") ?? false;
+                if (!string.IsNullOrEmpty(CardNumber) && nameContainsCredit)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
     }
 }

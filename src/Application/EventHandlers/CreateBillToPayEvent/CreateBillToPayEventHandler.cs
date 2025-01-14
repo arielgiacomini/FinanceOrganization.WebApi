@@ -13,10 +13,10 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         private readonly BillToPayOptions _billToPayOptions;
         private readonly IBillToPayRegistrationRepository _billToPayRegistrationRepository;
         private readonly IBillToPayRepository _billToPayRepository;
+        private readonly IAccountRepository _accountRepository;
         private const string FREQUENCIA_MENSAL_RECORRENTE = "Mensal:Recorrente";
         private const string FREQUENCIA_MENSAL = "Mensal";
         private const string FREQUENCIA_LIVRE = "Livre";
-        private const int DIA_VENCIMENTO_CARTAO_CREDITO = 9;
         private const string TIPO_REGISTRO_FATURA_FIXA = "Conta/Fatura Fixa";
         private const string TIPO_REGISTRO_COMPRA_LIVRE = "Compra Livre";
         private const int QUANTOS_DIAS_PASSADOS_CONSIDERAR = -1;
@@ -25,12 +25,14 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             ILogger logger,
             IOptions<BillToPayOptions> options,
             IBillToPayRegistrationRepository billToPayRegistrationRepository,
-            IBillToPayRepository billToPayRepository)
+            IBillToPayRepository billToPayRepository,
+            IAccountRepository accountRepository)
         {
             _logger = logger;
             _billToPayRegistrationRepository = billToPayRegistrationRepository;
             _billToPayOptions = options.Value;
             _billToPayRepository = billToPayRepository;
+            _accountRepository = accountRepository;
         }
 
         public async Task Handle(CreateBillToPayEventInput input)
@@ -94,6 +96,12 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         /// <returns></returns>
         private async Task LogicByBillToPayRegistration(BillToPayRegistration billToPayRegistration)
         {
+            if (string.IsNullOrEmpty(billToPayRegistration.Account))
+            {
+                _logger.Information("O nome da conta está inválido.");
+                return;
+            }
+
             List<BillToPay> listBillToPay = new();
 
             var totalMonths = DateServiceUtils.GetMonthsByDateTime(
@@ -117,8 +125,14 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             }
 
             bool addMonthForDueDate = false;
+            var account = await _accountRepository.GetAccountByName(billToPayRegistration.Account);
 
-            if (billToPayRegistration.Account == AccountFixed.CARTAO_CREDITO)
+            if (account == null)
+            {
+                return;
+            }
+
+            if (account.IsCreditCard)
             {
                 addMonthForDueDate = true;
             }
@@ -126,11 +140,10 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             Dictionary<string, DateTime> purchasesDate = new();
             bool considerPurchase = false;
 
-            if (billToPayRegistration.Account == AccountFixed.CARTAO_CREDITO)
+            if (account.IsCreditCard)
             {
                 // Cartão de Crédito
-
-                billToPayRegistration.BestPayDay = DIA_VENCIMENTO_CARTAO_CREDITO;
+                billToPayRegistration.BestPayDay = account.DueDate!.Value;
 
                 if (billToPayRegistration.Frequence == FREQUENCIA_MENSAL_RECORRENTE)
                 {

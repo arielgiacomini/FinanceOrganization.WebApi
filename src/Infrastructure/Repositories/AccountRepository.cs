@@ -23,5 +23,30 @@ namespace Infrastructure.Repositories
 
             return accounts;
         }
+
+        public async Task<IList<Account>> GetAllCreditCardAccounts()
+        {
+            var accounts = await GetAllAccounts();
+
+            return accounts
+                .Where(creditCard => creditCard.IsCreditCard)
+                .ToList();
+        }
+
+        public async Task<bool> AccountNameIsCreditCard(string? accountName)
+        {
+            var accounts = await GetAllAccounts();
+
+            return accounts
+                .FirstOrDefault(creditCard => creditCard.Name == accountName)?.IsCreditCard ?? false;
+        }
+
+        public async Task<Account?> GetAccountByName(string accountName)
+        {
+            var accounts = await GetAllAccounts();
+
+            return accounts
+                .FirstOrDefault(creditCard => creditCard.Name == accountName);
+        }
     }
 }
