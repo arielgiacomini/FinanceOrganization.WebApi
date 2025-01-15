@@ -5,8 +5,6 @@ namespace Application.Feature.BillToPay.PayBillToPay
 {
     public static class PayBillToPayValidator
     {
-        private const string EH_CARTAO_CREDITO_NAIRA = "Cartão de Crédito Nubank Naíra";
-
         public static async Task<Dictionary<string, string>> ValidateInput(
             PayBillToPayInput input,
             IBillToPayRepository billToPayRepository,
@@ -34,6 +32,7 @@ namespace Application.Feature.BillToPay.PayBillToPay
             if (validateAccount == null)
             {
                 validatorBase.Add("[31]", $"Não foi encontrada essa conta [{input.Account}] em nossos registros.");
+                return validatorBase;
             }
 
             if (input.Id != null)
@@ -55,12 +54,15 @@ namespace Application.Feature.BillToPay.PayBillToPay
                         $"O sistema irá fazer a baixa de todos os itens pendentes de pagamento da fatura de cartão de crédito.");
                 }
 
-                var invoiceClosingDate = DateServiceUtils.GetDateTimeByYearMonthBrazilian(input.YearMonth, 1, 1);
+                var monthYearResult = DateServiceUtils
+                    .GetSepareteMonthYear(input.YearMonth!, validateAccount.ClosingDay!.Value, 1);
 
-                if (DateTime.Now < invoiceClosingDate)
+                var openCreditCardInvoice = DateServiceUtils.Now().Date < monthYearResult.Date.Date;
+
+                if (openCreditCardInvoice)
                 {
                     validatorBase.Add("[34]", $"A fatura do Ano/Mês: [{input.YearMonth}] só vai fechar a partir do dia: " +
-                        $"[{invoiceClosingDate.Value.Date:dd/MM/yyyy}] os lançamentos atuais podem sofrer alterações " +
+                        $"[{monthYearResult.Date.Date:dd/MM/yyyy}] os lançamentos atuais podem sofrer alterações " +
                         $"e portanto ainda não está disponível para pagamento.");
                 }
             }

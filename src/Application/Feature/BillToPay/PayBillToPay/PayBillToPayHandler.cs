@@ -21,7 +21,7 @@ namespace Application.Feature.BillToPay.PayBillToPay
         public async Task<PayBillToPayOutput> Handle(PayBillToPayInput input, CancellationToken cancellationToken)
         {
             PayBillToPayOutput output = new();
-            var validate = await PayBillToPayValidator.ValidateInput(input, _billToPayRepository);
+            var validate = await PayBillToPayValidator.ValidateInput(input, _billToPayRepository, _accountRepository);
 
             if (validate.Any())
             {
@@ -113,6 +113,8 @@ namespace Application.Feature.BillToPay.PayBillToPay
 
                 if (listNotPaidYet != null)
                 {
+                    // TODO: Pode remover esse código quando no front-end não estiver mais apresentando o tipo "Cartão de Crédito"
+                    // genérico e remover o checkBox do cartão da Naíra
                     if (input.ConsiderNairaCreditCard.HasValue && input.ConsiderNairaCreditCard.Value)
                     {
                         var creditCardNaira = listNotPaidYet

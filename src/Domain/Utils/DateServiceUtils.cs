@@ -120,7 +120,7 @@
             return monthBrazilian;
         }
 
-        private static int Month(string monthNamePortugeuese)
+        public static int Month(string monthNamePortugeuese)
         {
             var mes = int.MinValue;
 
@@ -276,6 +276,35 @@
             }
 
             return dateTimeResult;
+        }
+
+        public static DateTime Now()
+        {
+            return DateTime.Now;
+        }
+
+        public static MonthYearResult GetSepareteMonthYear(string yearMonth, int closingDay, int monthAdd)
+        {
+            MonthYearResult monthYearResult = new();
+            var splited = yearMonth?.Split("/");
+
+            int month = DateServiceUtils.Month(splited![0]);
+            int.TryParse(splited![1], out int year);
+
+            monthYearResult.Month = month;
+            monthYearResult.Year = year;
+            monthYearResult.MonthText = splited[0];
+            monthYearResult.Date = new DateTime(year, month + monthAdd, closingDay).Date;
+
+            return monthYearResult;
+        }
+
+        public struct MonthYearResult
+        {
+            public int Year { get; set; }
+            public int Month { get; set; }
+            public string MonthText { get; set; }
+            public DateTime Date { get; set; }
         }
     }
 }

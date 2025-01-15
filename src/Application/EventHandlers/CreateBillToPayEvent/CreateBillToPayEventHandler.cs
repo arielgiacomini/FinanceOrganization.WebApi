@@ -264,7 +264,11 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
         private async Task LogicByBillToPay(BillToPay billToPay)
         {
-            var result = await _billToPayRegistrationRepository.GetById(billToPay.IdBillToPayRegistration);
+            var result = await _billToPayRegistrationRepository
+                .GetById(billToPay.IdBillToPayRegistration);
+
+            var account = await _accountRepository
+                .GetAccountByName(result?.Account!);
 
             if (result?.FynallyMonthYear?.Length > 0)
             {
@@ -274,7 +278,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             List<BillToPay> listBillToPay = new();
 
-            var totalMonths = DateServiceUtils.GetMonthsByDateTime(billToPay.DueDate, null);
+            var totalMonths = DateServiceUtils
+                .GetMonthsByDateTime(billToPay.DueDate, null);
 
             var qtdMonthAdd = GetMonthsAdd(totalMonths, _billToPayOptions.HowManyMonthForward);
 
@@ -290,7 +295,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             foreach (var nextMonth in nextMonthYearToRegister!)
             {
-                listBillToPay.Add(MapBillToPay(billToPay, null, nextMonth.Value, nextMonth.Key));
+                listBillToPay.Add(MapBillToPay(billToPay, null, account!, nextMonth.Value, nextMonth.Key));
             }
 
             await _billToPayRepository.SaveRange(listBillToPay);

@@ -2,7 +2,6 @@
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Options;
-using FinanceOrganization.UnitTests.Application.Configs.Collections;
 using FinanceOrganization.UnitTests.Application.Configs.Fixtures;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -18,6 +17,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
         private readonly Mock<IOptions<BillToPayOptions>> _mockOptions;
         private readonly Mock<IBillToPayRegistrationRepository> _mockBillToPayRegistrationRepository;
         private readonly Mock<IBillToPayRepository> _mockWalletToPayRepository;
+        private readonly Mock<IAccountRepository> _mockAccountRepository;
 
         public CreateBillToPayEventHandlerTests(ModelFixture modelFixture)
         {
@@ -26,6 +26,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
             _mockOptions = new Mock<IOptions<BillToPayOptions>>();
             _mockBillToPayRegistrationRepository = new Mock<IBillToPayRegistrationRepository>();
             _mockWalletToPayRepository = new Mock<IBillToPayRepository>();
+            _mockAccountRepository = new Mock<IAccountRepository>();
 
             _mockOptions
                 .Setup(options => options.Value)
@@ -59,7 +60,8 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
                 _dummyLogger.Object,
                 _mockOptions.Object,
                 _mockBillToPayRegistrationRepository.Object,
-                _mockWalletToPayRepository.Object);
+                _mockWalletToPayRepository.Object,
+                _mockAccountRepository.Object);
 
             var input = new CreateBillToPayEventInput
             {
@@ -103,7 +105,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
                 _dummyLogger.Object,
                 _mockOptions.Object,
                 _mockBillToPayRegistrationRepository.Object,
-                _mockWalletToPayRepository.Object);
+                _mockWalletToPayRepository.Object, _mockAccountRepository.Object);
 
             var input = new CreateBillToPayEventInput
             {
@@ -158,7 +160,8 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
                 _dummyLogger.Object,
                 _mockOptions.Object,
                 _mockBillToPayRegistrationRepository.Object,
-                _mockWalletToPayRepository.Object);
+                _mockWalletToPayRepository.Object,
+                _mockAccountRepository.Object);
 
             var input = new CreateBillToPayEventInput
             {
@@ -202,7 +205,7 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
                 _dummyLogger.Object,
                 _mockOptions.Object,
                 _mockBillToPayRegistrationRepository.Object,
-                _mockWalletToPayRepository.Object);
+                _mockWalletToPayRepository.Object, _mockAccountRepository.Object);
 
             var input = new CreateBillToPayEventInput
             {
