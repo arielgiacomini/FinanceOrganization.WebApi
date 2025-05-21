@@ -52,12 +52,12 @@ namespace Application.Feature.BillToPay.PayBillToPay
             }
             else
             {
-                if (!string.IsNullOrWhiteSpace(input.Account))
+                if (string.IsNullOrWhiteSpace(input.Account))
                 {
                     validatorBase.Add("[35]", $"Esta conta: {input.Account} é inválida.");
                 }
 
-                if (!string.IsNullOrWhiteSpace(input.YearMonth))
+                if (string.IsNullOrWhiteSpace(input.YearMonth))
                 {
                     validatorBase.Add("[36]", $"O Ano/Mês só é valido quando uma conta válida for informada.");
                 }

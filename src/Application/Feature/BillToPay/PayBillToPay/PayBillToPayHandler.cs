@@ -104,8 +104,7 @@ namespace Application.Feature.BillToPay.PayBillToPay
                     listPay.Add(bill);
                 }
             }
-
-            if (input.Account != null && input.YearMonth != null)
+            else if (input.Account != null && input.YearMonth != null)
             {
                 var listNotPaidYet = await _billToPayRepository.GetNotPaidYetByYearMonthAndAccount(input.YearMonth, input.Account);
 
