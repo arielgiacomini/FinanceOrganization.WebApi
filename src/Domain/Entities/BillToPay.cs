@@ -6,7 +6,7 @@
     public class BillToPay
     {
         public Guid Id { get; set; }
-        public int IdFixedInvoice { get; set; }
+        public int IdBillToPayRegistration { get; set; }
 
         /// <summary>
         /// Conta vinculada, Ex: Itaú, Cartão de Crédito, VA, VR, etc...

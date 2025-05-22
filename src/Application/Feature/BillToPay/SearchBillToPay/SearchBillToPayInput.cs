@@ -3,7 +3,7 @@
     public class SearchBillToPayInput
     {
         public Guid[]? Id { get; set; }
-        public int[]? IdFixedInvoices { get; set; }
+        public int[]? IdBillToPayRegistrations { get; set; }
 
         /// <summary>
         /// Mês/Ano de referência, gastos do determinado período.

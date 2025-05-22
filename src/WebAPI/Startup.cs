@@ -57,7 +57,7 @@ namespace WebAPI
             {
                 x.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Version = "1.9",
+                    Version = "2.2",
                     Title = "Controle Financeiro Residencial",
                     Description = $"Último restart da aplicação: [{DateTime.Now}]",
                     TermsOfService = URL_ARIELGIACOMINI,

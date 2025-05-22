@@ -1,34 +1,47 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
+﻿using Domain.Interfaces;
 using Domain.Utils;
 
 namespace Application.Feature.BillToPay.PayBillToPay
 {
     public static class PayBillToPayValidator
     {
-        private const string EH_CARTAO_CREDITO_NAIRA = "Cartão de Crédito Nubank Naíra";
-
         public static async Task<Dictionary<string, string>> ValidateInput(
             PayBillToPayInput input,
-            IBillToPayRepository billToPayRepository)
+            IBillToPayRepository billToPayRepository,
+            IAccountRepository accountRepository)
         {
-            return await CreateValidateBaseInput(input, billToPayRepository);
+            return await CreateValidateBaseInput(input, billToPayRepository, accountRepository);
         }
 
-        private static async Task<Dictionary<string, string>> CreateValidateBaseInput(PayBillToPayInput input,
-            IBillToPayRepository billToPayRepository)
+        private static async Task<Dictionary<string, string>> CreateValidateBaseInput(
+            PayBillToPayInput input,
+            IBillToPayRepository billToPayRepository,
+            IAccountRepository accountRepository)
         {
             Dictionary<string, string> validatorBase = new();
 
             Domain.Entities.BillToPay billToPay = new();
+
+            if (string.IsNullOrEmpty(input.Account))
+            {
+                validatorBase.Add("[30]", $"A conta [{input.Account}] deve ser informada.");
+            }
+
+            var validateAccount = await accountRepository.GetAccountByName(input.Account!);
+
+            if (validateAccount == null)
+            {
+                validatorBase.Add("[31]", $"Não foi encontrada essa conta [{input.Account}] em nossos registros.");
+                return validatorBase;
+            }
 
             if (input.Id != null)
             {
                 billToPay = await billToPayRepository.GetBillToPayById(input.Id.Value) ?? new Domain.Entities.BillToPay();
             }
 
-            if (input.Account == Account.CARTAO_CREDITO || (billToPay!.Account == Account.CARTAO_CREDITO
-                && !billToPay!.AdditionalMessage!.StartsWith(EH_CARTAO_CREDITO_NAIRA)))
+            //TODO: VALIDAR E TESTES
+            if (validateAccount!.IsCreditCard && billToPay.Id == Guid.Empty)
             {
                 if (string.IsNullOrEmpty(input.YearMonth))
                 {
@@ -41,12 +54,15 @@ namespace Application.Feature.BillToPay.PayBillToPay
                         $"O sistema irá fazer a baixa de todos os itens pendentes de pagamento da fatura de cartão de crédito.");
                 }
 
-                var invoiceClosingDate = DateServiceUtils.GetDateTimeByYearMonthBrazilian(input.YearMonth, 1, 1);
+                var monthYearResult = DateServiceUtils
+                    .GetSepareteMonthYear(input.YearMonth!, validateAccount.ClosingDay!.Value, 1);
 
-                if (DateTime.Now < invoiceClosingDate)
+                var openCreditCardInvoice = DateServiceUtils.Now().Date < monthYearResult.Date.Date;
+
+                if (openCreditCardInvoice)
                 {
                     validatorBase.Add("[34]", $"A fatura do Ano/Mês: [{input.YearMonth}] só vai fechar a partir do dia: " +
-                        $"[{invoiceClosingDate.Value.Date:dd/MM/yyyy}] os lançamentos atuais podem sofrer alterações " +
+                        $"[{monthYearResult.Date.Date:dd/MM/yyyy}] os lançamentos atuais podem sofrer alterações " +
                         $"e portanto ainda não está disponível para pagamento.");
                 }
             }

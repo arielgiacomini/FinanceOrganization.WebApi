@@ -109,17 +109,17 @@ namespace Application.Feature.BillToPay.SearchBillToPay
                 }
             }
 
-            if (input.IdFixedInvoices != null)
+            if (input.IdBillToPayRegistrations != null)
             {
-                foreach (var idFixedInvoice in input.IdFixedInvoices)
+                foreach (var idBillToPayRegistration in input.IdBillToPayRegistrations)
                 {
-                    var billToPayByIdFixedInvoice = await _billToPayRepository.GetBillToPayByFixedInvoiceId(idFixedInvoice);
+                    var billToPayByIdBillToPayRegistration = await _billToPayRepository.GetBillToPayByBillToPayRegistrationId(idBillToPayRegistration);
 
-                    if (billToPayByIdFixedInvoice != null)
+                    if (billToPayByIdBillToPayRegistration != null)
                     {
                         if (ShowDetails(input))
                         {
-                            foreach (var item in billToPayByIdFixedInvoice)
+                            foreach (var item in billToPayByIdBillToPayRegistration)
                             {
                                 decimal sumValue = 0;
                                 if (item != null)
@@ -151,11 +151,11 @@ namespace Application.Feature.BillToPay.SearchBillToPay
 
                         if (ShowDetails(input) && searchBillToPayDataOutput.Count > 0)
                         {
-                            output.Output = OutputBaseDetails.Success("", searchBillToPayDataOutput, billToPayByIdFixedInvoice.Count);
+                            output.Output = OutputBaseDetails.Success("", searchBillToPayDataOutput, billToPayByIdBillToPayRegistration.Count);
                         }
                         else
                         {
-                            output.Output = OutputBaseDetails.Success("", billToPayByIdFixedInvoice, billToPayByIdFixedInvoice.Count);
+                            output.Output = OutputBaseDetails.Success("", billToPayByIdBillToPayRegistration, billToPayByIdBillToPayRegistration.Count);
                         }
                     }
 
@@ -177,7 +177,7 @@ namespace Application.Feature.BillToPay.SearchBillToPay
                     listDetails.Add(new()
                     {
                         Id = itemDetail.Id,
-                        IdFixedInvoice = itemDetail.IdFixedInvoice,
+                        IdBillToPayRegistration = itemDetail.IdBillToPayRegistration,
                         Account = itemDetail.Account,
                         Name = itemDetail.Name,
                         Category = itemDetail.Category,
@@ -199,7 +199,7 @@ namespace Application.Feature.BillToPay.SearchBillToPay
             SearchBillToPayData searchBillToPayData = new()
             {
                 Id = domain.Id,
-                IdFixedInvoice = domain.IdFixedInvoice,
+                IdBillToPayRegistration = domain.IdBillToPayRegistration,
                 Account = domain.Account,
                 Name = domain.Name,
                 Category = domain.Category,

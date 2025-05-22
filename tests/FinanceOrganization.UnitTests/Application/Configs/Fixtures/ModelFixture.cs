@@ -1,4 +1,4 @@
-﻿using Application.Feature.BillToPay.CreateBillToPay;
+﻿using Application.Feature.BillToPayRegistration.CreateBillToPayRegistration;
 using Domain.Entities;
 using Domain.Options;
 
@@ -6,19 +6,19 @@ namespace FinanceOrganization.UnitTests.Application.Configs.Fixtures
 {
     public class ModelFixture
     {
-        public IList<FixedInvoice> GetListFixedInvoice()
+        public IList<BillToPayRegistration> GetListBillToPayRegistration()
         {
-            List<FixedInvoice> listFixedInvoice = new()
+            List<BillToPayRegistration> listBillToPayRegistration = new()
             {
-                GetFixedInvoice()
+                GetBillToPayRegistration()
             };
 
-            return listFixedInvoice;
+            return listBillToPayRegistration;
         }
 
-        public FixedInvoice GetFixedInvoice()
+        public BillToPayRegistration GetBillToPayRegistration()
         {
-            return new FixedInvoice()
+            return new BillToPayRegistration()
             {
                 Id = 0,
                 Name = "Teste",
@@ -52,7 +52,7 @@ namespace FinanceOrganization.UnitTests.Application.Configs.Fixtures
             return new BillToPay
             {
                 Id = Guid.NewGuid(),
-                IdFixedInvoice = 1,
+                IdBillToPayRegistration = 1,
                 Account = "",
                 Name = "",
                 Category = "",
@@ -80,25 +80,25 @@ namespace FinanceOrganization.UnitTests.Application.Configs.Fixtures
             };
         }
 
-        public CreateBillToPayInput GetCreateFixedInvoiceInput()
+        public CreateBillToPayRegistrationInput GetCreateBillToPayRegistrationInput()
         {
-            var fixedInvoice = GetFixedInvoice();
+            var billToPayRegistration = GetBillToPayRegistration();
 
-            return new CreateBillToPayInput()
+            return new CreateBillToPayRegistrationInput()
             {
-                Name = fixedInvoice.Name,
-                Account = fixedInvoice.Account,
-                Frequence = fixedInvoice.Frequence,
-                RegistrationType = fixedInvoice.RegistrationType,
-                InitialMonthYear = fixedInvoice.InitialMonthYear,
-                FynallyMonthYear = fixedInvoice.FynallyMonthYear,
-                Category = fixedInvoice.Category,
-                Value = fixedInvoice.Value,
-                PurchaseDate = fixedInvoice.PurchaseDate,
-                BestPayDay = fixedInvoice.BestPayDay,
-                AdditionalMessage = fixedInvoice.AdditionalMessage,
-                CreationDate = fixedInvoice.CreationDate,
-                LastChangeDate = fixedInvoice.LastChangeDate
+                Name = billToPayRegistration.Name,
+                Account = billToPayRegistration.Account,
+                Frequence = billToPayRegistration.Frequence,
+                RegistrationType = billToPayRegistration.RegistrationType,
+                InitialMonthYear = billToPayRegistration.InitialMonthYear,
+                FynallyMonthYear = billToPayRegistration.FynallyMonthYear,
+                Category = billToPayRegistration.Category,
+                Value = billToPayRegistration.Value,
+                PurchaseDate = billToPayRegistration.PurchaseDate,
+                BestPayDay = billToPayRegistration.BestPayDay,
+                AdditionalMessage = billToPayRegistration.AdditionalMessage,
+                CreationDate = billToPayRegistration.CreationDate,
+                LastChangeDate = billToPayRegistration.LastChangeDate
             };
         }
     }

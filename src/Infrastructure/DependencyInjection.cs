@@ -12,9 +12,11 @@ namespace Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             services.AddDbContext<FinanceOrganizationContext>();
-            services.AddScoped<IFixedInvoiceRepository, FixedInvoiceRepository>();
+            services.AddScoped<IBillToPayRegistrationRepository, BillToPayRegistrationRepository>();
             services.AddScoped<IBillToPayRepository, BillToPayRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<ICashReceivableRegistrationRepository, CashReceivableRegistrationRepository>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
 
             return services;
         }

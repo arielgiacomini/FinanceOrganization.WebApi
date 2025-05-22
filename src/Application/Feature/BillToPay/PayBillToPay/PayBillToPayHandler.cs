@@ -8,18 +8,20 @@ namespace Application.Feature.BillToPay.PayBillToPay
     {
         private readonly ILogger _logger;
         private readonly IBillToPayRepository _billToPayRepository;
+        private readonly IAccountRepository _accountRepository;
         private const string EH_CARTAO_CREDITO_NAIRA = "Cartão de Crédito Nubank Naíra";
 
-        public PayBillToPayHandler(ILogger logger, IBillToPayRepository billToPayRepository)
+        public PayBillToPayHandler(ILogger logger, IBillToPayRepository billToPayRepository, IAccountRepository accountRepository)
         {
             _logger = logger;
             _billToPayRepository = billToPayRepository;
+            _accountRepository = accountRepository;
         }
 
         public async Task<PayBillToPayOutput> Handle(PayBillToPayInput input, CancellationToken cancellationToken)
         {
             PayBillToPayOutput output = new();
-            var validate = await PayBillToPayValidator.ValidateInput(input, _billToPayRepository);
+            var validate = await PayBillToPayValidator.ValidateInput(input, _billToPayRepository, _accountRepository);
 
             if (validate.Any())
             {
@@ -69,7 +71,7 @@ namespace Application.Feature.BillToPay.PayBillToPay
                     mapBillsToPay.Add(new D.BillToPay()
                     {
                         Id = bill.Id,
-                        IdFixedInvoice = bill.IdFixedInvoice,
+                        IdBillToPayRegistration = bill.IdBillToPayRegistration,
                         Account = bill.Account,
                         Name = bill.Name,
                         Category = bill.Category,
@@ -110,6 +112,8 @@ namespace Application.Feature.BillToPay.PayBillToPay
 
                 if (listNotPaidYet != null)
                 {
+                    // TODO: Pode remover esse código quando no front-end não estiver mais apresentando o tipo "Cartão de Crédito"
+                    // genérico e remover o checkBox do cartão da Naíra
                     if (input.ConsiderNairaCreditCard.HasValue && input.ConsiderNairaCreditCard.Value)
                     {
                         var creditCardNaira = listNotPaidYet
