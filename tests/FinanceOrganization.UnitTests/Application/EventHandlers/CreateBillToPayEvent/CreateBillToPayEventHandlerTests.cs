@@ -19,9 +19,9 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
         private readonly Mock<IBillToPayRepository> _mockWalletToPayRepository;
         private readonly Mock<IAccountRepository> _mockAccountRepository;
 
-        public CreateBillToPayEventHandlerTests(ModelFixture modelFixture)
+        public CreateBillToPayEventHandlerTests()
         {
-            _modelFixture = modelFixture;
+            _modelFixture = new ModelFixture();
             _dummyLogger = new Mock<ILogger>();
             _mockOptions = new Mock<IOptions<BillToPayOptions>>();
             _mockBillToPayRegistrationRepository = new Mock<IBillToPayRegistrationRepository>();
@@ -153,6 +153,10 @@ namespace FinanceOrganization.UnitTests.Application.EventHandlers.CreateBillToPa
             _mockWalletToPayRepository
                 .Setup(walletToPay => walletToPay.SaveRange(It.IsAny<IList<BillToPay>>()))
                 .ReturnsAsync(It.IsAny<int>());
+
+            _mockAccountRepository
+                .Setup(account => account.GetAccountByName(It.IsAny<string>()))
+                .ReturnsAsync(new Account() { Id = 1, Name = "Teste" });
 
             // Action
 
