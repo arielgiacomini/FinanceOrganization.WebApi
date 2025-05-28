@@ -8,5 +8,6 @@ namespace Domain.Interfaces
         Task<Account?> GetAccountByName(string accountName);
         Task<IList<Account>> GetAllAccounts();
         Task<IList<Account>> GetAllCreditCardAccounts();
+        Task<int> Save(Account account);
     }
 }

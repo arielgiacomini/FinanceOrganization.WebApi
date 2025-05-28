@@ -53,6 +53,14 @@ namespace Infrastructure.Repositories
                 .FirstOrDefault(creditCard => creditCard.Name == accountName);
         }
 
+        public async Task<int> Save(Account account)
+        {
+            _context.Add(account);
+            var qtdEntry = await _context.SaveChangesAsync();
+
+            return qtdEntry;
+        }
+
         private async Task<IList<AccountColor>?> GetAllAccountColors()
         {
             return await _context.AccountColors!.ToListAsync();
