@@ -21,12 +21,16 @@ namespace Infrastructure.Repositories
         {
             var accounts = await _context.Accounts!.ToListAsync();
 
+            await IntoColors(accounts);
+
             return accounts;
         }
 
         public async Task<IList<Account>> GetAllCreditCardAccounts()
         {
             var accounts = await GetAllAccounts();
+
+            await IntoColors(accounts);
 
             return accounts
                 .Where(creditCard => creditCard.IsCreditCard)
@@ -47,6 +51,35 @@ namespace Infrastructure.Repositories
 
             return accounts
                 .FirstOrDefault(creditCard => creditCard.Name == accountName);
+        }
+
+        private async Task<IList<AccountColor>?> GetAllAccountColors()
+        {
+            return await _context.AccountColors!.ToListAsync();
+        }
+
+        private async Task IntoColors(IList<Account>? accounts)
+        {
+            var accountColors = await GetAllAccountColors();
+
+            foreach (var account in accounts)
+            {
+                var accountColor = accountColors?.Where(x => x.AccountId == account.Id).FirstOrDefault();
+
+                if (accountColor != null)
+                {
+                    account.Colors = new AccountColor()
+                    {
+                        Id = accountColor!.Id,
+                        AccountId = accountColor.AccountId,
+                        BackgroundColorHexadecimal = accountColor.BackgroundColorHexadecimal,
+                        FonteColorHexadecimal = accountColor.FonteColorHexadecimal,
+                        Enable = accountColor.Enable,
+                        CreationDate = accountColor.CreationDate,
+                        LastChangeDate = accountColor.LastChangeDate
+                    };
+                }
+            }
         }
     }
 }
