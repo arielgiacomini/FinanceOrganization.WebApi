@@ -141,6 +141,31 @@ namespace WebAPI.Controllers
         }
 
         /// <summary>
+        /// Edita um lote de contas a pagar
+        /// </summary>
+        /// <param name="edits"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPut("edit-basket")]
+        public async Task<IActionResult> EditBasketBillToPay([FromBody] IList<EditBillToPayInput> edits,
+            CancellationToken cancellationToken)
+        {
+            _logger.Information("Alteração de Contas a Pagar via Lote. Input: {@Inputs}", edits);
+
+            List<EditBillToPayOutput> outputList = new();
+            EditBillToPayOutput output = new();
+
+            foreach (var input in edits)
+            {
+                outputList.Add(await _editBillToPayHandler.Handle(input, cancellationToken));
+            }
+
+            output.Output = OutputBaseDetails.Success("A edição em lote de Contas a Pagar foi realizadas com sucesso.", outputList, outputList.Count);
+
+            return Ok(output);
+        }
+
+        /// <summary>
         /// Faz o processo de pagamento de uma conta à pagar.
         /// </summary>
         /// <param name="input"></param>

@@ -7,11 +7,16 @@ namespace Application.Feature.BillToPay.EditBillToPay
     {
         private readonly ILogger _logger;
         private readonly IBillToPayRepository _billToPayRepository;
+        private readonly IBillToPayRegistrationRepository _billToPayRegistrationRepository;
 
-        public EditBillToPayHandler(ILogger logger, IBillToPayRepository billToPayRepository)
+        public EditBillToPayHandler(
+            ILogger logger,
+            IBillToPayRepository billToPayRepository,
+            IBillToPayRegistrationRepository billToPayRegistrationRepository)
         {
             _logger = logger;
             _billToPayRepository = billToPayRepository;
+            _billToPayRegistrationRepository = billToPayRegistrationRepository;
         }
 
         public async Task<EditBillToPayOutput> Handle(EditBillToPayInput input, CancellationToken cancellationToken)
@@ -45,9 +50,38 @@ namespace Application.Feature.BillToPay.EditBillToPay
 
             var result = await _billToPayRepository.Edit(billToPay);
 
+            if (input.MustEditRegistrationAccount)
+            {
+                var registration = await _billToPayRegistrationRepository.GetById(billToPay.IdBillToPayRegistration);
+
+                if (registration is null)
+                {
+                    _logger.Warning("Não foi possível fazer a edição da conta de registro. Essa edição era pra deixar a conta o mais atualizado possível");
+                }
+
+                registration.Name = input.Name;
+                registration.Value = input.Value;
+                registration.AdditionalMessage = string.Concat(" | ", input.AdditionalMessage);
+                registration.Category = input.Category;
+                registration.Account = input.Account;
+                registration.RegistrationType = input.RegistrationType;
+                registration.LastChangeDate = DateTime.Now;
+
+                var editRegistration = await _billToPayRegistrationRepository.Edit(registration);
+
+                if (editRegistration > 0)
+                {
+                    _logger.Warning("Houve um problema ao tentar editar a conta {Name} de Id: {Id} e o processo não foi efetuado.", registration.Name, registration.Id);
+                }
+                else
+                {
+                    _logger.Information("Alteração da conta {Name} de Id: {} realizado com sucesso.", registration.Name, registration.Id);
+                }
+            }
+
             var output = new EditBillToPayOutput
             {
-                Output = OutputBaseDetails.Success($"[{result}] - Cadastro realizado com sucesso.", new object())
+                Output = OutputBaseDetails.Success($"[{result}] - Conta a Pagar alterada com sucesso.", new object())
             };
 
             return output;
