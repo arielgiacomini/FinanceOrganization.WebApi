@@ -232,7 +232,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     return;
                 }
 
-                if (descontar.Frequence == FREQUENCIA_MENSAL)
+                if (descontar.Frequence != FREQUENCIA_LIVRE)
                 {
                     var valueOld = descontar.Value;
 
