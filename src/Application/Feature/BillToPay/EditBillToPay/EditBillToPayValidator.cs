@@ -20,7 +20,7 @@ namespace Application.Feature.BillToPay.EditBillToPay
 
             if (result == null)
             {
-                validatorBase.Add("[29]", $"Não foi encontrado Conta a pagar pelo Id: {input.Id}");
+                validatorBase.Add("[29]", $"Não foi encontrado a conta a pagar {input.Name} pelo Id: {input.Id}");
             }
 
             return validatorBase;

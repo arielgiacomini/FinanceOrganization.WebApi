@@ -119,8 +119,12 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 qtdMonthAdd = totalMonths;
             }
 
-            if (qtdMonthAdd <= 0 || totalMonths > _billToPayOptions.HowManyMonthForward)
+            if (qtdMonthAdd <= 0 || CheckConsiderParamHowManyMonthForward(billToPayRegistration, totalMonths))
             {
+                _logger.Information("Regra de quantidade de meses solicitados para cadastro: {TotalMonths} " +
+                    "da conta configurada é superior ao configurado nesta aplicação que " +
+                    "são {HowManyMonthForward}. Ou a quantidade de meses para adicionar " +
+                    "for inferior ou igual a zero: {QtdMonthAdd}", totalMonths, _billToPayOptions.HowManyMonthForward, qtdMonthAdd);
                 return;
             }
 
@@ -129,6 +133,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             if (account == null)
             {
+                _logger.Information("A conta que foi pesquisada para cria as contas futuras não foi encontrada. Pesquisado: {Account}", billToPayRegistration.Account);
                 return;
             }
 
@@ -194,6 +199,23 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             await _billToPayRepository.SaveRange(listBillToPay);
         }
 
+        private bool CheckConsiderParamHowManyMonthForward(BillToPayRegistration billToPayRegistration, int totalMonths)
+        {
+            if (string.IsNullOrEmpty(billToPayRegistration.FynallyMonthYear))
+            {
+                return totalMonths > _billToPayOptions.HowManyMonthForward;
+            }
+            else
+            {
+                _logger.Information("O parâmetro configurado na aplicação para quantidade de meses futuros é de {HowManyMonthForward} meses" +
+                    "porém a conta que chegou: {Name} trata-se de uma conta com mês ano final em {FynallyMonthYear} portando, " +
+                    "será ignorado o parâmetro e respeitado quando finaliza a conta.", _billToPayOptions.HowManyMonthForward,
+                    billToPayRegistration.Name, billToPayRegistration.FynallyMonthYear
+                 );
+                return false;
+            }
+        }
+
         private async Task DebitFixedAccount(BillToPayRegistration billToPayRegistration, int qtdMonthAdd)
         {
             if (IsValidToDebit(billToPayRegistration, qtdMonthAdd))
@@ -204,26 +226,32 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
                 if (descontar == null)
                 {
+                    _logger.Information("Desconto de conta fixa, mesmo a conta sendo válida para desconto " +
+                        "algo deu errado na pesquisa e retornou null. Mes Ano Inicial: {InitialMonthYear} Categoria: {Category} e {Tipo}",
+                        billToPayRegistration.InitialMonthYear, billToPayRegistration.Category, TIPO_REGISTRO_FATURA_FIXA);
                     return;
                 }
 
-                if (descontar.HasPay)
-                {
-                    return;
-                }
-
-                if (descontar.Frequence == FREQUENCIA_MENSAL)
+                if (descontar.Frequence != FREQUENCIA_LIVRE)
                 {
                     var valueOld = descontar.Value;
 
-                    descontar.Value -= billToPayRegistration.Value;
-                    descontar.AdditionalMessage += $"Retirado: [R$ {billToPayRegistration.Value}] em [{DateTime.Now.Date}] do valor que estava: [R$ {valueOld}] pela seguinte conta: [{billToPayRegistration.Name}] | ";
+                    if (valueOld > 0)
+                    {
+                        descontar.Value -= billToPayRegistration.Value;
+
+                        descontar.Value = descontar.Value >= 0 ? descontar.Value : 0;
+                    }
+
+                    var dateTimeNow = DateTime.Now.Date.ToString("dd/MM/yyyy");
+                    descontar.AdditionalMessage += $"Removido automaticamente: [R$ {billToPayRegistration.Value}] em [{dateTimeNow}] do valor que estava: [R$ {valueOld}] pela seguinte conta: [{billToPayRegistration.Name}] | ";
 
                     var edited = await _billToPayRepository.Edit(descontar);
 
                     if (edited == 1)
                     {
-                        _logger.Information($"A conta relacionada de Id [{descontar.Id}] foi descontado valores com base no gasto da conta de Id [{billToPayRegistration.Id}] com a seguinte informação [{descontar.AdditionalMessage}]");
+                        _logger.Information("Foi aplicado o desconto de: {ValueConta} da conta fixa: {Name} que tinha um valor antigo de: {valueOld} relacionada ao cadastro da conta livre: {freeConta} que acabou de ser cadastrada.",
+                            billToPayRegistration.Value, descontar.Name, valueOld, billToPayRegistration.Name);
                     }
                 }
             }

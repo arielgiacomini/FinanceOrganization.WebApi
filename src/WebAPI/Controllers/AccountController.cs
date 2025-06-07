@@ -1,5 +1,7 @@
-﻿using Application.Feature.Account.SearchAccount;
+﻿using Application.Feature.Account.CreateAccount;
+using Application.Feature.Account.SearchAccount;
 using Application.Feature.Account.SearchAccountOnlyName;
+using Domain.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -12,15 +14,40 @@ namespace WebAPI.Controllers
         private readonly Serilog.ILogger _logger;
         private readonly ISearchAccountOnlyNameHandler _searchAccountOnlyNameHandler;
         private readonly ISearchAccountHandler _searchAccountHandler;
+        private readonly ICreateAccountHandler _createAccountHandler;
 
         public AccountController(
             Serilog.ILogger logger,
             ISearchAccountOnlyNameHandler searchAccountOnlyNameHandler,
-            ISearchAccountHandler searchAccountHandler)
+            ISearchAccountHandler searchAccountHandler,
+            ICreateAccountHandler createAccountHandler)
         {
             _logger = logger;
             _searchAccountOnlyNameHandler = searchAccountOnlyNameHandler;
             _searchAccountHandler = searchAccountHandler;
+            _createAccountHandler = createAccountHandler;
+        }
+
+        /// <summary>
+        /// Cadastro de uma nova conta
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost("register")]
+        public async Task<IActionResult> CreateAccount([FromBody] CreateAccountInput input,
+                    CancellationToken cancellationToken)
+        {
+            _logger.Information($"[AccountController.CreateAccount()] - Cadastro de uma nova conta. Input: {JsonSerializeUtils.Serialize(input)}");
+
+            var output = await _createAccountHandler.Handle(input, cancellationToken);
+
+            if (output.Output.Status == Application.Feature.OutputBaseDetails.OutputStatus.HasValidationIssue)
+            {
+                return BadRequest(output);
+            }
+
+            return Ok(output);
         }
 
         /// <summary>

@@ -46,6 +46,11 @@ namespace Infrastructure.Database.Context
         /// </summary>
         public DbSet<Account>? Accounts { get; set; }
 
+        /// <summary>
+        /// Tabela de Cores de Contas
+        /// </summary>
+        public DbSet<AccountColor> AccountColors { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new BillToPayRegistrationMapping());
@@ -54,6 +59,7 @@ namespace Infrastructure.Database.Context
             modelBuilder.ApplyConfiguration(new CashReceivableRegistrationMapping());
             modelBuilder.ApplyConfiguration(new MonthlyAverageAnalysisMapping());
             modelBuilder.ApplyConfiguration(new AccountMapping());
+            modelBuilder.ApplyConfiguration(new AccountColorMapping());
 
             base.OnModelCreating(modelBuilder);
         }
