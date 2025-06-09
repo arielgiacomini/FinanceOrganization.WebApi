@@ -22,7 +22,7 @@ namespace Infrastructure.Database.Context
         public DbSet<BillToPayRegistration>? BillToPayRegistration { get; set; }
 
         /// <summary>
-        /// Conta a pagar
+        /// Tabela de Contas a pagar
         /// </summary>
         public DbSet<BillToPay>? BillToPay { get; set; }
 
@@ -51,6 +51,11 @@ namespace Infrastructure.Database.Context
         /// </summary>
         public DbSet<AccountColor> AccountColors { get; set; }
 
+        /// <summary>
+        /// Tabela de Contas a Receber
+        /// </summary>
+        public DbSet<CashReceivable> CashReceivable { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new BillToPayRegistrationMapping());
@@ -60,6 +65,7 @@ namespace Infrastructure.Database.Context
             modelBuilder.ApplyConfiguration(new MonthlyAverageAnalysisMapping());
             modelBuilder.ApplyConfiguration(new AccountMapping());
             modelBuilder.ApplyConfiguration(new AccountColorMapping());
+            modelBuilder.ApplyConfiguration(new CashReceivableMapping());
 
             base.OnModelCreating(modelBuilder);
         }

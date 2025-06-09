@@ -17,6 +17,7 @@ namespace Infrastructure
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICashReceivableRegistrationRepository, CashReceivableRegistrationRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<ICashReceivableRepository, CashReceivableRepository>();
 
             return services;
         }

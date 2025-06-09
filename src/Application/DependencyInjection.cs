@@ -1,4 +1,5 @@
 ﻿using Application.EventHandlers.CreateBillToPayEvent;
+using Application.EventHandlers.CreateCashReceivableEvent;
 using Application.EventHandlers.CreateCategoryEvent;
 using Application.Feature.Account.CreateAccount;
 using Application.Feature.Account.SearchAccount;
@@ -38,6 +39,7 @@ namespace Application
             services.AddScoped<ISearchAccountOnlyNameHandler, SearchAccountOnlyNameHandler>();
             services.AddScoped<ISearchAccountHandler, SearchAccountHandler>();
             services.AddScoped<ICreateAccountHandler, CreateAccountHandler>();
+            services.AddScoped<ICreateCashReceivableEventHandler, CreateCashReceivableEventHandler>();
 
             return services;
         }
