@@ -11,7 +11,7 @@ public class CashReceivableRegistrationRepository : ICashReceivableRegistrationR
     private readonly ILogger<CashReceivableRegistrationRepository> _logger;
     private readonly FinanceOrganizationContext _context;
 
-    public CashReceivableRegistrationRepository(Serilog.ILogger logger,
+    public CashReceivableRegistrationRepository(ILogger<CashReceivableRegistrationRepository> logger,
             FinanceOrganizationContext context)
     {
         _logger = logger;
@@ -30,7 +30,7 @@ public class CashReceivableRegistrationRepository : ICashReceivableRegistrationR
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, ex.Message);
+            _logger.LogError(ex, ex.Message);
 
             return qtd;
         }

@@ -92,7 +92,7 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
 
             if (account == null)
             {
-                _logger.LogInformation("A conta que foi pesquisada para cria as contas futuras não foi encontrada. Pesquisado: {Account}", billToPayRegistration.Account);
+                _logger.LogInformation("A conta que foi pesquisada para cria as contas futuras não foi encontrada. Pesquisado: {Account}", registration.Account);
                 return;
             }
 
