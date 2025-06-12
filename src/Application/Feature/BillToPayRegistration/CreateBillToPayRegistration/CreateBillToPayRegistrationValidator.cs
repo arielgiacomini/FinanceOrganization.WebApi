@@ -4,11 +4,6 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
 {
     public static class CreateBillToPayRegistrationValidator
     {
-        private const string CARTAO_CREDITO = "Cartão de Crédito";
-        private const string CARTAO_DEBITO = "Cartão de Débito";
-        private const string CARTAO_VALE_ALIMENTACAO = "Cartão VA";
-        private const string CARTAO_VALE_REFEICAO = "Cartão VR";
-
         public static async Task<Dictionary<string, string>> ValidateInput(
             CreateBillToPayRegistrationInput input,
             IBillToPayRegistrationRepository billToPayRegistrationRepository,
@@ -29,7 +24,7 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
 
             var billToPay = await billToPayRepository.GetBillToPayByNameDueDateAndFrequence(input.Name!, input.InitialMonthYear!, input.Frequence!);
 
-            if (billToPay != null && AccountIsValidRule(billToPay.Account))
+            if (billToPay != null && await AccountIsValidRule(billToPayRegistrationRepository, input))
             {
                 validatorBase.Add("[32]", $"Já existe uma conta a pagar para este mesmo nome: {input.Name}, " +
                     $"neste mesmo Ano/Mes: {input.InitialMonthYear} e nesta frequência: {input.Frequence}");
@@ -44,28 +39,23 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
             return validatorBase;
         }
 
-        public static bool AccountIsValidRule(string? account)
+        public static async Task<bool> AccountIsValidRule(IBillToPayRegistrationRepository registration, CreateBillToPayRegistrationInput input)
         {
-            bool isAccountValidRule = true;
-            switch (account)
+            bool isAccountValidRule = false;
+
+            var teste = await registration.GetBillToPayRegistrationByName(input.Name);
+
+            if (teste.Name == input.Name &&
+                teste.PurchaseDate == input.PurchaseDate &&
+                teste.Value == input.Value &&
+                teste.InitialMonthYear == input.InitialMonthYear &&
+                teste.FynallyMonthYear == input.FynallyMonthYear &&
+                teste.AdditionalMessage == input.AdditionalMessage)
             {
-                case CARTAO_CREDITO:
-                    isAccountValidRule = false;
-                    break;
-                case CARTAO_VALE_ALIMENTACAO:
-                    isAccountValidRule = false;
-                    break;
-                case CARTAO_VALE_REFEICAO:
-                    isAccountValidRule = false;
-                    break;
-                case CARTAO_DEBITO:
-                    isAccountValidRule = false;
-                    break;
-                default:
-                    break;
+                isAccountValidRule = true;
             }
 
-            return isAccountValidRule;
+            return await Task.FromResult(isAccountValidRule);
         }
     }
 }

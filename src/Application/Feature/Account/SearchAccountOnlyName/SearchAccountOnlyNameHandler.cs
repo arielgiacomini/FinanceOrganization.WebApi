@@ -13,29 +13,30 @@ namespace Application.Feature.Account.SearchAccountOnlyName
 
         public async Task<IList<string>> Handle()
         {
-            IList<string> stringList = new List<string>();
+            IList<string> accountListString = new List<string>();
 
             var accounts = await _accountRepository
                 .GetAllAccounts();
 
             if (accounts == null)
             {
-                return stringList;
+                return accountListString;
             }
 
             var accountEnable = accounts
                 .Where(x => x.Enable)
+                .OrderBy(x => x.Name)
                 .ToList();
 
-            foreach (var item in accountEnable)
+            foreach (var account in accountEnable)
             {
-                if (item.Name != null)
+                if (account.Name != null)
                 {
-                    stringList.Add(item.Name);
+                    accountListString.Add(account.Name);
                 }
             }
 
-            return stringList;
+            return accountListString;
         }
     }
 }
