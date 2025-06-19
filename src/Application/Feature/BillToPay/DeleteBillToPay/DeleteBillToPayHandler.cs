@@ -88,6 +88,21 @@ namespace Application.Feature.BillToPay.DeleteBillToPay
                         var resultTwo = await _billToPayRegistrationRepository.Edit(billToPayRegistrationsReadyToDisabled!);
                         total += resultTwo;
                     }
+                    else if (!existsBillToPayOpenAfterRemoved && !input.DisableBillToPayRegistration)
+                    {
+                        var billToPayRegistrationsReadyToExclude = await _billToPayRegistrationRepository.GetById(key);
+
+                        if (billToPayRegistrationsReadyToExclude == null)
+                        {
+                            _logger.Error($"[DeleteBillToPayHandler.Input.Id] - Não encontrado o BillToPayRegistration pelo Id: {item.Key}");
+                            continue;
+                        }
+
+                        var deleted = await _billToPayRegistrationRepository
+                            .Delete(billToPayRegistrationsReadyToExclude);
+
+                        total += deleted;
+                    }
                 }
             }
 
