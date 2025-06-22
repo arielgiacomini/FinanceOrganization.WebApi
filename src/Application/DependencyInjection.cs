@@ -11,6 +11,7 @@ using Application.Feature.BillToPay.SearchBillToPay;
 using Application.Feature.BillToPay.SearchMonthlyAverageAnalysis;
 using Application.Feature.BillToPayRegistration.CreateBillToPayRegistration;
 using Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBillToPayRegistration;
+using Application.Feature.BillToPayRegistration.RecordsAwaitingCompleteRegistration;
 using Application.Feature.BillToPayRegistration.SearchBillToPayRegistration;
 using Application.Feature.CashReceivableRegistration.CreateCashReceivableRegistration;
 using Application.Feature.Category.SearchCategory;
@@ -40,6 +41,7 @@ namespace Application
             services.AddScoped<ISearchAccountHandler, SearchAccountHandler>();
             services.AddScoped<ICreateAccountHandler, CreateAccountHandler>();
             services.AddScoped<ICreateCashReceivableEventHandler, CreateCashReceivableEventHandler>();
+            services.AddScoped<IRecordsAwaitingCompleteRegistrationHandler, RecordsAwaitingCompleteRegistrationHandler>();
 
             return services;
         }
