@@ -112,8 +112,8 @@ namespace Application.Feature.BillToPay.PayBillToPay
 
                 if (listNotPaidYet != null)
                 {
-                    // TODO: Pode remover esse código quando no front-end não estiver mais apresentando o tipo "Cartão de Crédito"
-                    // genérico e remover o checkBox do cartão da Naíra
+                    // TODO: Pode remover esse código quando no front-end não estiver mais apresentando o tipo "Cartão de Crédito genérico"
+                    // remover o checkBox do cartão da Naíra
                     if (input.ConsiderNairaCreditCard.HasValue && input.ConsiderNairaCreditCard.Value)
                     {
                         var creditCardNaira = listNotPaidYet

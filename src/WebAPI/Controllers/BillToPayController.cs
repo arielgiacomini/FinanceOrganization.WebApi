@@ -6,6 +6,7 @@ using Application.Feature.BillToPay.SearchBillToPay;
 using Application.Feature.BillToPay.SearchMonthlyAverageAnalysis;
 using Application.Feature.BillToPayRegistration.CreateBillToPayRegistration;
 using Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBillToPayRegistration;
+using Application.Feature.BillToPayRegistration.RecordsAwaitingCompleteRegistration;
 using Application.Feature.BillToPayRegistration.SearchBillToPayRegistration;
 using Domain.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,7 @@ namespace WebAPI.Controllers
         private readonly IDeleteBillToPayHandler _deleteBillToPayHandler;
         private readonly ISearchMonthlyAverageAnalysisHandler _searchMonthlyAverageAnalysisHandler;
         private readonly ICreateCreditCardNFCMobileBillToPayRegistrationHandler _createCreditCardNFCMobileBillToPayHandler;
+        private readonly IRecordsAwaitingCompleteRegistrationHandler _recordsAwaitingCompleteRegistrationHandler;
 
         public BillToPayController(
             Serilog.ILogger logger,
@@ -36,7 +38,8 @@ namespace WebAPI.Controllers
             ISearchBillToPayHandler searchBillToPayHandler,
             IDeleteBillToPayHandler deleteBillToPayHandler,
             ISearchMonthlyAverageAnalysisHandler searchMonthlyAverageAnalysisHandler,
-            ICreateCreditCardNFCMobileBillToPayRegistrationHandler createCreditCardNFCMobileBillToPayHandler)
+            ICreateCreditCardNFCMobileBillToPayRegistrationHandler createCreditCardNFCMobileBillToPayHandler,
+            IRecordsAwaitingCompleteRegistrationHandler recordsAwaitingCompleteRegistrationHandler)
         {
             _logger = logger;
             _createBillToPayRegistrationHandler = createBillToPayRegistrationHandler;
@@ -47,6 +50,7 @@ namespace WebAPI.Controllers
             _deleteBillToPayHandler = deleteBillToPayHandler;
             _searchMonthlyAverageAnalysisHandler = searchMonthlyAverageAnalysisHandler;
             _createCreditCardNFCMobileBillToPayHandler = createCreditCardNFCMobileBillToPayHandler;
+            _recordsAwaitingCompleteRegistrationHandler = recordsAwaitingCompleteRegistrationHandler;
         }
 
         /// <summary>
@@ -119,6 +123,22 @@ namespace WebAPI.Controllers
             _logger.Information($"[BillToPayController.GetBillToPayRegistration()] - Busca de conta/fatura fixa.");
 
             var output = await _searchBillToPayRegistrationHandler.Handle();
+
+            return Ok(output);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet("records-awaiting-complete-registration")]
+        public async Task<IActionResult> GetBillToPayRecordsAwaitingCompleteRegistration(CancellationToken cancellationToken)
+        {
+            _logger.Information("Busca os registros que estão aguardando o cadastro de evento ser realizado.");
+
+            var output = await _recordsAwaitingCompleteRegistrationHandler
+                .Handle(new RecordsAwaitingCompleteRegistrationInput(), cancellationToken);
 
             return Ok(output);
         }

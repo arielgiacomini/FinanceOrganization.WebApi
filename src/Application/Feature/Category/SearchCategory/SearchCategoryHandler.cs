@@ -25,7 +25,7 @@ namespace Application.Feature.Category.SearchCategory
                 return stringList;
             }
 
-            foreach (var item in result)
+            foreach (var item in result.OrderBy(x => x.Name))
             {
                 stringList.Add(item.Name);
             }

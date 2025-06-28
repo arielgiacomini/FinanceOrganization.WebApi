@@ -114,5 +114,19 @@ namespace Infrastructure.Repositories
 
             return await Task.FromResult(result);
         }
+
+        /// <summary>
+        /// Busca no repositório todos os registros que já foram cadastrados porém sem ser inseridos na tabela principal.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IList<BillToPayRegistration>> GetBillToPayNotRegistrationPrincipal()
+        {
+            var result = await _context.BillToPayRegistration!
+            .AsNoTracking()
+            .Where(x => !x.LastChangeDate.HasValue)
+            .ToListAsync();
+
+            return result;
+        }
     }
 }

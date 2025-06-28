@@ -59,11 +59,11 @@ namespace Application.Feature.BillToPay.PayBillToPay
 
                 var openCreditCardInvoice = DateServiceUtils.Now().Date < monthYearResult.Date.Date;
 
-                if (openCreditCardInvoice)
+                if (IsNotAdvancePayment(input, openCreditCardInvoice))
                 {
                     validatorBase.Add("[34]", $"A fatura do Ano/Mês: [{input.YearMonth}] só vai fechar a partir do dia: " +
-                        $"[{monthYearResult.Date.Date:dd/MM/yyyy}] os lançamentos atuais podem sofrer alterações " +
-                        $"e portanto ainda não está disponível para pagamento.");
+                    $"[{monthYearResult.Date.Date:dd/MM/yyyy}] os lançamentos atuais podem sofrer alterações " +
+                    $"e portanto ainda não está disponível para pagamento.");
                 }
             }
             else
@@ -94,6 +94,11 @@ namespace Application.Feature.BillToPay.PayBillToPay
             }
 
             return validatorBase;
+        }
+
+        private static bool IsNotAdvancePayment(PayBillToPayInput input, bool openCreditCardInvoice)
+        {
+            return (!input.AdvancePayment.HasValue || !input.AdvancePayment.Value) && openCreditCardInvoice;
         }
     }
 }

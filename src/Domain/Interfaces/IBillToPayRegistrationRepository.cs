@@ -13,5 +13,6 @@ namespace Domain.Interfaces
         Task<BillToPayRegistration?> GetBillToPayRegistrationByName(string? name);
         Task<IList<BillToPayRegistration>> GetOnlyOldRecordsAndParticipants(int daysLater, string registrationType);
         Task<int> Save(BillToPayRegistration billToPayRegistration);
+        Task<IList<BillToPayRegistration>> GetBillToPayNotRegistrationPrincipal();
     }
 }
