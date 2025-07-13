@@ -292,19 +292,42 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
         private async Task LogicByBillToPay(BillToPay billToPay)
         {
-            var result = await _billToPayRegistrationRepository
+            List<BillToPay> listBillToPay = new();
+
+            var billToPayRegistration = await _billToPayRegistrationRepository
                 .GetById(billToPay.IdBillToPayRegistration);
 
             var account = await _accountRepository
-                .GetAccountByName(result?.Account!);
+                .GetAccountByName(billToPayRegistration?.Account!);
 
-            if (result?.FynallyMonthYear?.Length > 0)
+            if (billToPayRegistration?.FynallyMonthYear?.Length > 0)
             {
+                var lastDueDateBillToPay = billToPay.DueDate;
+
+                var MustBeRegisteredBy = DateServiceUtils
+                    .GetDateTimeByYearMonthBrazilian(billToPayRegistration.FynallyMonthYear);
+
+                if (lastDueDateBillToPay < MustBeRegisteredBy)
+                {
+                    var getMonthsByDateTime = DateServiceUtils
+                        .GetMonthsByDateTime(billToPay.DueDate, MustBeRegisteredBy);
+
+                    var nextTotalMonthYear = DateServiceUtils
+                        .GetNextYearMonthAndDateTime(
+                        billToPay.DueDate, getMonthsByDateTime, null, false);
+
+                    foreach (var nextMonth in nextTotalMonthYear!)
+                    {
+                        listBillToPay.Add(MapBillToPay(billToPay, null, account!, nextMonth.Value, nextMonth.Key));
+                    }
+
+                    await _billToPayRepository.SaveRange(listBillToPay);
+                }
+
                 await EditBillToPayRegistrationNow(billToPay);
+
                 return;
             }
-
-            List<BillToPay> listBillToPay = new();
 
             var totalMonths = DateServiceUtils
                 .GetMonthsByDateTime(billToPay.DueDate, null);
