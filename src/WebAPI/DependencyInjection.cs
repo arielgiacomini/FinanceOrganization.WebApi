@@ -10,6 +10,7 @@ namespace WebAPI
         {
             services.AddHostedService<CreateBillToPayBackgroundServices>();
             services.AddHostedService<CreateCategoryBackgroundServices>();
+            services.AddHostedService<CreateCashReceivableBackgroundServices>();
 
             return services;
         }
