@@ -137,24 +137,11 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
                 listCashReceivable.Add(MapCashReceivable(null, registration, account, nextMonth.Value, nextMonth.Key, agreementDate));
             }
 
-            await AvailableBalanceAdjustment(registration, qtdMonthAdd);
-
             registration.LastChangeDate = DateTime.Now;
 
             await _cashReceivableRegistrationRepository.Edit(registration);
 
             await _cashReceivableRepository.SaveRange(listCashReceivable);
-        }
-
-        /// <summary>
-        /// Ajusta o Saldo Disponível da conta a receber
-        /// </summary>
-        /// <param name="registration"></param>
-        /// <param name="qtdMonthAdd"></param>
-        /// <returns></returns>
-        private async Task AvailableBalanceAdjustment(CashReceivableRegistration registration, int qtdMonthAdd)
-        {
-
         }
 
         public static CashReceivable MapCashReceivable(
@@ -171,6 +158,7 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
                     Category = cashReceivable.Category,
                     RegistrationType = cashReceivable.RegistrationType,
                     Value = cashReceivable.Value,
+                    ManipulatedValue = cashReceivable.ManipulatedValue,
                     AgreementDate = agreementDate,
                     DueDate = dueDate,
                     YearMonth = yearMonth,
@@ -193,6 +181,7 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
                     Category = registration.Category,
                     RegistrationType = registration.RegistrationType,
                     Value = registration.Value,
+                    ManipulatedValue = registration.Value,
                     AgreementDate = agreementDate,
                     DueDate = dueDate,
                     YearMonth = yearMonth,

@@ -17,6 +17,7 @@ namespace Infrastructure.Database.Mapping
             builder.Property(x => x.Category).HasColumnName("DSC_CATEGORIA");
             builder.Property(x => x.RegistrationType).HasColumnName("IND_TIPO_REGISTRO");
             builder.Property(x => x.Value).HasColumnName("VAL_VALOR");
+            builder.Property(x => x.ManipulatedValue).HasColumnName("VAL_VALOR_MANIPULADO");
             builder.Property(x => x.AgreementDate).HasColumnName("DAT_ACORDO").HasColumnType("datetime");
             builder.Property(x => x.DueDate).HasColumnName("DAT_VENCIMENTO").HasColumnType("datetime");
             builder.Property(x => x.HasReceived).HasColumnName("IND_RECEBIDO");

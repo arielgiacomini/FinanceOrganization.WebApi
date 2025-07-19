@@ -14,8 +14,10 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         private readonly IBillToPayRegistrationRepository _billToPayRegistrationRepository;
         private readonly IBillToPayRepository _billToPayRepository;
         private readonly IAccountRepository _accountRepository;
+        private readonly ICashReceivableRepository _cashReceivableRepository;
+
+
         private const string FREQUENCIA_MENSAL_RECORRENTE = "Mensal:Recorrente";
-        private const string FREQUENCIA_MENSAL = "Mensal";
         private const string FREQUENCIA_LIVRE = "Livre";
         private const string TIPO_REGISTRO_FATURA_FIXA = "Conta/Fatura Fixa";
         private const string TIPO_REGISTRO_COMPRA_LIVRE = "Compra Livre";
@@ -266,6 +268,12 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             return isTrue;
         }
 
+        /// <summary>
+        /// Conta a pagar que já entra no modo PAGO. Ex.: Gasto no Vale Refeição/Alimentação Assim não precisa fazer conferência e fazer o pagamento manual.
+        /// </summary>
+        /// <param name="billToPayRegistration"></param>
+        /// <param name="account"></param>
+        /// <returns></returns>
         public static bool EnterPaid(BillToPayRegistration? billToPayRegistration, Account account)
         {
             bool considerPaid = false;
@@ -365,7 +373,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         }
 
         public static BillToPay MapBillToPay(
-            BillToPay? billToPay, BillToPayRegistration? billToPayRegistration, Account account, DateTime dueDate, string yearMonth, DateTime? purchaseDate = null)
+            BillToPay? billToPay, BillToPayRegistration? billToPayRegistration, Account account,
+            DateTime dueDate, string yearMonth, DateTime? purchaseDate = null)
         {
             if (billToPay is not null)
             {

@@ -1,4 +1,5 @@
-﻿using Domain.Interfaces;
+﻿using Application.Feature.CashReceivableLogic;
+using Domain.Interfaces;
 using Serilog;
 
 namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
@@ -8,14 +9,17 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
         private readonly ILogger _logger;
         private readonly IBillToPayRegistrationRepository _billToPayRegistrationRepository;
         private readonly IBillToPayRepository _billToPayRepository;
+        private readonly IAdjustCashReceivable _adjustCashReceivable;
 
         public CreateBillToPayRegistrationHandler(ILogger logger,
             IBillToPayRegistrationRepository billToPayRegistrationRepository,
-            IBillToPayRepository billToPayRepository)
+            IBillToPayRepository billToPayRepository,
+            IAdjustCashReceivable adjustCashReceivable)
         {
             _logger = logger;
             _billToPayRegistrationRepository = billToPayRegistrationRepository;
             _billToPayRepository = billToPayRepository;
+            _adjustCashReceivable = adjustCashReceivable;
         }
 
         public async Task<CreateBillToPayRegistrationOutput> Handle(CreateBillToPayRegistrationInput input,
@@ -44,7 +48,11 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
                 Output = OutputBaseDetails.Success($"[{isSaved}] - Cadastro realizado com sucesso.", new object(), 1)
             };
 
-            return await Task.FromResult(output);
+            // Ajusta o valor manipulado da conta a receber, caso necessário.
+            await _adjustCashReceivable
+                .AdjustCashReceivableManipulatedValue(input);
+
+            return output;
         }
 
         private static Domain.Entities.BillToPayRegistration MapInputBillToPayRegistrationToDomain(CreateBillToPayRegistrationInput input)
