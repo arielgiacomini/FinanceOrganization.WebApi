@@ -1,17 +1,17 @@
 ﻿using Application.Feature.CashReceivableLogic;
 using Domain.Interfaces;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
 {
     public class CreateBillToPayRegistrationHandler : ICreateBillToPayRegistrationHandler
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<CreateBillToPayRegistrationHandler> _logger;
         private readonly IBillToPayRegistrationRepository _billToPayRegistrationRepository;
         private readonly IBillToPayRepository _billToPayRepository;
         private readonly IAdjustCashReceivable _adjustCashReceivable;
 
-        public CreateBillToPayRegistrationHandler(ILogger logger,
+        public CreateBillToPayRegistrationHandler(ILogger<CreateBillToPayRegistrationHandler> logger,
             IBillToPayRegistrationRepository billToPayRegistrationRepository,
             IBillToPayRepository billToPayRepository,
             IAdjustCashReceivable adjustCashReceivable)
@@ -25,13 +25,13 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
         public async Task<CreateBillToPayRegistrationOutput> Handle(CreateBillToPayRegistrationInput input,
             CancellationToken cancellationToken = default)
         {
-            _logger.Information("Está sendo criado a conta a pagar de nome: {Name}", input.Name);
+            _logger.LogInformation("Está sendo criado a conta a pagar de nome: {Name}", input.Name);
 
             var validate = await CreateBillToPayRegistrationValidator.ValidateInput(input, _billToPayRegistrationRepository, _billToPayRepository);
 
             if (validate.Any())
             {
-                _logger.Warning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
+                _logger.LogWarning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
 
                 var outputValidator = new CreateBillToPayRegistrationOutput
                 {

@@ -1,19 +1,19 @@
 ﻿using Application.EventHandlers.CreateCategoryEvent;
 using Domain.Options;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Serilog;
 
 namespace Infrastructure.BackgroundServices
 {
     public class CreateCategoryBackgroundServices : BackgroundService
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<CreateCategoryBackgroundServices> _logger;
         private readonly CategoryOptions _options;
         private readonly ICreateCategoryEventHandler _createCategoryEventHandler;
 
         public CreateCategoryBackgroundServices(
-            ILogger logger,
+            ILogger<CreateCategoryBackgroundServices> logger,
             IOptions<CategoryOptions> options,
             ICreateCategoryEventHandler createCategoryEventHandler)
         {
@@ -26,18 +26,22 @@ namespace Infrastructure.BackgroundServices
         {
             if (IsRoutineEnabled(_options))
             {
+                _logger.LogInformation("Rotina automática de cadastro de categorias está habilitada.");
+
                 _ = Task.Run(() => RoutineFromTimeToTime(stoppingToken), stoppingToken);
 
                 await Task.CompletedTask;
             }
             else
             {
-                _logger.Information("[CreateWalletToPayBackgroundServices] - Rotina está desabilitada para efetuar o processo em background.");
+                _logger.LogInformation("Rotina automática de cadastro de categorias está desabilitada.");
             }
         }
 
         private async Task RoutineFromTimeToTime(CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Rotina automática de cadastro de categorias será configurada para executar a cada: [{StartTime}]", _options.RoutineWorker.StartTime);
+
             while (!cancellationToken.IsCancellationRequested)
             {
                 await _createCategoryEventHandler.Handle(new CreateCategoryEventInput());
@@ -53,14 +57,14 @@ namespace Infrastructure.BackgroundServices
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.Information("[CreateCategoryBackgroundServices] - Iniciando o BackgoundServices responsável por criação de novas categorias");
+            _logger.LogInformation("Iniciando o BackgoundServices responsável por criação de categorias.");
 
             return base.StartAsync(cancellationToken);
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.Information("[CreateCategoryBackgroundServices] - Finalizando o BackgoundServices responsável por criação de novas categorias");
+            _logger.LogInformation("Finalizando o BackgoundServices responsável por criação de categorias.");
 
             return base.StopAsync(cancellationToken);
         }

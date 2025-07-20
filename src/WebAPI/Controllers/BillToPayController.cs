@@ -135,8 +135,6 @@ namespace WebAPI.Controllers
         [HttpGet("records-awaiting-complete-registration")]
         public async Task<IActionResult> GetBillToPayRecordsAwaitingCompleteRegistration(CancellationToken cancellationToken)
         {
-            _logger.Information("Busca os registros que estão aguardando o cadastro de evento ser realizado.");
-
             var output = await _recordsAwaitingCompleteRegistrationHandler
                 .Handle(new RecordsAwaitingCompleteRegistrationInput(), cancellationToken);
 

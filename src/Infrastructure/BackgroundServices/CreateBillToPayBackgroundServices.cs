@@ -1,19 +1,19 @@
 ﻿using Application.EventHandlers.CreateBillToPayEvent;
 using Domain.Options;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Serilog;
 
 namespace Infrastructure.BackgroundServices
 {
     public class CreateBillToPayBackgroundServices : BackgroundService
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<CreateBillToPayBackgroundServices> _logger;
         private readonly BillToPayOptions _options;
         private readonly ICreateBillToPayEventHandler _walletToPayHandler;
 
         public CreateBillToPayBackgroundServices(
-            ILogger logger,
+            ILogger<CreateBillToPayBackgroundServices> logger,
             IOptions<BillToPayOptions> options,
             ICreateBillToPayEventHandler walletToPayHandler)
         {
@@ -26,18 +26,22 @@ namespace Infrastructure.BackgroundServices
         {
             if (IsRoutineEnabled(_options))
             {
+                _logger.LogInformation("Rotina automática de cadastro de conta a pagar está habilitada.");
+
                 _ = Task.Run(() => RoutineFromTimeToTime(stoppingToken), stoppingToken);
 
                 await Task.CompletedTask;
             }
             else
             {
-                _logger.Information("[CreateWalletToPayBackgroundServices] - Rotina está desabilitada para efetuar o processo em background.");
+                _logger.LogInformation("Rotina automática de cadastro de conta a pagar está desabilitada.");
             }
         }
 
         private async Task RoutineFromTimeToTime(CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Rotina automática de cadastro de conta a pagar será configurada para executar a cada: [{StartTime}]", _options.RoutineWorker.StartTime);
+
             while (!cancellationToken.IsCancellationRequested)
             {
                 await _walletToPayHandler.Handle(new CreateBillToPayEventInput() { DateExecution = DateTime.Now });
@@ -53,14 +57,14 @@ namespace Infrastructure.BackgroundServices
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.Information("[CreateWalletToPayBackgroundServices] - Iniciando o BackgoundServices responsável por criação da carteira de pagamentos.");
+            _logger.LogInformation("Iniciando o BackgoundServices responsável por criação de contas a pagar.");
 
             return base.StartAsync(cancellationToken);
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.Information("[CreateWalletToPayBackgroundServices] - Finalizando o BackgoundServices responsável por criação da carteira de pagamentos.");
+            _logger.LogInformation("Finalizando o BackgoundServices responsável por criação de contas a pagar.");
 
             return base.StopAsync(cancellationToken);
         }

@@ -26,18 +26,22 @@ namespace Infrastructure.BackgroundServices
         {
             if (IsRoutineEnabled(_options))
             {
+                _logger.LogInformation("Rotina automática de cadastro de conta a receber está habilitada.");
+                
                 _ = Task.Run(() => RoutineFromTimeToTime(stoppingToken), stoppingToken);
 
                 await Task.CompletedTask;
             }
             else
             {
-                _logger.LogInformation("[CreateCashReceivableBackgroundServices] - Rotina está desabilitada para efetuar o processo em background.");
+                _logger.LogInformation("Rotina automática de cadastro de conta a receber está desabilitada.");
             }
         }
 
         private async Task RoutineFromTimeToTime(CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Rotina automática de cadastro de conta a receber será configurada para executar a cada: [{StartTime}]", _options.RoutineWorker.StartTime);
+
             while (!cancellationToken.IsCancellationRequested)
             {
                 await _cashReceivableHandler.Handle(new CreateCashReceivableEventInput() { DateExecution = DateTime.Now });
@@ -53,14 +57,14 @@ namespace Infrastructure.BackgroundServices
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CreateCashReceivableBackgroundServices] - Iniciando o BackgoundServices responsável por criação da carteira de pagamentos.");
+            _logger.LogInformation("Iniciando o BackgoundServices responsável por criação de contas a receber.");
 
             return base.StartAsync(cancellationToken);
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("[CreateCashReceivableBackgroundServices] - Finalizando o BackgoundServices responsável por criação da carteira de pagamentos.");
+            _logger.LogInformation("Finalizando o BackgoundServices responsável por criação de contas a receber.");
 
             return base.StopAsync(cancellationToken);
         }
