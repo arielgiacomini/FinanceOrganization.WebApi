@@ -10,14 +10,14 @@ namespace Infrastructure.BackgroundServices
 {
     public class GenericBackgroundServices : BackgroundService
     {
-        private readonly ILogger<CreateCategoryBackgroundServices> _logger;
+        private readonly ILogger<GenericBackgroundServices> _logger;
         private readonly GenericBackgroundServiceOptions _options;
         private readonly ICreateCategoryEventHandler _createCategoryEventHandler;
         private readonly ICreateBillToPayEventHandler _createBillToPayEventHandler;
         private readonly ICreateCashReceivableEventHandler _cashReceivableHandler;
 
         public GenericBackgroundServices(
-            ILogger<CreateCategoryBackgroundServices> logger,
+            ILogger<GenericBackgroundServices> logger,
             IOptions<GenericBackgroundServiceOptions> options,
             ICreateCategoryEventHandler createCategoryEventHandler,
             ICreateBillToPayEventHandler createBillToPayEventHandler,
