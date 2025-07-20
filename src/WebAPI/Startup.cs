@@ -35,6 +35,9 @@ namespace WebAPI
             services.Configure<CashReceivableOptions>(options =>
             Configuration.GetSection("CashReceivableOptions").Bind(options));
 
+            services.Configure<GenericBackgroundServiceOptions>(options =>
+             Configuration.GetSection("GenericBackgroundServiceOptions").Bind(options));
+
             services.AddHostedServices();
             services.AddApplication();
             services.AddInfrastructure();

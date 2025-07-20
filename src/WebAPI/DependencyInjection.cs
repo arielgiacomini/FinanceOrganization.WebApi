@@ -8,9 +8,7 @@ namespace WebAPI
     {
         public static IServiceCollection AddHostedServices(this IServiceCollection services)
         {
-            services.AddHostedService<CreateBillToPayBackgroundServices>();
-            services.AddHostedService<CreateCategoryBackgroundServices>();
-            services.AddHostedService<CreateCashReceivableBackgroundServices>();
+            services.AddHostedService<GenericBackgroundServices>();
 
             return services;
         }
