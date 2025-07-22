@@ -20,7 +20,10 @@ namespace Infrastructure.Repositories
 
         public async Task<IList<Category>?> GetAllAsync()
         {
-            var categories = await _context.Category!.ToListAsync();
+            var categories = await _context
+                .Category!
+                .AsNoTracking()
+                .ToListAsync();
 
             return categories;
         }

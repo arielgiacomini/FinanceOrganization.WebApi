@@ -2,7 +2,7 @@
 
 namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBillToPayRegistration
 {
-    public class CreateCreditCardNFCMobileBillToPayRegistrationValidator
+    public class CreateNFCMobileBillToPayRegistrationValidator
     {
         private const string CARTAO_CREDITO = "Cartão de Crédito";
         private const string CARTAO_DEBITO = "Cartão de Débito";
@@ -10,7 +10,7 @@ namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBil
         private const string CARTAO_VALE_REFEICAO = "Cartão VR";
 
         public static async Task<Dictionary<string, string>> ValidateInput(
-            CreateCreditCardNFCMobileBillToPayRegistrationInput input,
+            CreateNFCMobileBillToPayRegistrationInput input,
             IBillToPayRegistrationRepository billToPayRegistrationRepository,
             IBillToPayRepository billToPayRepository,
             IAccountRepository accountRepository)
@@ -19,7 +19,7 @@ namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBil
         }
 
         public static async Task<Dictionary<string, string>> CreateValidateBaseInput(
-            CreateCreditCardNFCMobileBillToPayRegistrationInput input,
+            CreateNFCMobileBillToPayRegistrationInput input,
             IBillToPayRegistrationRepository billToPayRegistrationRepository,
             IBillToPayRepository billToPayRepository,
             IAccountRepository accountRepository)
