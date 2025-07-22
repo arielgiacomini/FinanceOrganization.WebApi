@@ -29,7 +29,7 @@
         /// <summary>
         /// Data de Recebimento
         /// </summary>
-        public DateTime? DateReceived { get; set; }
+        public string? DateReceived { get; set; }
         /// <summary>
         /// Indica se a conta foi recebida
         /// </summary>

@@ -21,7 +21,7 @@ namespace Infrastructure.Database.Mapping
             builder.Property(x => x.AgreementDate).HasColumnName("DAT_ACORDO").HasColumnType("datetime");
             builder.Property(x => x.DueDate).HasColumnName("DAT_VENCIMENTO").HasColumnType("datetime");
             builder.Property(x => x.HasReceived).HasColumnName("IND_RECEBIDO");
-            builder.Property(x => x.DateReceived).HasColumnName("DAT_RECEBIMENTO").HasColumnType("datetime");
+            builder.Property(x => x.DateReceived).HasColumnName("DAT_RECEBIMENTO");
             builder.Property(x => x.YearMonth).HasColumnName("IND_MES_ANO");
             builder.Property(x => x.Frequence).HasColumnName("IND_FREQUENCIA");
             builder.Property(x => x.AdditionalMessage).HasColumnName("DSC_MENSAGEM_ADICIONAL");

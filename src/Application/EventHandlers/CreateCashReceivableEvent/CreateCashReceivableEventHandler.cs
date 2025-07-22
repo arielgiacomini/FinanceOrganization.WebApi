@@ -198,7 +198,7 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
                     if (EnterReceived(registration, account))
                     {
                         newBillToPay.HasReceived = true;
-                        newBillToPay.DateReceived = agreementDate;
+                        newBillToPay.DateReceived = agreementDate.ToString();
                         newBillToPay.LastChangeDate = DateTime.Now;
                     }
                 }
