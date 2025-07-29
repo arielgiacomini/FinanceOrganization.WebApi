@@ -53,6 +53,7 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                _logger.Error(ex, "Erro ao consultar o método GetBillToPayByYearMonthAndCategoryAndRegistrationType() no Repositório de BillToPay. Erro: {Message}", ex.Message);
                 Exception exception = new(ex.Message);
                 throw exception;
             }

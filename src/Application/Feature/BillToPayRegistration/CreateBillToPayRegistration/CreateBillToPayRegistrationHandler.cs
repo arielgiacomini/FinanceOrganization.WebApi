@@ -1,4 +1,4 @@
-﻿using Application.Feature.CashReceivableLogic;
+﻿using Application.Feature.CashReceivable.AdjustCashReceivable;
 using Domain.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -9,12 +9,12 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
         private readonly ILogger<CreateBillToPayRegistrationHandler> _logger;
         private readonly IBillToPayRegistrationRepository _billToPayRegistrationRepository;
         private readonly IBillToPayRepository _billToPayRepository;
-        private readonly IAdjustCashReceivable _adjustCashReceivable;
+        private readonly IAdjustCashReceivableHandler _adjustCashReceivable;
 
         public CreateBillToPayRegistrationHandler(ILogger<CreateBillToPayRegistrationHandler> logger,
             IBillToPayRegistrationRepository billToPayRegistrationRepository,
             IBillToPayRepository billToPayRepository,
-            IAdjustCashReceivable adjustCashReceivable)
+            IAdjustCashReceivableHandler adjustCashReceivable)
         {
             _logger = logger;
             _billToPayRegistrationRepository = billToPayRegistrationRepository;
@@ -47,10 +47,6 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
             {
                 Output = OutputBaseDetails.Success($"[{isSaved}] - Cadastro realizado com sucesso.", new object(), 1)
             };
-
-            // Ajusta o valor manipulado da conta a receber, caso necessário.
-            await _adjustCashReceivable
-                .AdjustCashReceivableManipulatedValue(input);
 
             return output;
         }

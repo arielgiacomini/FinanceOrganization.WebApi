@@ -13,9 +13,11 @@ using Application.Feature.BillToPayRegistration.CreateBillToPayRegistration;
 using Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBillToPayRegistration;
 using Application.Feature.BillToPayRegistration.RecordsAwaitingCompleteRegistration;
 using Application.Feature.BillToPayRegistration.SearchBillToPayRegistration;
-using Application.Feature.CashReceivableLogic;
+using Application.Feature.CashReceivable.AdjustCashReceivable;
+using Application.Feature.CashReceivable.SearchCashReceivable;
 using Application.Feature.CashReceivableRegistration.CreateCashReceivableRegistration;
 using Application.Feature.Category.SearchCategory;
+using Application.Feature.Payment.AdjustPayament;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 
@@ -43,7 +45,9 @@ namespace Application
             services.AddScoped<ICreateAccountHandler, CreateAccountHandler>();
             services.AddScoped<ICreateCashReceivableEventHandler, CreateCashReceivableEventHandler>();
             services.AddScoped<IRecordsAwaitingCompleteRegistrationHandler, RecordsAwaitingCompleteRegistrationHandler>();
-            services.AddScoped<IAdjustCashReceivable, AdjustCashReceivable>();
+            services.AddScoped<IAdjustCashReceivableHandler, AdjustCashReceivableHandler>();
+            services.AddScoped<IPaymentAdjustmentHandler, PaymentAdjustmentHandler>();
+            services.AddScoped<ISearchCashReceivableHandler, SearchCashReceivableHandler>();
 
             return services;
         }

@@ -44,10 +44,10 @@
         /// Valor total somado das contas livres relacionadas a conta fixa + conta fixa existente (atual)
         /// </summary>
         public decimal DetailsAmount { get; set; }
-        public IList<Details>? Details { get; set; }
+        public IList<SearchBillToPayDataDetails>? Details { get; set; }
     }
 
-    public class Details
+    public class SearchBillToPayDataDetails
     {
         public Guid Id { get; set; }
         public int IdBillToPayRegistration { get; set; }

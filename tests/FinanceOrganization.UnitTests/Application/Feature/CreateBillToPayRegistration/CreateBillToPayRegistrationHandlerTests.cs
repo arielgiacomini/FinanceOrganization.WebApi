@@ -1,6 +1,6 @@
 ﻿using Application.Feature;
 using Application.Feature.BillToPayRegistration.CreateBillToPayRegistration;
-using Application.Feature.CashReceivableLogic;
+using Application.Feature.CashReceivable.AdjustCashReceivable;
 using Domain.Interfaces;
 using FinanceOrganization.UnitTests.Application.Configs.Collections;
 using FinanceOrganization.UnitTests.Application.Configs.Fixtures;
@@ -18,7 +18,7 @@ namespace FinanceOrganization.UnitTests.Application.Feature.CreateBillToPayRegis
         private readonly Mock<IBillToPayRegistrationRepository> _mockBillToPayRegistrationRepository;
         private readonly Mock<IBillToPayRepository> _mockBillToPayRepository;
         private readonly Mock<ILogger<CreateBillToPayRegistrationHandler>> _mockLogger;
-        private readonly Mock<IAdjustCashReceivable> _mockAdjustCashReceivable;
+        private readonly Mock<IAdjustCashReceivableHandler> _mockAdjustCashReceivable;
 
         public CreateBillToPayRegistrationHandlerTests(ModelFixture modelFixture)
         {
@@ -26,7 +26,7 @@ namespace FinanceOrganization.UnitTests.Application.Feature.CreateBillToPayRegis
             _mockBillToPayRegistrationRepository = new Mock<IBillToPayRegistrationRepository>();
             _mockBillToPayRepository = new Mock<IBillToPayRepository>();
             _mockLogger = new Mock<ILogger<CreateBillToPayRegistrationHandler>>();
-            _mockAdjustCashReceivable = new Mock<IAdjustCashReceivable>();
+            _mockAdjustCashReceivable = new Mock<IAdjustCashReceivableHandler>();
         }
 
         [Fact]

@@ -6,6 +6,9 @@ namespace Domain.Interfaces
     {
         Task<int> Edit(CashReceivable cashReceivable);
         Task<CashReceivable?> GetByAccountAndMonthYear(string account, string monthYear);
+        Task<CashReceivable?> GetById(Guid id);
+        Task<IList<CashReceivable>> GetByMonthYear(string monthYear);
+        Task<IList<CashReceivable>> GetByYearMonthAndCategoryAndRegistrationType(string yearMonth, string category, string registationType);
         Task<IList<CashReceivable>> GetCashReceivableRegistrationId(int cashReceivableRegistrationId);
         Task<int> Save(CashReceivable cashReceivable);
         Task<int> SaveRange(IList<CashReceivable> cashsReceivable);

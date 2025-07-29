@@ -50,7 +50,7 @@ namespace Infrastructure.Repositories
             var accounts = await GetAllAccounts();
 
             return accounts
-                .FirstOrDefault(creditCard => creditCard.Name == accountName);
+                .FirstOrDefault(account => account.Name == accountName);
         }
 
         public async Task<int> Save(Account account)

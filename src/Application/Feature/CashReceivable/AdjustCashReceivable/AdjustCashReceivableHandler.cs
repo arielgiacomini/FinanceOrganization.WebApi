@@ -2,36 +2,33 @@
 using Microsoft.Extensions.Logging;
 
 
-namespace Application.Feature.CashReceivableLogic
+namespace Application.Feature.CashReceivable.AdjustCashReceivable
 {
-    public class AdjustCashReceivable : IAdjustCashReceivable
+    public class AdjustCashReceivableHandler : IAdjustCashReceivableHandler
     {
-        private readonly ILogger<AdjustCashReceivable> _logger;
+        private readonly ILogger<AdjustCashReceivableHandler> _logger;
         private readonly ICashReceivableRepository _cashReceivableRepository;
 
-        public AdjustCashReceivable(ILogger<AdjustCashReceivable> logger,
+        public AdjustCashReceivableHandler(ILogger<AdjustCashReceivableHandler> logger,
             ICashReceivableRepository cashReceivableRepository)
         {
             _logger = logger;
             _cashReceivableRepository = cashReceivableRepository;
         }
 
-        public async Task AdjustCashReceivableManipulatedValue<T>(T input) where T : class
+        public async Task Adjust<T>(T input) where T : class
         {
-            bool flowControl = await SetManipuletedValue(input);
-            if (!flowControl)
+            var validate = Validator(input, out string accountValue, out string monthYearValue, out decimal valueValue);
+
+            if (!validate)
             {
-                return;
+                _logger.LogError("Validation failed for input type {InputType}.", typeof(T).Name);
             }
+
+            await CashReceivablePayment(accountValue, monthYearValue, valueValue);
         }
 
-        /// <summary>
-        /// Mantém a lógica de ajuste do valor manipulado da conta a receber génerica.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        private async Task<bool> SetManipuletedValue<T>(T input) where T : class
+        private bool Validator<T>(T input, out string accountValue, out string monthYearValue, out decimal valueValue) where T : class
         {
             var accountProperty = typeof(T).GetProperty("Account");
             var monthYearProperty = typeof(T).GetProperty("InitialMonthYear");
@@ -43,18 +40,29 @@ namespace Application.Feature.CashReceivableLogic
             if (accountProperty == null || monthYearProperty == null)
             {
                 _logger.LogError("The input type {InputType} does not contain the required properties 'Account' or 'InitialMonthYear'.", typeof(T).Name);
+                accountValue = null;
+                monthYearValue = null;
+                valueValue = 0;
                 return false;
             }
 
-            var accountValue = accountProperty.GetValue(input)?.ToString();
-            var monthYearValue = monthYearProperty.GetValue(input)?.ToString();
-
+            accountValue = accountProperty.GetValue(input)?.ToString();
+            monthYearValue = monthYearProperty.GetValue(input)?.ToString();
             if (string.IsNullOrEmpty(accountValue) || string.IsNullOrEmpty(monthYearValue))
             {
                 _logger.LogError("The input object is missing required values for 'Account' or 'InitialMonthYear'.");
+                accountValue = null;
+                monthYearValue = null;
+                valueValue = 0;
                 return false;
             }
 
+            valueValue = (decimal)typeof(T).GetProperty("Value")?.GetValue(input);
+            return true;
+        }
+
+        private async Task<bool> CashReceivablePayment(string accountValue, string monthYearValue, decimal value)
+        {
             var cashReceivable = await _cashReceivableRepository
                 .GetByAccountAndMonthYear(accountValue, monthYearValue);
 
@@ -64,7 +72,7 @@ namespace Application.Feature.CashReceivableLogic
             }
 
             var oldManipuledValue = cashReceivable.ManipulatedValue;
-            var newManipulatedValue = oldManipuledValue - (decimal)typeof(T).GetProperty("Value")?.GetValue(input);
+            var newManipulatedValue = oldManipuledValue - value;
 
             cashReceivable.ManipulatedValue = newManipulatedValue;
             cashReceivable.LastChangeDate = DateTime.Now;
@@ -76,7 +84,7 @@ namespace Application.Feature.CashReceivableLogic
             {
                 _logger.LogInformation("O valor manipulado da conta a receber: {Account} foi ajustado de: {OldManipulatedValue} para: {NewManipulatedValue} " +
                     "devido ao cadastro da conta a pagar: {BillToPayName} com o valor de: {BillToPayValue}.",
-                    cashReceivable.Account, oldManipuledValue, newManipulatedValue, typeof(T).GetProperty("Name")?.GetValue(input), typeof(T).GetProperty("Value")?.GetValue(input));
+                    cashReceivable.Account, oldManipuledValue, newManipulatedValue, cashReceivable.Name, cashReceivable.Value);
             }
 
             return true;

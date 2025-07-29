@@ -1,4 +1,4 @@
-﻿using Application.Feature.CashReceivableLogic;
+﻿using Application.Feature.CashReceivable.AdjustCashReceivable;
 using Domain.Interfaces;
 using Domain.Utils;
 using Serilog;
@@ -11,13 +11,13 @@ namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBil
         private readonly IBillToPayRegistrationRepository _billToPayRegistrationRepository;
         private readonly IBillToPayRepository _billToPayRepository;
         private readonly IAccountRepository _accountRepository;
-        private readonly IAdjustCashReceivable _adjustCashReceivable;
+        private readonly IAdjustCashReceivableHandler _adjustCashReceivable;
 
         public CreateNFCMobileBillToPayRegistrationHandler(ILogger logger,
             IBillToPayRegistrationRepository billToPayRegistrationRepository,
             IBillToPayRepository billToPayRepository,
             IAccountRepository accountRepository,
-            IAdjustCashReceivable adjustCashReceivable)
+            IAdjustCashReceivableHandler adjustCashReceivable)
         {
             _logger = logger;
             _billToPayRegistrationRepository = billToPayRegistrationRepository;
@@ -56,10 +56,6 @@ namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBil
             {
                 Output = OutputBaseDetails.Success($"[{isSaved}] - Cadastro realizado com sucesso.", new object(), 1)
             };
-
-            // Ajusta o valor manipulado da conta a receber, caso necessário.
-            await _adjustCashReceivable
-                .AdjustCashReceivableManipulatedValue(billToPayRegistration);
 
             return output;
         }
