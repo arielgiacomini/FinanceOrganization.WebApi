@@ -1,40 +1,44 @@
-﻿using Domain.Interfaces;
+﻿using Application.Feature.CashReceivable.AdjustCashReceivable;
+using Domain.Interfaces;
 using Domain.Utils;
 using Serilog;
 
 namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBillToPayRegistration
 {
-    public class CreateCreditCardNFCMobileBillToPayRegistrationHandler : ICreateCreditCardNFCMobileBillToPayRegistrationHandler
+    public class CreateNFCMobileBillToPayRegistrationHandler : ICreateNFCMobileBillToPayRegistrationHandler
     {
         private readonly ILogger _logger;
         private readonly IBillToPayRegistrationRepository _billToPayRegistrationRepository;
         private readonly IBillToPayRepository _billToPayRepository;
         private readonly IAccountRepository _accountRepository;
+        private readonly IAdjustCashReceivableHandler _adjustCashReceivable;
 
-        public CreateCreditCardNFCMobileBillToPayRegistrationHandler(ILogger logger,
+        public CreateNFCMobileBillToPayRegistrationHandler(ILogger logger,
             IBillToPayRegistrationRepository billToPayRegistrationRepository,
             IBillToPayRepository billToPayRepository,
-            IAccountRepository accountRepository)
+            IAccountRepository accountRepository,
+            IAdjustCashReceivableHandler adjustCashReceivable)
         {
             _logger = logger;
             _billToPayRegistrationRepository = billToPayRegistrationRepository;
             _billToPayRepository = billToPayRepository;
             _accountRepository = accountRepository;
+            _adjustCashReceivable = adjustCashReceivable;
         }
 
-        public async Task<CreateCreditCardNFCMobileBillToPayRegistrationOutput> Handle(CreateCreditCardNFCMobileBillToPayRegistrationInput input,
+        public async Task<CreateNFCMobileBillToPayRegistrationOutput> Handle(CreateNFCMobileBillToPayRegistrationInput input,
             CancellationToken cancellationToken = default)
         {
             _logger.Information("Está sendo criado a conta a pagar de nome: {Name}", input.Name);
 
-            var validate = await CreateCreditCardNFCMobileBillToPayRegistrationValidator
+            var validate = await CreateNFCMobileBillToPayRegistrationValidator
                 .ValidateInput(input, _billToPayRegistrationRepository, _billToPayRepository, _accountRepository);
 
             if (validate.Any())
             {
                 _logger.Warning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
 
-                var outputValidator = new CreateCreditCardNFCMobileBillToPayRegistrationOutput
+                var outputValidator = new CreateNFCMobileBillToPayRegistrationOutput
                 {
                     Output = OutputBaseDetails.Validation("Houve erro de validação", validate)
                 };
@@ -44,19 +48,20 @@ namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBil
 
             var accountByInput = await _accountRepository.GetAccountByName(input.Account!);
 
-            var isSaved = await _billToPayRegistrationRepository
-                .Save(MapInputBillToPayRegistrationToDomain(input, accountByInput!));
+            var billToPayRegistration = MapInputBillToPayRegistrationToDomain(input, accountByInput!);
 
-            var output = new CreateCreditCardNFCMobileBillToPayRegistrationOutput
+            var isSaved = await _billToPayRegistrationRepository.Save(billToPayRegistration);
+
+            var output = new CreateNFCMobileBillToPayRegistrationOutput
             {
                 Output = OutputBaseDetails.Success($"[{isSaved}] - Cadastro realizado com sucesso.", new object(), 1)
             };
 
-            return await Task.FromResult(output);
+            return output;
         }
 
         private static Domain.Entities.BillToPayRegistration MapInputBillToPayRegistrationToDomain(
-            CreateCreditCardNFCMobileBillToPayRegistrationInput input, Domain.Entities.Account account)
+            CreateNFCMobileBillToPayRegistrationInput input, Domain.Entities.Account account)
         {
             return new Domain.Entities.BillToPayRegistration
             {

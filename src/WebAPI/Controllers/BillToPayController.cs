@@ -26,7 +26,7 @@ namespace WebAPI.Controllers
         private readonly ISearchBillToPayHandler _searchBillToPayHandler;
         private readonly IDeleteBillToPayHandler _deleteBillToPayHandler;
         private readonly ISearchMonthlyAverageAnalysisHandler _searchMonthlyAverageAnalysisHandler;
-        private readonly ICreateCreditCardNFCMobileBillToPayRegistrationHandler _createCreditCardNFCMobileBillToPayHandler;
+        private readonly ICreateNFCMobileBillToPayRegistrationHandler _createCreditCardNFCMobileBillToPayHandler;
         private readonly IRecordsAwaitingCompleteRegistrationHandler _recordsAwaitingCompleteRegistrationHandler;
 
         public BillToPayController(
@@ -38,7 +38,7 @@ namespace WebAPI.Controllers
             ISearchBillToPayHandler searchBillToPayHandler,
             IDeleteBillToPayHandler deleteBillToPayHandler,
             ISearchMonthlyAverageAnalysisHandler searchMonthlyAverageAnalysisHandler,
-            ICreateCreditCardNFCMobileBillToPayRegistrationHandler createCreditCardNFCMobileBillToPayHandler,
+            ICreateNFCMobileBillToPayRegistrationHandler createCreditCardNFCMobileBillToPayHandler,
             IRecordsAwaitingCompleteRegistrationHandler recordsAwaitingCompleteRegistrationHandler)
         {
             _logger = logger;
@@ -102,7 +102,7 @@ namespace WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost("register-creditcard-nfc-mobile")]
-        public async Task<IActionResult> CreateBillToPayRegistrationCreditCardNFCMobile([FromBody] CreateCreditCardNFCMobileBillToPayRegistrationInput input,
+        public async Task<IActionResult> CreateBillToPayRegistrationCreditCardNFCMobile([FromBody] CreateNFCMobileBillToPayRegistrationInput input,
             CancellationToken cancellationToken)
         {
             _logger.Information($"[BillToPayController.CreateBillToPayRegistrationCreditCardNFCMobile()] - Cadastro de uma nova conta especifica quando ocorre a compra via Apple Pay Input: {JsonSerializeUtils.Serialize(input)}");
@@ -135,8 +135,6 @@ namespace WebAPI.Controllers
         [HttpGet("records-awaiting-complete-registration")]
         public async Task<IActionResult> GetBillToPayRecordsAwaitingCompleteRegistration(CancellationToken cancellationToken)
         {
-            _logger.Information("Busca os registros que estão aguardando o cadastro de evento ser realizado.");
-
             var output = await _recordsAwaitingCompleteRegistrationHandler
                 .Handle(new RecordsAwaitingCompleteRegistrationInput(), cancellationToken);
 

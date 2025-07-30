@@ -1,33 +1,37 @@
-﻿using Domain.Interfaces;
-using Serilog;
+﻿using Application.Feature.CashReceivable.AdjustCashReceivable;
+using Domain.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
 {
     public class CreateBillToPayRegistrationHandler : ICreateBillToPayRegistrationHandler
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<CreateBillToPayRegistrationHandler> _logger;
         private readonly IBillToPayRegistrationRepository _billToPayRegistrationRepository;
         private readonly IBillToPayRepository _billToPayRepository;
+        private readonly IAdjustCashReceivableHandler _adjustCashReceivable;
 
-        public CreateBillToPayRegistrationHandler(ILogger logger,
+        public CreateBillToPayRegistrationHandler(ILogger<CreateBillToPayRegistrationHandler> logger,
             IBillToPayRegistrationRepository billToPayRegistrationRepository,
-            IBillToPayRepository billToPayRepository)
+            IBillToPayRepository billToPayRepository,
+            IAdjustCashReceivableHandler adjustCashReceivable)
         {
             _logger = logger;
             _billToPayRegistrationRepository = billToPayRegistrationRepository;
             _billToPayRepository = billToPayRepository;
+            _adjustCashReceivable = adjustCashReceivable;
         }
 
         public async Task<CreateBillToPayRegistrationOutput> Handle(CreateBillToPayRegistrationInput input,
             CancellationToken cancellationToken = default)
         {
-            _logger.Information("Está sendo criado a conta a pagar de nome: {Name}", input.Name);
+            _logger.LogInformation("Está sendo criado a conta a pagar de nome: {Name}", input.Name);
 
             var validate = await CreateBillToPayRegistrationValidator.ValidateInput(input, _billToPayRegistrationRepository, _billToPayRepository);
 
             if (validate.Any())
             {
-                _logger.Warning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
+                _logger.LogWarning("Erro de validação. para os seguintes dados: {@input} e a validação foi: {@validate}", input, validate);
 
                 var outputValidator = new CreateBillToPayRegistrationOutput
                 {
@@ -44,7 +48,7 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
                 Output = OutputBaseDetails.Success($"[{isSaved}] - Cadastro realizado com sucesso.", new object(), 1)
             };
 
-            return await Task.FromResult(output);
+            return output;
         }
 
         private static Domain.Entities.BillToPayRegistration MapInputBillToPayRegistrationToDomain(CreateBillToPayRegistrationInput input)

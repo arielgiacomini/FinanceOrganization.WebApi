@@ -43,11 +43,11 @@ namespace Infrastructure.Repositories
         {
             int contador = 0;
 
-            foreach (var item in cashsReceivable)
+            foreach (var cashReceivable in cashsReceivable)
             {
                 try
                 {
-                    _context.Add(item);
+                    _context.Add(cashReceivable);
 
                     _context.SaveChanges();
 
@@ -55,7 +55,7 @@ namespace Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "{message}, item: {@item}", ex.Message, item);
+                    _logger.LogError(ex, "Erro ao salvar o seguinte CashReceivable: {@cashReceivable}. Erro: {message}", cashReceivable, ex.Message);
                     throw;
                 }
             }
@@ -72,6 +72,92 @@ namespace Infrastructure.Repositories
             var result = _context.SaveChanges();
 
             return await Task.FromResult(result);
+        }
+
+        public async Task<CashReceivable> GetByAccountAndMonthYear(string account, string monthYear)
+        {
+            try
+            {
+                var result = await _context.CashReceivable!
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(receivable => receivable.YearMonth == monthYear && receivable.Account == account);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao consultar o método GetById() no Repositório de CashReceivable. Erro: {Message}", ex.Message);
+                Exception exception = new(ex.Message);
+                throw exception;
+            }
+        }
+
+        public async Task<IList<CashReceivable>> GetByMonthYear(string monthYear)
+        {
+            try
+            {
+                var result = await _context.CashReceivable!
+                    .AsNoTracking()
+                    .Where(receivable => receivable.YearMonth == monthYear)
+                    .ToListAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao consultar o método GetByMonthYear() no Repositório de CashReceivable. Erro: {Message}", ex.Message);
+                Exception exception = new(ex.Message);
+                throw exception;
+            }
+        }
+
+        public async Task<IList<CashReceivable>> GetByYearMonthAndCategoryAndRegistrationType(string yearMonth, string category, string registationType)
+        {
+            try
+            {
+                var result = await _context.CashReceivable!
+                    .AsNoTracking()
+                    .Where(pay => pay.Category == category
+                        && pay.RegistrationType == registationType && pay.YearMonth == yearMonth)
+                    .OrderBy(pay => pay.DueDate)
+                    .ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao consultar o método GetByYearMonthAndCategoryAndRegistrationType() no Repositório de CashReceivable. Erro: {Message}", ex.Message);
+                Exception exception = new(ex.Message);
+                throw exception;
+            }
+        }
+
+        public async Task<CashReceivable?> GetById(Guid id)
+        {
+            var cashReceivableOrigin = await _context.CashReceivable!
+                .AsNoTracking()
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            return cashReceivableOrigin;
+        }
+
+        public async Task<int> Save(CashReceivable cashReceivable)
+        {
+            int contador = 0;
+
+            try
+            {
+                _context.Add(cashReceivable);
+
+                _context.SaveChanges();
+
+                contador++;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao salvar o seguinte CashReceivable: {@cashReceivable}. Erro: {message}", cashReceivable, ex.Message);
+                throw;
+            }
+
+            return await Task.FromResult(contador);
         }
     }
 }

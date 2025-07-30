@@ -18,11 +18,18 @@
         public DateTime? DueDate { get; set; }
         public string? YearMonth { get; set; }
         public string? Category { get; set; }
+        /// <summary>
+        /// Valor oficial, sem alterações. É o valor recebido.
+        /// </summary>
         public decimal Value { get; set; }
+        /// <summary>
+        /// Valor manipulado. A cada conta a pagar na conta associada, esse campo é alterado. Como se fosse o saldo.
+        /// </summary>
+        public decimal ManipulatedValue { get; set; }
         /// <summary>
         /// Data de Recebimento
         /// </summary>
-        public DateTime? DateReceived { get; set; }
+        public string? DateReceived { get; set; }
         /// <summary>
         /// Indica se a conta foi recebida
         /// </summary>

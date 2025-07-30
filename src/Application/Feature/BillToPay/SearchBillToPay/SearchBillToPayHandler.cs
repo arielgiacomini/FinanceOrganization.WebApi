@@ -17,7 +17,7 @@ namespace Application.Feature.BillToPay.SearchBillToPay
 
         public async Task<SearchBillToPayOutput> Handle(SearchBillToPayInput input, CancellationToken cancellationToken = default)
         {
-            _logger.Information("Está sendo criado a conta a pagar de nome: {YearMonth}", input.YearMonth);
+            _logger.Information("Busca de contas a pagar atráves do Mes Ano: {YearMonth}", input.YearMonth);
 
             var validate = await SearchBillToPayValidator.ValidateInput(input);
 
@@ -168,7 +168,7 @@ namespace Application.Feature.BillToPay.SearchBillToPay
 
         private static SearchBillToPayData MapDomainToData(Domain.Entities.BillToPay domain, List<Domain.Entities.BillToPay>? details, decimal amount)
         {
-            IList<Details> listDetails = new List<Details>();
+            IList<SearchBillToPayDataDetails> listDetails = new List<SearchBillToPayDataDetails>();
 
             if (details is not null)
             {

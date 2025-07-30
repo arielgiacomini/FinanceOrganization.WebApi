@@ -1,38 +1,43 @@
-﻿using Domain.Entities;
+﻿using Application.Feature.Payment.AdjustPayament;
+using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Options;
 using Domain.Utils;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Serilog;
 
 namespace Application.EventHandlers.CreateBillToPayEvent
 {
     public class CreateBillToPayEventHandler : ICreateBillToPayEventHandler
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<CreateBillToPayEventHandler> _logger;
         private readonly BillToPayOptions _billToPayOptions;
         private readonly IBillToPayRegistrationRepository _billToPayRegistrationRepository;
         private readonly IBillToPayRepository _billToPayRepository;
         private readonly IAccountRepository _accountRepository;
+        private readonly IPaymentAdjustmentHandler _paymentAdjustmentHandler;
+
+
         private const string FREQUENCIA_MENSAL_RECORRENTE = "Mensal:Recorrente";
-        private const string FREQUENCIA_MENSAL = "Mensal";
         private const string FREQUENCIA_LIVRE = "Livre";
         private const string TIPO_REGISTRO_FATURA_FIXA = "Conta/Fatura Fixa";
         private const string TIPO_REGISTRO_COMPRA_LIVRE = "Compra Livre";
         private const int QUANTOS_DIAS_PASSADOS_CONSIDERAR = -1;
 
         public CreateBillToPayEventHandler(
-            ILogger logger,
+            ILogger<CreateBillToPayEventHandler> logger,
             IOptions<BillToPayOptions> options,
             IBillToPayRegistrationRepository billToPayRegistrationRepository,
             IBillToPayRepository billToPayRepository,
-            IAccountRepository accountRepository)
+            IAccountRepository accountRepository,
+            IPaymentAdjustmentHandler paymentAdjustmentHandler)
         {
             _logger = logger;
             _billToPayRegistrationRepository = billToPayRegistrationRepository;
             _billToPayOptions = options.Value;
             _billToPayRepository = billToPayRepository;
             _accountRepository = accountRepository;
+            _paymentAdjustmentHandler = paymentAdjustmentHandler;
         }
 
         public async Task Handle(CreateBillToPayEventInput input)
@@ -46,7 +51,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 {
                     var json = JsonSerializeUtils.Serialize(toProcess);
 
-                    _logger.Information("Objeto BillToPayRegistration que será processado: {@json}", json);
+                    _logger.LogInformation("Rotina que cria novas contas a pagar. Conta a ser processada: {@json}", json);
 
                     var billsToPay = await _billToPayRepository.GetBillToPayByBillToPayRegistrationId(toProcess.Id);
 
@@ -58,7 +63,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Erro ao efetuar o processo para cada item participante. Erro: {ex.Message}", ex);
+                    _logger.LogError(ex, "Erro na rotina que cria novas contas a pagar. Erro: {Message}", ex.Message);
                 }
             }
         }
@@ -98,7 +103,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         {
             if (string.IsNullOrEmpty(billToPayRegistration.Account))
             {
-                _logger.Information("O nome da conta está inválido.");
+                _logger.LogError("Conta vazia ou null. {@json}", billToPayRegistration);
                 return;
             }
 
@@ -121,7 +126,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             if (qtdMonthAdd <= 0 || CheckConsiderParamHowManyMonthForward(billToPayRegistration, totalMonths))
             {
-                _logger.Information("Regra de quantidade de meses solicitados para cadastro: {TotalMonths} " +
+                _logger.LogInformation("Regra de quantidade de meses solicitados para cadastro: {TotalMonths} " +
                     "da conta configurada é superior ao configurado nesta aplicação que " +
                     "são {HowManyMonthForward}. Ou a quantidade de meses para adicionar " +
                     "for inferior ou igual a zero: {QtdMonthAdd}", totalMonths, _billToPayOptions.HowManyMonthForward, qtdMonthAdd);
@@ -133,7 +138,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             if (account == null)
             {
-                _logger.Information("A conta que foi pesquisada para cria as contas futuras não foi encontrada. Pesquisado: {Account}", billToPayRegistration.Account);
+                _logger.LogInformation("A conta que foi pesquisada para cria as contas futuras não foi encontrada. Pesquisado: {Account}", billToPayRegistration.Account);
                 return;
             }
 
@@ -170,6 +175,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 null, qtdMonthAdd, billToPayRegistration.BestPayDay,
                 DateServiceUtils.IsCurrentMonth(billToPayRegistration.InitialMonthYear, billToPayRegistration.FynallyMonthYear), addMonthForDueDate);
 
+            billToPayRegistration.LastChangeDate = DateTime.Now;
+
             foreach (var nextMonth in nextMonthYearToRegister!)
             {
                 DateTime? purchase;
@@ -187,16 +194,38 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     purchase = billToPayRegistration.PurchaseDate;
                 }
 
-                listBillToPay.Add(MapBillToPay(null, billToPayRegistration, account, nextMonth.Value, nextMonth.Key, purchase));
+                var consideredPaid = await _paymentAdjustmentHandler
+                    .ConsideredPaid(billToPayRegistration.Account, billToPayRegistration.RegistrationType);
+
+                listBillToPay.Add(MapBillToPay(null, billToPayRegistration, consideredPaid, nextMonth.Value, nextMonth.Key, purchase));
             }
 
-            await DebitFixedAccount(billToPayRegistration, qtdMonthAdd);
-
-            EditBillToPayRegistration(billToPayRegistration);
+            await _paymentAdjustmentHandler
+                .Handle(CreatePaymentAdjustment(billToPayRegistration, qtdMonthAdd, account, nextMonthYearToRegister), new CancellationToken());
 
             await _billToPayRegistrationRepository.Edit(billToPayRegistration);
 
             await _billToPayRepository.SaveRange(listBillToPay);
+        }
+
+        private static PaymentAdjustmentInput CreatePaymentAdjustment(BillToPayRegistration billToPayRegistration, int qtdMonthAdd, Account account, Dictionary<string, DateTime> nextMonthYearToRegister)
+        {
+            return new PaymentAdjustmentInput
+            {
+                AccountType = Domain.Entities.Enums.AccountType.ContaAPagar,
+                Name = billToPayRegistration.Name,
+                ConsideredPaid = account.ConsiderPaid.Value,
+                RegistrationType = billToPayRegistration.RegistrationType,
+                QuantityMonthsAdd = qtdMonthAdd,
+                Frequence = billToPayRegistration.Frequence,
+                Account = billToPayRegistration.Account,
+                Category = billToPayRegistration.Category,
+                YearMonth = nextMonthYearToRegister.First().Key,
+                PaymentDate = DateTime.Now.Date,
+                Value = billToPayRegistration.Value,
+                AdditionalMessage = billToPayRegistration.AdditionalMessage,
+                LastChangeDate = DateTime.Now
+            };
         }
 
         private bool CheckConsiderParamHowManyMonthForward(BillToPayRegistration billToPayRegistration, int totalMonths)
@@ -207,82 +236,13 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             }
             else
             {
-                _logger.Information("O parâmetro configurado na aplicação para quantidade de meses futuros é de {HowManyMonthForward} meses" +
+                _logger.LogInformation("O parâmetro configurado na aplicação para quantidade de meses futuros é de {HowManyMonthForward} meses" +
                     "porém a conta que chegou: {Name} trata-se de uma conta com mês ano final em {FynallyMonthYear} portando, " +
                     "será ignorado o parâmetro e respeitado quando finaliza a conta.", _billToPayOptions.HowManyMonthForward,
                     billToPayRegistration.Name, billToPayRegistration.FynallyMonthYear
                  );
                 return false;
             }
-        }
-
-        private async Task DebitFixedAccount(BillToPayRegistration billToPayRegistration, int qtdMonthAdd)
-        {
-            if (IsValidToDebit(billToPayRegistration, qtdMonthAdd))
-            {
-                var descontar = await _billToPayRepository
-                    .GetByYearMonthCategoryAndRegistrationType(
-                    billToPayRegistration.InitialMonthYear!, billToPayRegistration.Category!, TIPO_REGISTRO_FATURA_FIXA);
-
-                if (descontar == null)
-                {
-                    _logger.Information("Desconto de conta fixa, mesmo a conta sendo válida para desconto " +
-                        "algo deu errado na pesquisa e retornou null. Mes Ano Inicial: {InitialMonthYear} Categoria: {Category} e {Tipo}",
-                        billToPayRegistration.InitialMonthYear, billToPayRegistration.Category, TIPO_REGISTRO_FATURA_FIXA);
-                    return;
-                }
-
-                if (descontar.Frequence != FREQUENCIA_LIVRE)
-                {
-                    var valueOld = descontar.Value;
-
-                    if (valueOld > 0)
-                    {
-                        descontar.Value -= billToPayRegistration.Value;
-
-                        descontar.Value = descontar.Value >= 0 ? descontar.Value : 0;
-                    }
-
-                    var dateTimeNow = DateTime.Now.Date.ToString("dd/MM/yyyy");
-                    descontar.AdditionalMessage += $"Removido automaticamente: [R$ {billToPayRegistration.Value}] em [{dateTimeNow}] do valor que estava: [R$ {valueOld}] pela seguinte conta: [{billToPayRegistration.Name}] | ";
-
-                    var edited = await _billToPayRepository.Edit(descontar);
-
-                    if (edited == 1)
-                    {
-                        _logger.Information("Foi aplicado o desconto de: {ValueConta} da conta fixa: {Name} que tinha um valor antigo de: {valueOld} relacionada ao cadastro da conta livre: {freeConta} que acabou de ser cadastrada.",
-                            billToPayRegistration.Value, descontar.Name, valueOld, billToPayRegistration.Name);
-                    }
-                }
-            }
-        }
-
-        private static bool IsValidToDebit(BillToPayRegistration billToPayRegistration, int qtdMonthAdd)
-        {
-            var isTrue = billToPayRegistration.RegistrationType == TIPO_REGISTRO_COMPRA_LIVRE
-                      && qtdMonthAdd == 0
-                      && billToPayRegistration.Frequence == FREQUENCIA_LIVRE;
-
-            return isTrue;
-        }
-
-        public static bool EnterPaid(BillToPayRegistration? billToPayRegistration, Account account)
-        {
-            bool considerPaid = false;
-
-            if (billToPayRegistration == null)
-            {
-                return considerPaid;
-            }
-
-            if (account.ConsiderPaid.HasValue
-                && account.ConsiderPaid.Value
-                && IsNotFaturaFixa(billToPayRegistration))
-            {
-                considerPaid = true;
-            }
-
-            return considerPaid;
         }
 
         private static bool IsNotFaturaFixa(BillToPayRegistration billToPayRegistration)
@@ -292,19 +252,42 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
         private async Task LogicByBillToPay(BillToPay billToPay)
         {
-            var result = await _billToPayRegistrationRepository
+            List<BillToPay> listBillToPay = new();
+
+            var billToPayRegistration = await _billToPayRegistrationRepository
                 .GetById(billToPay.IdBillToPayRegistration);
 
             var account = await _accountRepository
-                .GetAccountByName(result?.Account!);
+                .GetAccountByName(billToPayRegistration?.Account!);
 
-            if (result?.FynallyMonthYear?.Length > 0)
+            if (billToPayRegistration?.FynallyMonthYear?.Length > 0)
             {
+                var lastDueDateBillToPay = billToPay.DueDate;
+
+                var MustBeRegisteredBy = DateServiceUtils
+                    .GetDateTimeByYearMonthBrazilian(billToPayRegistration.FynallyMonthYear);
+
+                if (lastDueDateBillToPay < MustBeRegisteredBy)
+                {
+                    var getMonthsByDateTime = DateServiceUtils
+                        .GetMonthsByDateTime(billToPay.DueDate, MustBeRegisteredBy);
+
+                    var nextTotalMonthYear = DateServiceUtils
+                        .GetNextYearMonthAndDateTime(
+                        billToPay.DueDate, getMonthsByDateTime, null, false);
+
+                    foreach (var nextMonth in nextTotalMonthYear!)
+                    {
+                        listBillToPay.Add(MapBillToPay(billToPay, null, account.ConsiderPaid.Value, nextMonth.Value, nextMonth.Key));
+                    }
+
+                    await _billToPayRepository.SaveRange(listBillToPay);
+                }
+
                 await EditBillToPayRegistrationNow(billToPay);
+
                 return;
             }
-
-            List<BillToPay> listBillToPay = new();
 
             var totalMonths = DateServiceUtils
                 .GetMonthsByDateTime(billToPay.DueDate, null);
@@ -323,7 +306,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
 
             foreach (var nextMonth in nextMonthYearToRegister!)
             {
-                listBillToPay.Add(MapBillToPay(billToPay, null, account!, nextMonth.Value, nextMonth.Key));
+                listBillToPay.Add(MapBillToPay(billToPay, null, account.ConsiderPaid.Value, nextMonth.Value, nextMonth.Key));
             }
 
             await _billToPayRepository.SaveRange(listBillToPay);
@@ -342,7 +325,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         }
 
         public static BillToPay MapBillToPay(
-            BillToPay? billToPay, BillToPayRegistration? billToPayRegistration, Account account, DateTime dueDate, string yearMonth, DateTime? purchaseDate = null)
+            BillToPay? billToPay, BillToPayRegistration? billToPayRegistration, bool consideredPaid,
+            DateTime dueDate, string yearMonth, DateTime? purchaseDate = null)
         {
             if (billToPay is not null)
             {
@@ -388,7 +372,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     LastChangeDate = new DateTime(1753, 01, 01, 12, 0, 0, DateTimeKind.Local)
                 };
 
-                if (EnterPaid(billToPayRegistration, account))
+                if (consideredPaid)
                 {
                     newBillToPay.HasPay = true;
                     newBillToPay.PayDay = purchaseDate.ToString();
@@ -427,11 +411,6 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             };
 
             await _billToPayRegistrationRepository.Edit(billToPayRegistration);
-        }
-
-        private static void EditBillToPayRegistration(BillToPayRegistration billToPayRegistration)
-        {
-            billToPayRegistration.LastChangeDate = DateTime.Now;
         }
 
         private static BillToPay? GetLastRegistrationBillToPay(IList<BillToPay> billsToPay)

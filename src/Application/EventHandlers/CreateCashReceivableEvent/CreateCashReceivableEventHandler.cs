@@ -12,6 +12,7 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
         private const int QUANTOS_DIAS_PASSADOS_CONSIDERAR = -1;
         private const string FREQUENCIA_MENSAL = "Mensal";
         private const string TIPO_REGISTRO_FATURA_FIXA = "Conta Fixa";
+        private const bool IS_CASH_RECEIVABLE = true;
 
         private readonly ILogger<CreateCashReceivableEventHandler> _logger;
         private readonly CashReceivableOptions _cashReceivableOptions;
@@ -38,19 +39,24 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
             var participants = await _cashReceivableRegistrationRepository
                 .GetOnlyOldRecordsAndParticipants(QUANTOS_DIAS_PASSADOS_CONSIDERAR, FREQUENCIA_MENSAL);
 
-            foreach (var item in participants)
+            foreach (var cashReceivableRegistration in participants)
             {
-                var json = JsonSerializeUtils.Serialize(item);
+                var json = JsonSerializeUtils.Serialize(cashReceivableRegistration);
 
                 _logger.LogInformation("Objeto BillToPayRegistration que será processado: {@json}", json);
 
-                var cashReceivable = await _cashReceivableRepository.GetCashReceivableRegistrationId(item.Id);
+                var cashReceivableList = await _cashReceivableRepository.GetCashReceivableRegistrationId(cashReceivableRegistration.Id);
+
+                await StartRegistration(cashReceivableRegistration, cashReceivableList);
             }
         }
 
-        public async Task StartRegistration(CashReceivableRegistration registration, CashReceivable cashReceivable)
+        public async Task StartRegistration(CashReceivableRegistration registration, IList<CashReceivable> cashReceivableList)
         {
-
+            if (cashReceivableList == null || cashReceivableList.Count <= 0)
+            {
+                await LogicByCashReceivableRegistration(registration);
+            }
         }
 
         public async Task LogicByCashReceivableRegistration(CashReceivableRegistration registration)
@@ -58,6 +64,14 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
             if (string.IsNullOrEmpty(registration.Account))
             {
                 _logger.LogInformation("O nome da conta está inválido.");
+                return;
+            }
+
+            var account = await _accountRepository.GetAccountByName(registration.Account);
+
+            if (account == null)
+            {
+                _logger.LogInformation("A conta que foi pesquisada para cria as contas futuras não foi encontrada. Pesquisado: {Account}", registration.Account);
                 return;
             }
 
@@ -88,13 +102,6 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
             }
 
             bool addMonthForDueDate = false;
-            var account = await _accountRepository.GetAccountByName(registration.Account);
-
-            if (account == null)
-            {
-                _logger.LogInformation("A conta que foi pesquisada para cria as contas futuras não foi encontrada. Pesquisado: {Account}", registration.Account);
-                return;
-            }
 
             Dictionary<string, DateTime> purchasesDate = new();
             bool considerPurchase = false;
@@ -130,24 +137,11 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
                 listCashReceivable.Add(MapCashReceivable(null, registration, account, nextMonth.Value, nextMonth.Key, agreementDate));
             }
 
-            await AvailableBalanceAdjustment(registration, qtdMonthAdd);
-
             registration.LastChangeDate = DateTime.Now;
 
             await _cashReceivableRegistrationRepository.Edit(registration);
 
             await _cashReceivableRepository.SaveRange(listCashReceivable);
-        }
-
-        /// <summary>
-        /// Ajusta o Saldo Disponível da conta a receber
-        /// </summary>
-        /// <param name="registration"></param>
-        /// <param name="qtdMonthAdd"></param>
-        /// <returns></returns>
-        private async Task AvailableBalanceAdjustment(CashReceivableRegistration registration, int qtdMonthAdd)
-        {
-
         }
 
         public static CashReceivable MapCashReceivable(
@@ -164,6 +158,7 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
                     Category = cashReceivable.Category,
                     RegistrationType = cashReceivable.RegistrationType,
                     Value = cashReceivable.Value,
+                    ManipulatedValue = cashReceivable.ManipulatedValue,
                     AgreementDate = agreementDate,
                     DueDate = dueDate,
                     YearMonth = yearMonth,
@@ -186,6 +181,7 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
                     Category = registration.Category,
                     RegistrationType = registration.RegistrationType,
                     Value = registration.Value,
+                    ManipulatedValue = registration.Value,
                     AgreementDate = agreementDate,
                     DueDate = dueDate,
                     YearMonth = yearMonth,
@@ -197,11 +193,14 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
                     LastChangeDate = new DateTime(1753, 01, 01, 12, 0, 0, DateTimeKind.Local)
                 };
 
-                if (EnterReceived(registration, account))
+                if (!IS_CASH_RECEIVABLE)
                 {
-                    newBillToPay.HasReceived = true;
-                    newBillToPay.DateReceived = agreementDate;
-                    newBillToPay.LastChangeDate = DateTime.Now;
+                    if (EnterReceived(registration, account))
+                    {
+                        newBillToPay.HasReceived = true;
+                        newBillToPay.DateReceived = agreementDate.ToString();
+                        newBillToPay.LastChangeDate = DateTime.Now;
+                    }
                 }
 
                 return newBillToPay;

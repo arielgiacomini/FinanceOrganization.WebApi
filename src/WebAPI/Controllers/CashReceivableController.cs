@@ -1,4 +1,5 @@
 ﻿using Application.Feature;
+using Application.Feature.CashReceivable.SearchCashReceivable;
 using Application.Feature.CashReceivableRegistration.CreateCashReceivableRegistration;
 using Domain.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +11,18 @@ namespace WebAPI.Controllers
     [Produces("application/json")]
     public class CashReceivableController : ControllerBase
     {
-        private readonly Serilog.ILogger _logger;
+        private readonly ILogger<CashReceivableController> _logger;
         private readonly ICreateCashReceivableRegistrationHandler _createCashReceivableHandler;
+        private readonly ISearchCashReceivableHandler _searchCashReceivableHandler;
 
         public CashReceivableController(
-            Serilog.ILogger logger,
-            ICreateCashReceivableRegistrationHandler createCashReceivableHandler)
+            ILogger<CashReceivableController> logger,
+            ICreateCashReceivableRegistrationHandler createCashReceivableHandler,
+            ISearchCashReceivableHandler searchCashReceivableHandler)
         {
             _logger = logger;
             _createCashReceivableHandler = createCashReceivableHandler;
+            _searchCashReceivableHandler = searchCashReceivableHandler;
         }
 
         /// <summary>
@@ -31,7 +35,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> CashReceivableRegistration([FromBody] CreateCashReceivableRegistrationInput input,
             CancellationToken cancellationToken)
         {
-            _logger.Information($"[CashReceivableController.CashReceivableRegistration()] - Cadastro de uma nova conta a receber. Input: {JsonSerializeUtils.Serialize(input)}");
+            _logger.LogInformation($"[CashReceivableController.CashReceivableRegistration()] - Cadastro de uma nova conta a receber. Input: {JsonSerializeUtils.Serialize(input)}");
 
             var output = await _createCashReceivableHandler.Handle(input, cancellationToken);
 
@@ -48,7 +52,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> CreateBasketCashReceivable([FromBody] IList<CreateCashReceivableRegistrationInput> input,
             CancellationToken cancellationToken)
         {
-            _logger.Information("[CashReceivableController.CreateBasketCashReceivable()] - Cadastro de uma nova conta a receber via basket. Input: {@Input}", JsonSerializeUtils.Serialize(input));
+            _logger.LogInformation("[CashReceivableController.CreateBasketCashReceivable()] - Cadastro de uma nova conta a receber via basket. Input: {@Input}", JsonSerializeUtils.Serialize(input));
 
             List<CreateCashReceivableRegistrationOutput> outputList = new();
             CreateCashReceivableRegistrationOutput output = new();
@@ -59,6 +63,23 @@ namespace WebAPI.Controllers
             }
 
             output.Output = OutputBaseDetails.Success("A lista de contas a receber para cadastro teve exito.", outputList, outputList.Count);
+
+            return Ok(output);
+        }
+
+        /// <summary>
+        /// Busca de contas a receber
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPost("search")]
+        public async Task<IActionResult> GetCashReceivable([FromBody] SearchCashReceivableInput input,
+            CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Busca de contar a receber");
+
+            var output = await _searchCashReceivableHandler.Handle(input, cancellationToken);
 
             return Ok(output);
         }
