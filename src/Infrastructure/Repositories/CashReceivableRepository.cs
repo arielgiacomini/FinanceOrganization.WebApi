@@ -74,6 +74,22 @@ namespace Infrastructure.Repositories
             return await Task.FromResult(result);
         }
 
+        public async Task<IList<CashReceivable>> GetAll()
+        {
+            try
+            {
+                var result = await _context.CashReceivable!.ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao consultar o método GetAll() no Repositório de CashReceivable. Erro: {Message}", ex.Message);
+                Exception exception = new(ex.Message);
+                throw exception;
+            }
+        }
+
         public async Task<CashReceivable> GetByAccountAndMonthYear(string account, string monthYear)
         {
             try

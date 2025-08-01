@@ -5,6 +5,7 @@ namespace Domain.Interfaces
     public interface ICashReceivableRepository
     {
         Task<int> Edit(CashReceivable cashReceivable);
+        Task<IList<CashReceivable>> GetAll();
         Task<CashReceivable?> GetByAccountAndMonthYear(string account, string monthYear);
         Task<CashReceivable?> GetById(Guid id);
         Task<IList<CashReceivable>> GetByMonthYear(string monthYear);
