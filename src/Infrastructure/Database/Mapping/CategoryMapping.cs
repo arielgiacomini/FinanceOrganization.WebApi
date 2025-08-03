@@ -24,6 +24,8 @@ namespace Infrastructure.Database.Mapping
                 .HasColumnName("DAT_ULTIMA_ALTERACAO")
                 .HasColumnType("datetime")
                 .HasDefaultValue(null);
+            builder.Property(x => x.AccountType)
+                .HasColumnName("DSC_TIPO_CONTA");
         }
     }
 }

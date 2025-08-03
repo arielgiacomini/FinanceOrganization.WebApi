@@ -14,11 +14,11 @@ namespace Application.Feature.Category.SearchCategory
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<IList<string>> Handle()
+        public async Task<IList<string>> Handle(SearchCategoryInput input)
         {
             IList<string> stringList = new List<string>();
 
-            var result = await _categoryRepository.GetAllAsync();
+            var result = await _categoryRepository.GetAllAsync(input.AccountType);
 
             if (result == null)
             {

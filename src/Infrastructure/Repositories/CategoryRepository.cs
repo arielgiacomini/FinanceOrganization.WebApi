@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Entities.Enums;
 using Domain.Interfaces;
 using Infrastructure.Database.Context;
 using Microsoft.EntityFrameworkCore;
@@ -18,10 +19,12 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<IList<Category>?> GetAllAsync()
+        public async Task<IList<Category>?> GetAllAsync(AccountType accountType)
         {
+            var accountTypeString = accountType.GetDescription();
             var categories = await _context
                 .Category!
+                .Where(accountType => accountType.AccountType == accountTypeString)
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -36,7 +39,7 @@ namespace Infrastructure.Repositories
 
                 var categoriesNonRegister = _context.BillToPay!.AsNoTracking().Select(x => x.Category).Distinct().ToList();
 
-                var categoriesRegister = await GetAllAsync();
+                var categoriesRegister = await GetAllAsync(AccountType.ContaAPagar);
 
                 foreach (var itemNonRegister in categoriesNonRegister)
                 {
