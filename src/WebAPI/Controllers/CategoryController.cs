@@ -1,4 +1,5 @@
 ﻿using Application.Feature.Category.SearchCategory;
+using Domain.Entities.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -8,11 +9,11 @@ namespace WebAPI.Controllers
     [Produces("application/json")]
     public class CategoryController : ControllerBase
     {
-        private readonly Serilog.ILogger _logger;
+        private readonly ILogger<CategoryController> _logger;
         private readonly ISearchCategoryHandler _searchCategoryHandler;
 
         public CategoryController(
-            Serilog.ILogger logger,
+            ILogger<CategoryController> logger,
             ISearchCategoryHandler searchCategoryHandler)
         {
             _logger = logger;
@@ -25,13 +26,43 @@ namespace WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("search")]
-        public async Task<IActionResult> GetCategory(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetCategory([FromHeader] string? accountType, CancellationToken cancellationToken)
         {
-            _logger.Information($"[CategoryController.GetCategory()] - Busca de todas as categorias disponíveis");
+            _logger.LogInformation("Busca de todas as categorias disponíveis com o parâmetro: {accountType}", accountType);
 
-            var output = await _searchCategoryHandler.Handle();
+            var input = new SearchCategoryInput
+            {
+                AccountType = GetAccountTypeByString(accountType)
+            };
+
+            var output = await _searchCategoryHandler.Handle(input);
 
             return Ok(output);
+        }
+
+        private AccountType GetAccountTypeByString(string? headerInput)
+        {
+            AccountType accountType;
+
+            if (string.IsNullOrWhiteSpace(headerInput))
+            {
+                accountType = AccountType.ContaAPagar;
+            }
+            else if (headerInput.Contains("Pagar", StringComparison.OrdinalIgnoreCase))
+            {
+                accountType = AccountType.ContaAPagar;
+            }
+            else if (headerInput.Contains("Receber", StringComparison.OrdinalIgnoreCase))
+            {
+                accountType = AccountType.ContaAReceber;
+            }
+            else
+            {
+                accountType = AccountType.ContaAPagar;
+                _logger.LogWarning("Tipo de conta não reconhecido: {headerInput}", headerInput);
+            }
+
+            return accountType;
         }
     }
 }

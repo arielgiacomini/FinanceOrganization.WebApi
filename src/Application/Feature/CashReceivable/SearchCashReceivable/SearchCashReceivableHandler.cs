@@ -92,8 +92,7 @@ namespace Application.Feature.CashReceivable.SearchCashReceivable
                     return output;
                 }
             }
-
-            if (input.Id != null)
+            else if (input.Id != null)
             {
                 foreach (var iDCashReceivable in input.Id)
                 {
@@ -110,8 +109,7 @@ namespace Application.Feature.CashReceivable.SearchCashReceivable
                     }
                 }
             }
-
-            if (input.IdCashReceivableRegistrations != null)
+            else if (input.IdCashReceivableRegistrations != null)
             {
                 foreach (var idBillToPayRegistration in input.IdCashReceivableRegistrations)
                 {
@@ -163,6 +161,17 @@ namespace Application.Feature.CashReceivable.SearchCashReceivable
 
                     return output;
                 }
+            }
+            else
+            {
+                var all = await _cashReceivableRepository.GetAll();
+
+                foreach (var item in all)
+                {
+                    searchCashReceivableDataOutput.Add(MapDomainToData(item, null, 0));
+                }
+
+                output.Output = OutputBaseDetails.Success("", searchCashReceivableDataOutput, searchCashReceivableDataOutput.Count);
             }
 
             return output;
