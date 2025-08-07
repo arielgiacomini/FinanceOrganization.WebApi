@@ -23,6 +23,7 @@ namespace Application.Feature.CashReceivable.AdjustCashReceivable
             if (!validate)
             {
                 _logger.LogError("Validation failed for input type {InputType}.", typeof(T).Name);
+                return;
             }
 
             await CashReceivablePayment(accountValue, monthYearValue, valueValue);
@@ -32,7 +33,7 @@ namespace Application.Feature.CashReceivable.AdjustCashReceivable
         {
             var accountProperty = typeof(T).GetProperty("Account");
             var monthYearProperty = typeof(T).GetProperty("InitialMonthYear");
-            if (accountProperty == null)
+            if (monthYearProperty == null)
             {
                 monthYearProperty = typeof(T).GetProperty("YearMonth");
             }
