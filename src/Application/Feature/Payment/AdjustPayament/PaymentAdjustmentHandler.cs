@@ -58,7 +58,7 @@ namespace Application.Feature.Payment.AdjustPayament
             {
                 return new PaymentAdjustmentOutput
                 {
-                    Output = OutputBaseDetails.Error("", new Dictionary<string, string>(), 0)
+                    Output = OutputBaseDetails.Error("Ajuste no pagamento com erro", new Dictionary<string, string>(), 0)
                 };
             }
 
