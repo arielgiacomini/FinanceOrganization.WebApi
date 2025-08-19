@@ -107,6 +107,23 @@ namespace Infrastructure.Repositories
             }
         }
 
+        public async Task<CashReceivable> GetByCategoryAndMonthYear(string category, string monthYear)
+        {
+            try
+            {
+                var result = await _context.CashReceivable!
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(receivable => receivable.Category == category && receivable.YearMonth == monthYear);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao consultar o método GetByCategoryAndMonthYear() no Repositório de CashReceivable. Erro: {Message}", ex.Message);
+                Exception exception = new(ex.Message);
+                throw exception;
+            }
+        }
+
         public async Task<IList<CashReceivable>> GetByMonthYear(string monthYear)
         {
             try

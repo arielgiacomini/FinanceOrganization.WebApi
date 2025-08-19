@@ -58,7 +58,7 @@ namespace Application.Feature.Payment.AdjustPayament
             {
                 return new PaymentAdjustmentOutput
                 {
-                    Output = OutputBaseDetails.Error("", new Dictionary<string, string>(), 0)
+                    Output = OutputBaseDetails.Error("Ajuste no pagamento com erro", new Dictionary<string, string>(), 0)
                 };
             }
 
@@ -143,7 +143,7 @@ namespace Application.Feature.Payment.AdjustPayament
                     }
 
                     var dateTimeNow = DateTime.Now.Date.ToString("dd/MM/yyyy");
-                    descontar.AdditionalMessage += $"Removido automaticamente: [R$ {input.Value}] em [{dateTimeNow}] do valor que estava: [R$ {valueOld}] pela seguinte conta: [{input.Name}] | ";
+                    descontar.AdditionalMessage += $" | Removido automaticamente: [R$ {input.Value}] em [{dateTimeNow}] do valor que estava: [R$ {valueOld}] pela seguinte conta: [{input.Name}]";
 
                     var edited = await _billToPayRepository.Edit(descontar);
 

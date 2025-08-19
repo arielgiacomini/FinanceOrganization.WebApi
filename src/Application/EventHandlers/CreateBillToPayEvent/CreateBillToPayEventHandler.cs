@@ -16,6 +16,7 @@ namespace Application.EventHandlers.CreateBillToPayEvent
         private readonly IBillToPayRepository _billToPayRepository;
         private readonly IAccountRepository _accountRepository;
         private readonly IPaymentAdjustmentHandler _paymentAdjustmentHandler;
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
 
         private const string FREQUENCIA_MENSAL_RECORRENTE = "Mensal:Recorrente";
@@ -49,6 +50,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             {
                 try
                 {
+                    await _semaphore.WaitAsync();
+
                     var json = JsonSerializeUtils.Serialize(toProcess);
 
                     _logger.LogInformation("Rotina que cria novas contas a pagar. Conta a ser processada: {@json}", json);
@@ -64,6 +67,10 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Erro na rotina que cria novas contas a pagar. Erro: {Message}", ex.Message);
+                }
+                finally
+                {
+                    _semaphore.Release();
                 }
             }
         }
@@ -200,8 +207,9 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 listBillToPay.Add(MapBillToPay(null, billToPayRegistration, consideredPaid, nextMonth.Value, nextMonth.Key, purchase));
             }
 
-            await _paymentAdjustmentHandler
-                .Handle(CreatePaymentAdjustment(billToPayRegistration, qtdMonthAdd, account, nextMonthYearToRegister), new CancellationToken());
+            var createPaymentAdjustment = CreatePaymentAdjustment(billToPayRegistration, qtdMonthAdd, account, nextMonthYearToRegister);
+
+            await _paymentAdjustmentHandler.Handle(createPaymentAdjustment, new CancellationToken());
 
             await _billToPayRegistrationRepository.Edit(billToPayRegistration);
 
@@ -243,11 +251,6 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                  );
                 return false;
             }
-        }
-
-        private static bool IsNotFaturaFixa(BillToPayRegistration billToPayRegistration)
-        {
-            return billToPayRegistration.RegistrationType != TIPO_REGISTRO_FATURA_FIXA;
         }
 
         private async Task LogicByBillToPay(BillToPay billToPay)

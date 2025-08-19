@@ -8,34 +8,37 @@ namespace Application.Feature.CashReceivable.AdjustCashReceivable
     {
         private readonly ILogger<AdjustCashReceivableHandler> _logger;
         private readonly ICashReceivableRepository _cashReceivableRepository;
+        public static string VOUCHER { get; set; } = string.Empty;
+        public static string CATEGORY_CASHRECEIVABLE_VOUCHER { get; set; } = string.Empty;
 
         public AdjustCashReceivableHandler(ILogger<AdjustCashReceivableHandler> logger,
             ICashReceivableRepository cashReceivableRepository)
         {
             _logger = logger;
             _cashReceivableRepository = cashReceivableRepository;
+            VOUCHER = "Vale";
+            CATEGORY_CASHRECEIVABLE_VOUCHER = "Vale Alimentação/Refeição";
+
         }
 
         public async Task Adjust<T>(T input) where T : class
         {
-            var validate = Validator(input, out string accountValue, out string monthYearValue, out decimal valueValue);
+            var validate = Validator(input, out string accountValue, out string monthYearValue, out decimal valueValue, out string categoryValue);
 
             if (!validate)
             {
                 _logger.LogError("Validation failed for input type {InputType}.", typeof(T).Name);
+                return;
             }
 
-            await CashReceivablePayment(accountValue, monthYearValue, valueValue);
+            await CashReceivablePayment(accountValue, monthYearValue, valueValue, categoryValue);
         }
 
-        private bool Validator<T>(T input, out string accountValue, out string monthYearValue, out decimal valueValue) where T : class
+        private bool Validator<T>(T input, out string accountValue, out string monthYearValue, out decimal valueValue, out string categoryValue) where T : class
         {
+            var categoryProperty = typeof(T).GetProperty("Category");
             var accountProperty = typeof(T).GetProperty("Account");
-            var monthYearProperty = typeof(T).GetProperty("InitialMonthYear");
-            if (accountProperty == null)
-            {
-                monthYearProperty = typeof(T).GetProperty("YearMonth");
-            }
+            var monthYearProperty = typeof(T).GetProperty("InitialMonthYear") ?? typeof(T).GetProperty("YearMonth");
 
             if (accountProperty == null || monthYearProperty == null)
             {
@@ -43,11 +46,14 @@ namespace Application.Feature.CashReceivable.AdjustCashReceivable
                 accountValue = null;
                 monthYearValue = null;
                 valueValue = 0;
+                categoryValue = null;
                 return false;
             }
 
             accountValue = accountProperty.GetValue(input)?.ToString();
             monthYearValue = monthYearProperty.GetValue(input)?.ToString();
+            categoryValue = categoryProperty?.GetValue(input)?.ToString();
+
             if (string.IsNullOrEmpty(accountValue) || string.IsNullOrEmpty(monthYearValue))
             {
                 _logger.LogError("The input object is missing required values for 'Account' or 'InitialMonthYear'.");
@@ -61,10 +67,24 @@ namespace Application.Feature.CashReceivable.AdjustCashReceivable
             return true;
         }
 
-        private async Task<bool> CashReceivablePayment(string accountValue, string monthYearValue, decimal value)
+        private async Task<bool> CashReceivablePayment(string accountValue, string monthYearValue, decimal value, string categoryValue)
         {
-            var cashReceivable = await _cashReceivableRepository
-                .GetByAccountAndMonthYear(accountValue, monthYearValue);
+            Domain.Entities.CashReceivable cashReceivable;
+
+            if (accountValue.Contains(VOUCHER))
+            {
+                _logger.LogInformation("A conta a receber é do tipo {Category}. A conta associada é: {Account}.", VOUCHER, accountValue);
+
+                cashReceivable = await _cashReceivableRepository
+                    .GetByCategoryAndMonthYear(CATEGORY_CASHRECEIVABLE_VOUCHER, monthYearValue);
+            }
+            else
+            {
+                _logger.LogInformation("A conta a receber é do tipo {Category}. A conta associada é: {Account}.", categoryValue, accountValue);
+
+                cashReceivable = await _cashReceivableRepository
+                    .GetByAccountAndMonthYear(accountValue, monthYearValue);
+            }
 
             if (cashReceivable == null)
             {
