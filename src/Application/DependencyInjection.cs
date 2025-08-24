@@ -14,6 +14,7 @@ using Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBillToP
 using Application.Feature.BillToPayRegistration.RecordsAwaitingCompleteRegistration;
 using Application.Feature.BillToPayRegistration.SearchBillToPayRegistration;
 using Application.Feature.CashReceivable.AdjustCashReceivable;
+using Application.Feature.CashReceivable.EditCashReceivable;
 using Application.Feature.CashReceivable.SearchCashReceivable;
 using Application.Feature.CashReceivableRegistration.CreateCashReceivableRegistration;
 using Application.Feature.Category.SearchCategory;
@@ -48,6 +49,7 @@ namespace Application
             services.AddScoped<IAdjustCashReceivableHandler, AdjustCashReceivableHandler>();
             services.AddScoped<IPaymentAdjustmentHandler, PaymentAdjustmentHandler>();
             services.AddScoped<ISearchCashReceivableHandler, SearchCashReceivableHandler>();
+            services.AddScoped<IEditCashReceivableHandler, EditCashReceivableHandler>();
 
             return services;
         }
