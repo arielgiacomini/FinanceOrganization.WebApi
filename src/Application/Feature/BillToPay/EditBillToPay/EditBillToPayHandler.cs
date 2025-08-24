@@ -1,16 +1,16 @@
 ﻿using Domain.Interfaces;
-using Serilog;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Feature.BillToPay.EditBillToPay
 {
     public class EditBillToPayHandler : IEditBillToPayHandler
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<EditBillToPayHandler> _logger;
         private readonly IBillToPayRepository _billToPayRepository;
         private readonly IBillToPayRegistrationRepository _billToPayRegistrationRepository;
 
         public EditBillToPayHandler(
-            ILogger logger,
+            ILogger<EditBillToPayHandler> logger,
             IBillToPayRepository billToPayRepository,
             IBillToPayRegistrationRepository billToPayRegistrationRepository)
         {
@@ -25,7 +25,8 @@ namespace Application.Feature.BillToPay.EditBillToPay
 
             if (validate.Any())
             {
-                _logger.Warning("");
+                _logger.LogWarning("Houve erro de validação: {@Validation}", validate);
+
                 var outputValidator = new EditBillToPayOutput
                 {
                     Output = OutputBaseDetails.Validation("Houve erro de validação", validate)
@@ -56,7 +57,7 @@ namespace Application.Feature.BillToPay.EditBillToPay
 
                 if (registration is null)
                 {
-                    _logger.Warning("Não foi possível fazer a edição da conta de registro. Essa edição era pra deixar a conta o mais atualizado possível");
+                    _logger.LogWarning("Não foi possível fazer a edição da conta de registro. Essa edição era pra deixar a conta o mais atualizado possível");
                 }
 
                 registration.Name = input.Name;
@@ -71,11 +72,11 @@ namespace Application.Feature.BillToPay.EditBillToPay
 
                 if (editRegistration > 0)
                 {
-                    _logger.Warning("Houve um problema ao tentar editar a conta {Name} de Id: {Id} e o processo não foi efetuado.", registration.Name, registration.Id);
+                    _logger.LogWarning("Houve um problema ao tentar editar a conta {Name} de Id: {Id} e o processo não foi efetuado.", registration.Name, registration.Id);
                 }
                 else
                 {
-                    _logger.Information("Alteração da conta {Name} de Id: {} realizado com sucesso.", registration.Name, registration.Id);
+                    _logger.LogInformation("Alteração da conta {Name} de Id: {} realizado com sucesso.", registration.Name, registration.Id);
                 }
             }
 

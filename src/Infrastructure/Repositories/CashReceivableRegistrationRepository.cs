@@ -60,4 +60,22 @@ public class CashReceivableRegistrationRepository : ICashReceivableRegistrationR
 
         return result;
     }
+
+    public async Task<CashReceivableRegistration?> GetById(int iD)
+    {
+        try
+        {
+            var result = await _context.CashReceivableRegistration!
+                .AsNoTracking()
+                .FirstOrDefaultAsync(cashReceivableRegistration => cashReceivableRegistration.Id == iD);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            Exception exception = new(ex.Message);
+            throw exception;
+        }
+    }
 }

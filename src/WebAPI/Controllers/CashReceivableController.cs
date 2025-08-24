@@ -1,4 +1,5 @@
 ﻿using Application.Feature;
+using Application.Feature.CashReceivable.EditCashReceivable;
 using Application.Feature.CashReceivable.SearchCashReceivable;
 using Application.Feature.CashReceivableRegistration.CreateCashReceivableRegistration;
 using Domain.Utils;
@@ -14,15 +15,18 @@ namespace WebAPI.Controllers
         private readonly ILogger<CashReceivableController> _logger;
         private readonly ICreateCashReceivableRegistrationHandler _createCashReceivableHandler;
         private readonly ISearchCashReceivableHandler _searchCashReceivableHandler;
+        private readonly IEditCashReceivableHandler _editCashReceivableHandler;
 
         public CashReceivableController(
             ILogger<CashReceivableController> logger,
             ICreateCashReceivableRegistrationHandler createCashReceivableHandler,
-            ISearchCashReceivableHandler searchCashReceivableHandler)
+            ISearchCashReceivableHandler searchCashReceivableHandler,
+            IEditCashReceivableHandler editCashReceivableHandler)
         {
             _logger = logger;
             _createCashReceivableHandler = createCashReceivableHandler;
             _searchCashReceivableHandler = searchCashReceivableHandler;
+            _editCashReceivableHandler = editCashReceivableHandler;
         }
 
         /// <summary>
@@ -80,6 +84,23 @@ namespace WebAPI.Controllers
             _logger.LogInformation("Busca de contar a receber");
 
             var output = await _searchCashReceivableHandler.Handle(input, cancellationToken);
+
+            return Ok(output);
+        }
+
+        /// <summary>
+        /// Edita uma conta a receber
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPut("edit")]
+        public async Task<IActionResult> EditCashReceivable([FromBody] EditCashReceivableInput input,
+            CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Edição de uma conta a receber");
+
+            var output = await _editCashReceivableHandler.Handle(input, cancellationToken);
 
             return Ok(output);
         }

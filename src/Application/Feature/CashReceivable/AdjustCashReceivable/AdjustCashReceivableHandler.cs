@@ -73,14 +73,16 @@ namespace Application.Feature.CashReceivable.AdjustCashReceivable
 
             if (accountValue.Contains(VOUCHER))
             {
-                _logger.LogInformation("A conta a receber é do tipo {Category}. A conta associada é: {Account}.", VOUCHER, accountValue);
+                _logger.LogInformation("A conta a receber é {Account}. E está entre o VOUCHER: {Voucher} " +
+                    "e por isso a busca será feita por Categoria e Mês Ano.", accountValue, VOUCHER);
 
                 cashReceivable = await _cashReceivableRepository
                     .GetByCategoryAndMonthYear(CATEGORY_CASHRECEIVABLE_VOUCHER, monthYearValue);
             }
             else
             {
-                _logger.LogInformation("A conta a receber é do tipo {Category}. A conta associada é: {Account}.", categoryValue, accountValue);
+                _logger.LogInformation("A conta a receber tem a conta: {Account} " +
+                    "e sua categoria é {Category}. A busca será feita por conta e Mês Ano.", categoryValue, accountValue);
 
                 cashReceivable = await _cashReceivableRepository
                     .GetByAccountAndMonthYear(accountValue, monthYearValue);
