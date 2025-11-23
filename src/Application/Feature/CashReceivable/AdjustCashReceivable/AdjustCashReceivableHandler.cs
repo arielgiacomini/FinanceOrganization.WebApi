@@ -69,7 +69,7 @@ namespace Application.Feature.CashReceivable.AdjustCashReceivable
 
         private async Task<bool> CashReceivablePayment(string accountValue, string monthYearValue, decimal value, string categoryValue)
         {
-            Domain.Entities.CashReceivable cashReceivable;
+            Domain.Entities.CashReceivable cashReceivable = new();
 
             if (accountValue.Contains(VOUCHER))
             {
@@ -79,6 +79,9 @@ namespace Application.Feature.CashReceivable.AdjustCashReceivable
                 cashReceivable = await _cashReceivableRepository
                     .GetByCategoryAndMonthYear(CATEGORY_CASHRECEIVABLE_VOUCHER, monthYearValue);
             }
+
+            /*
+             * Removido em 19/11/2025 - Motivo: Decidiu-se que só deve fazer ajuste em conta a receber se for vale refeição/alimentação.
             else
             {
                 _logger.LogInformation("A conta a receber tem a conta: {Account} " +
@@ -87,8 +90,9 @@ namespace Application.Feature.CashReceivable.AdjustCashReceivable
                 cashReceivable = await _cashReceivableRepository
                     .GetByAccountAndMonthYear(accountValue, monthYearValue);
             }
+            */
 
-            if (cashReceivable == null)
+            if (cashReceivable.Id == Guid.Empty)
             {
                 return false;
             }
