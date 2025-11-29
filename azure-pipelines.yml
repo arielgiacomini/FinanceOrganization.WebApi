@@ -1,57 +1,45 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
-- main
-
-pool:
-  vmImage: 'windows-latest'
-
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-
-steps:
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: ExtractFiles@1
-  inputs:
-    archiveFilePatterns: '$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip'
-    destinationFolder: '$(Build.ArtifactStagingDirectory)\extract'
-    cleanDestinationFolder: true
-    overwriteExistingFiles: true
-
-- task: FtpUpload@2
-  inputs:
-    credentialsOption: 'inputs'
-    serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
-    username: 'arielgiacomini-003'
-    password: 'Passw0rdhelen@'
-    rootDirectory: '$(Build.ArtifactStagingDirectory)\extract'
-    filePatterns: '**'
-    remoteDirectory: '/api.finance.hml'
-    #remoteDirectory: '/teste'
-    enableUtf8: true
-    clean: false
-    cleanContents: false
-    preservePaths: false
-    trustSSL: false
+ - none
+stages:
+ - stage: Build
+   displayName: 'Build Stage'
+   jobs:
+     - job: BuildJob
+       pool:
+         vmImage: 'windows-latest'
+       steps:
+         - task: VSBuild@1
+           inputs:
+             solution: '**/*.sln'
+             msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:PackageLocation="$(Build.ArtifactStagingDirectory)"'
+         - task: PublishBuildArtifacts@1
+           inputs:
+             PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+             ArtifactName: 'drop'
+ - stage: Deploy
+   displayName: 'Deploy Stage'
+   dependsOn: Build
+   jobs:
+     - deployment: DeployToEnvironment
+       displayName: 'Deploy to Environment'
+       environment:
+         name: DevEnvironment
+         resourceType: VirtualMachine
+       strategy:
+         runOnce:
+           deploy:
+             steps:
+               - download: current
+                 artifact: drop
+               - task: IISWebAppManagementOnMachineGroup@0
+                 displayName: 'Manage IIS Web App'
+                 inputs:
+                   IISDeploymentType: 'IISWebsite'
+                   ActionIISWebsite: 'https://win8130.site4now.net:8172/MsDeploy.axd?site=arielgiacomini-003-site1'
+                   WebsiteName: 'arielgiacomini-003-site1'
+                   WebsitePhysicalPath: 'h:\\root\\home\\arielgiacomini-003\\www\\api.finance.prd'
+               - task: IISWebAppDeploymentOnMachineGroup@0
+                 displayName: 'Deploy IIS Web App'
+                 inputs:
+                   WebSiteName: 'Default Web Site'
+                   Package: '$(Pipeline.Workspace)/drop/*.zip'
