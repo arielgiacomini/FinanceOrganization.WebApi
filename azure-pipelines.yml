@@ -16,6 +16,7 @@ stages:
            inputs:
              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
              ArtifactName: 'drop'
+
  - stage: Deploy
    displayName: 'Deploy Stage'
    dependsOn: Build
@@ -23,7 +24,7 @@ stages:
      - deployment: DeployToEnvironment
        displayName: 'Deploy to Environment'
        environment:
-         name: DevEnvironment
+         name: 'Approvers HML'
          resourceType: VirtualMachine
        strategy:
          runOnce:
