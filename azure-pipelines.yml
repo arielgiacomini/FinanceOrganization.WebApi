@@ -11,7 +11,7 @@ variables:
   
 stages:
  - stage: Build
-   displayName: 'Build Stage'
+   displayName: 'Build'
    jobs:
      - job: BuildJob
        pool:
@@ -33,7 +33,35 @@ stages:
              ArtifactName: 'drop'
 
  - stage: Deploy
-   displayName: 'Deploy Stage'
+   displayName: 'Deploy on hml'
+   dependsOn: Build
+   jobs:
+     - deployment: DeployToEnvironment
+       displayName: 'Inicia o Deploy'
+       environment:
+         name: 'Approvers HML'
+         resourceType: VirtualMachine
+       strategy:
+         runOnce:
+           deploy:
+             steps:
+               - download: current
+                 artifact: drop
+               - task: IISWebAppManagementOnMachineGroup@0
+                 displayName: 'Manage IIS Web App'
+                 inputs:
+                   IISDeploymentType: 'IISWebsite'
+                   ActionIISWebsite: 'https://win8130.site4now.net:8172/MsDeploy.axd?site=arielgiacomini-003-subsite6'
+                   WebsiteName: 'arielgiacomini-003-subsite6'
+                   WebsitePhysicalPath: 'h:\\root\\home\\arielgiacomini-003\\www\\api.finance.prd'
+               - task: IISWebAppDeploymentOnMachineGroup@0
+                 displayName: 'Deploy IIS Web App'
+                 inputs:
+                   WebSiteName: 'arielgiacomini-003-site1'
+                   Package: '$(Pipeline.Workspace)/drop/*.zip'
+
+ - stage: Deploy
+   displayName: 'Deploy on prd'
    dependsOn: Build
    jobs:
      - deployment: DeployToEnvironment
