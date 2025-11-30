@@ -1,5 +1,14 @@
 trigger:
  - none
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  
 stages:
  - stage: Build
    displayName: 'Build Stage'
@@ -8,16 +17,16 @@ stages:
        pool:
          vmImage: 'windows-latest'
        steps:
-         - task: NuGetToolInstaller@1         
+         - task: NuGetToolInstaller@1
          - task: NuGetCommand@2
            inputs:
              restoreSolution: '$(solution)'
          - task: VSBuild@1
            inputs:
-             solution: '**/*.sln'
-             msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:TargetFramework=net6.0 /p:PackageLocation="$(Build.ArtifactStagingDirectory)"'
-             platform: 'Any CPU'
-             configuration: Release
+             solution: '$(solution)'
+             msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip" /p:DeployIisAppPath="Default Web Site"'
+             platform: '$(buildPlatform)'
+             configuration: '$(buildConfiguration)'
          - task: PublishBuildArtifacts@1
            inputs:
              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
