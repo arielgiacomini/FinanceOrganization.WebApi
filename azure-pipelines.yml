@@ -1,94 +1,102 @@
+# Pseudocode / Plan (detailed):
+# - Use a Windows hosted agent because msdeploy.exe is required.
+# - Install .NET 6 SDK.
+# - Restore, build and publish the WebAPI to a local publish folder.
+# - Archive the publish folder into a zip package.
+# - Locate msdeploy.exe on the agent (common Program Files paths or in PATH).
+# - Run msdeploy.exe with the publish-profile MSDeployServiceURL, username and a secret password variable.
+# - Fail the pipeline if msdeploy.exe is not found.
+# - Provide a secret pipeline variable named "msdeployPassword" (do NOT store it here).
+#
+# Notes:
+# - The MSDeployServiceURL and DeployIisAppPath taken from your publish profile are embedded as variables.
+# - Set the secret variable "msdeployPassword" in the pipeline UI or a variable group before running.
+# - This pipeline does not auto-trigger (trigger: none). Adjust triggers as needed.
 
-
-trigger:
- - main
-
-pool:
-  vmImage: 'windows-latest'
+trigger: none
+pr: none
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
+  vmImage: 'windows-latest'
   buildConfiguration: 'Release'
-  
-stages:
- - stage: Build
-   displayName: 'Build'
-   jobs:
-     - job: BuildJob
-       displayName: 'Inicia o processo de Build da Aplicação'
-       pool:
-         vmImage: 'windows-latest'
-       steps:
-         - task: NuGetToolInstaller@1
-         - task: NuGetCommand@2
-           inputs:
-             restoreSolution: '$(solution)'
-         - task: VSBuild@1
-           inputs:
-             solution: '$(solution)'
-             msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip" /p:DeployIisAppPath="Default Web Site"'
-             platform: '$(buildPlatform)'
-             configuration: '$(buildConfiguration)'
-         - task: PublishBuildArtifacts@1
-           inputs:
-             PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-             ArtifactName: 'drop'
+  targetFramework: 'net6.0'
+  packageFolder: '$(Build.ArtifactStagingDirectory)/publish'
+  packageZip: '$(Build.ArtifactStagingDirectory)/publish.zip'
+  # From publish profile:
+  msdeployServiceUrl: 'https://win8130.site4now.net:8172/MsDeploy.axd?site=arielgiacomini-003-subsite6'
+  msdeployUser: 'arielgiacomini-003'
+  msdeploySite: 'arielgiacomini-003-subsite6'
+  # NOTE: create a secret pipeline variable named "msdeployPassword" (no default here)
 
- - stage: DeployOnHml
-   displayName: 'Deploy on hml'
-   dependsOn: Build
-   jobs:
-     - deployment: DeployToEnvironment
-       displayName: 'Inicia o Deploy em Homologação'
-       environment:
-         name: 'Approvers HML'
-       strategy:
-         runOnce:
-           deploy:
-             steps:
-               - download: current
-                 artifact: drop
-               - task: IISWebAppManagementOnMachineGroup@0
-                 displayName: 'Manage IIS Web App'
-                 inputs:
-                   IISDeploymentType: 'IISWebsite'
-                   ActionIISWebsite: 'CreateOrUpdateWebsite'
-                   WebsiteName: 'arielgiacomini-003-subsite6'
-                   WebsitePhysicalPath: 'h:\\root\\home\\arielgiacomini-003\\www\\api.finance.prd'
-                   WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
-                   WebsiteAuthUserName: 'arielgiacomini-003'
-                   WebsiteAuthUserPassword: ''
-               - task: IISWebAppDeploymentOnMachineGroup@0
-                 displayName: 'Deploy IIS Web App'
-                 inputs:
-                   WebSiteName: 'arielgiacomini-003-site1'
-                   Package: '$(Pipeline.Workspace)/drop/*.zip'
+pool:
+  vmImage: $(vmImage)
 
- - stage: DeployOnPrd
-   displayName: 'Deploy on prd'
-   dependsOn: Build
-   jobs:
-     - deployment: DeployToEnvironment
-       displayName: 'Inicia o Deploy em Produção'
-       environment:
-         name: 'Approvers HML'
-         resourceType: VirtualMachine
-       strategy:
-         runOnce:
-           deploy:
-             steps:
-               - download: current
-                 artifact: drop
-               - task: IISWebAppManagementOnMachineGroup@0
-                 displayName: 'Manage IIS Web App'
-                 inputs:
-                   IISDeploymentType: 'IISWebsite'
-                   ActionIISWebsite: 'https://win8130.site4now.net:8172/MsDeploy.axd?site=arielgiacomini-003-site1'
-                   WebsiteName: 'arielgiacomini-003-site1'
-                   WebsitePhysicalPath: 'h:\\root\\home\\arielgiacomini-003\\www\\api.finance.prd'
-               - task: IISWebAppDeploymentOnMachineGroup@0
-                 displayName: 'Deploy IIS Web App'
-                 inputs:
-                   WebSiteName: 'Default Web Site'
-                   Package: '$(Pipeline.Workspace)/drop/*.zip'
+steps:
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '6.0.x'
+    includePreviewVersions: false
+
+- script: dotnet restore
+  displayName: 'dotnet restore'
+
+- script: dotnet build --no-restore -c $(buildConfiguration)
+  displayName: 'dotnet build'
+
+- script: dotnet publish --no-build -c $(buildConfiguration) -f $(targetFramework) -o "$(packageFolder)"
+  displayName: 'dotnet publish'
+
+- task: ArchiveFiles@2
+  displayName: 'Create ZIP package'
+  inputs:
+    rootFolderOrFile: '$(packageFolder)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(packageZip)'
+    replaceExistingArchive: true
+
+- powershell: |
+    Write-Host "Searching for msdeploy.exe..."
+    $msdeploy = $null
+    try { $msdeploy = (Get-Command msdeploy.exe -ErrorAction Stop).Source } catch {}
+    if (-not $msdeploy) {
+      $candidates = @(
+        "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe",
+        "C:\Program Files (x86)\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+      )
+      $msdeploy = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+    }
+    if (-not $msdeploy -or -not (Test-Path $msdeploy)) {
+      Write-Error "msdeploy.exe not found on agent. Ensure agent image has Web Deploy installed or use a self-hosted agent."
+      exit 1
+    }
+    Write-Host "Using msdeploy: $msdeploy"
+
+    if (-not $Env:msdeployPassword) {
+      Write-Error "Secret variable 'msdeployPassword' is not set. Set it in pipeline variables before running."
+      exit 1
+    }
+
+    $serviceUrl = "$(msdeployServiceUrl)"
+    $user = "$(msdeployUser)"
+    $pwd = $Env:msdeployPassword
+    $package = "$(packageZip)"
+
+    # Build destination string. Using Basic auth (WMSVC). allowUntrusted used because remote cert may be untrusted.
+    $dest = "auto,computerName='$serviceUrl',userName='$user',password='$pwd',authType='Basic'"
+
+    Write-Host "Deploying package to $serviceUrl (site: $(msdeploySite))"
+    & "$msdeploy" -verb:sync -source:package="$package" -dest:$dest -allowUntrusted -verbose
+  displayName: 'Deploy with msdeploy'
+  env:
+    msdeployPassword: $(msdeployPassword)
+  failOnStderr: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish build artifact (package)'
+  inputs:
+    PathToPublish: '$(packageZip)'
+    ArtifactName: 'webapp-package'
+    publishLocation: 'Container'
