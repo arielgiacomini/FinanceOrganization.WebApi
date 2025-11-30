@@ -1,5 +1,7 @@
+
+
 trigger:
- - none
+ - main
 
 pool:
   vmImage: 'windows-latest'
@@ -14,6 +16,7 @@ stages:
    displayName: 'Build'
    jobs:
      - job: BuildJob
+       displayName: 'Inicia o processo de Build da Aplicação'
        pool:
          vmImage: 'windows-latest'
        steps:
@@ -37,10 +40,9 @@ stages:
    dependsOn: Build
    jobs:
      - deployment: DeployToEnvironment
-       displayName: 'Inicia o Deploy'
+       displayName: 'Inicia o Deploy em Homologação'
        environment:
          name: 'Approvers HML'
-         resourceType: VirtualMachine
        strategy:
          runOnce:
            deploy:
@@ -65,7 +67,7 @@ stages:
    dependsOn: Build
    jobs:
      - deployment: DeployToEnvironment
-       displayName: 'Deploy to Environment'
+       displayName: 'Inicia o Deploy em Produção'
        environment:
          name: 'Approvers HML'
          resourceType: VirtualMachine
