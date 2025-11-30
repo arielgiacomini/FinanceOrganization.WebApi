@@ -88,7 +88,7 @@ steps:
     $dest = "contentPath='$(msdeploySite)',computerName='$serviceUrl',userName='$user',password='$pwd',authType='Basic,includeAcls="False" -allowUntrusted -disableLink:AppPoolExtension -disableLink:ContentExtension -disableLink:CertificateExtension -enableRule:AppOffline -enableRule:DoNotDeleteRule'"
 
     Write-Host "Deploying package to $serviceUrl (site: $(msdeploySite))"
-    & "$msdeploy" -verb:sync -source:package="$package" -dest:$dest -allowUntrusted -enableRule:DoNotDeleteRule -verbose
+    & "$msdeploy" -verb:sync -source:package="$package" -dest:$dest -verbose
   displayName: 'Deploy with msdeploy'
   env:
     msdeployPassword: $(msdeployPassword)
