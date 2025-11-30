@@ -8,6 +8,10 @@ stages:
        pool:
          vmImage: 'windows-latest'
        steps:
+         - task: NuGetToolInstaller@1         
+         - task: NuGetCommand@2
+           inputs:
+             restoreSolution: '$(solution)'
          - task: VSBuild@1
            inputs:
              solution: '**/*.sln'
