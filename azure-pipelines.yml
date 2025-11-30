@@ -85,7 +85,7 @@ steps:
     $package = "$(packageZip)"
 
     # Build destination string. Using Basic auth (WMSVC). allowUntrusted used because remote cert may be untrusted.
-    $dest = "contentPath='$(msdeploySite)',computerName='$serviceUrl',userName='$user',password='$pwd',authType='Basic,includeAcls="False" -allowUntrusted -disableLink:AppPoolExtension -disableLink:ContentExtension -disableLink:CertificateExtension -enableRule:AppOffline -enableRule:DoNotDeleteRule'"
+    $dest = "contentPath='$(msdeploySite)',computerName='$serviceUrl',userName='$user',password='$pwd',authType='Basic,includeAcls="False" -allowUntrusted -disableLink:AppPoolExtension -disableLink:ContentExtension -disableLink:CertificateExtension -enableRule:AppOffline -enableRule:DoNotDeleteRule"
 
     Write-Host "Deploying package to $serviceUrl (site: $(msdeploySite))"
     & "$msdeploy" -verb:sync -source:package="$package" -dest:$dest -verbose
