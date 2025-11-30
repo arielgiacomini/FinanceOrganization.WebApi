@@ -53,9 +53,12 @@ stages:
                  displayName: 'Manage IIS Web App'
                  inputs:
                    IISDeploymentType: 'IISWebsite'
-                   ActionIISWebsite: 'https://win8130.site4now.net:8172/MsDeploy.axd?site=arielgiacomini-003-subsite6'
+                   ActionIISWebsite: 'CreateOrUpdateWebsite'
                    WebsiteName: 'arielgiacomini-003-subsite6'
                    WebsitePhysicalPath: 'h:\\root\\home\\arielgiacomini-003\\www\\api.finance.prd'
+                   WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
+                   WebsiteAuthUserName: 'arielgiacomini-003'
+                   WebsiteAuthUserPassword: ''
                - task: IISWebAppDeploymentOnMachineGroup@0
                  displayName: 'Deploy IIS Web App'
                  inputs:
