@@ -15,7 +15,9 @@ stages:
          - task: VSBuild@1
            inputs:
              solution: '**/*.sln'
-             msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:PackageLocation="$(Build.ArtifactStagingDirectory)"'
+             msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:TargetFramework=net6.0 /p:PackageLocation="$(Build.ArtifactStagingDirectory)"'
+             platform: 'Any CPU'
+             configuration: Release
          - task: PublishBuildArtifacts@1
            inputs:
              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
