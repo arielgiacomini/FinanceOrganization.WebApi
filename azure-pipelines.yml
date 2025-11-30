@@ -24,7 +24,7 @@ variables:
   packageZip: '$(Build.ArtifactStagingDirectory)/publish.zip'
   # From publish profile:
   msdeployServiceUrl: 'https://win8130.site4now.net:8172/MsDeploy.axd?site=arielgiacomini-003-subsite6'
-  msdeployUser: 'arielgiacomini'
+  msdeployUser: 'arielgiacomini-003'
   msdeploySite: 'arielgiacomini-003-subsite6'
   # NOTE: create a secret pipeline variable named "msdeployPassword" (no default here)
 
@@ -85,10 +85,9 @@ steps:
     $package = "$(packageZip)"
 
     # Build destination string. Using Basic auth (WMSVC). allowUntrusted used because remote cert may be untrusted.
-    $dest = "contentPath='https://win8130.site4now.net:8172/MsDeploy.axd?site=arielgiacomini-003-subsite6',computerName='$serviceUrl',userName='$user',password='$pwd',authType='Basic'"
+    $dest = "auto,computerName='$serviceUrl',userName='$user',password='$pwd',authType='Basic'"
 
     Write-Host "Deploying package to $serviceUrl (site: $(msdeploySite))"
-    #Write-Host "Senha: $Env:msdeployPassword"
     & "$msdeploy" -verb:sync -source:package="$package" -dest:$dest -allowUntrusted -enableRule:DoNotDeleteRule -verbose
   displayName: 'Deploy with msdeploy'
   env:
