@@ -89,7 +89,7 @@ steps:
 
     Write-Host "Deploying package to $serviceUrl (site: $(msdeploySite))"
     #Write-Host "Senha: $Env:msdeployPassword"
-    & "$msdeploy" -verb:sync -source:package="$package" -dest:$dest -allowUntrusted -verbose
+    & "$msdeploy" -verb:sync -source:package="$package" -dest:$dest -allowUntrusted -enableRule:DoNotDeleteRule –whatif -verbose
   displayName: 'Deploy with msdeploy'
   env:
     msdeployPassword: $(msdeployPassword)
