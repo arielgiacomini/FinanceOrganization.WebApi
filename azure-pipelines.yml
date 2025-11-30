@@ -88,6 +88,7 @@ steps:
     $dest = "auto,computerName='$serviceUrl',userName='$user',password='$pwd',authType='Basic'"
 
     Write-Host "Deploying package to $serviceUrl (site: $(msdeploySite))"
+    Write-Host "Senha: $Env:msdeployPassword"
     & "$msdeploy" -verb:sync -source:package="$package" -dest:$dest -allowUntrusted -verbose
   displayName: 'Deploy with msdeploy'
   env:
