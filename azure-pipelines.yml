@@ -32,7 +32,7 @@ stages:
              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
              ArtifactName: 'drop'
 
- - stage: Deploy
+ - stage: DeployOnHml
    displayName: 'Deploy on hml'
    dependsOn: Build
    jobs:
@@ -60,7 +60,7 @@ stages:
                    WebSiteName: 'arielgiacomini-003-site1'
                    Package: '$(Pipeline.Workspace)/drop/*.zip'
 
- - stage: Deploy
+ - stage: DeployOnPrd
    displayName: 'Deploy on prd'
    dependsOn: Build
    jobs:
