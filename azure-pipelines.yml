@@ -1,57 +1,87 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
-trigger:
-- main
-
-pool:
-  vmImage: 'windows-latest'
+trigger: none
+pr: none
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
+  vmImage: 'windows-latest'
   buildConfiguration: 'Release'
+  targetFramework: 'net6.0'
+  packageFolder: '$(Build.ArtifactStagingDirectory)/publish'
+  packageZip: '$(Build.ArtifactStagingDirectory)/publish.zip'
+  # From publish profile:
+  msdeployServiceUrl: 'https://win8130.site4now.net:8172/MsDeploy.axd?site=arielgiacomini-003-subsite6'
+  msdeployUser: 'arielgiacomini-003'
+  msdeploySite: 'arielgiacomini-003-subsite6'
+  # NOTE: create a secret pipeline variable named "msdeployPassword" (no default here)
+
+pool:
+  vmImage: $(vmImage)
 
 steps:
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
+- task: UseDotNet@2
+  displayName: 'Install .NET SDK'
   inputs:
-    restoreSolution: '$(solution)'
+    packageType: 'sdk'
+    version: '6.0.x'
+    includePreviewVersions: false
 
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+- script: dotnet restore
+  displayName: 'dotnet restore'
 
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+- script: dotnet build --no-restore -c $(buildConfiguration)
+  displayName: 'dotnet build'
 
-- task: ExtractFiles@1
-  inputs:
-    archiveFilePatterns: '$(build.artifactStagingDirectory)\FinanceOrganization.WebApi.zip'
-    destinationFolder: '$(Build.ArtifactStagingDirectory)\extract'
-    cleanDestinationFolder: true
-    overwriteExistingFiles: true
+- script: dotnet publish --no-build -c $(buildConfiguration) -f $(targetFramework) -o "$(packageFolder)"
+  displayName: 'dotnet publish'
 
-- task: FtpUpload@2
+- task: ArchiveFiles@2
+  displayName: 'Create ZIP package'
   inputs:
-    credentialsOption: 'inputs'
-    serverUrl: 'ftp://arielgiacomini-003@WIN8130.SITE4NOW.NET'
-    username: 'arielgiacomini-003'
-    password: 'Passw0rdhelen@'
-    rootDirectory: '$(Build.ArtifactStagingDirectory)\extract'
-    filePatterns: '**'
-    remoteDirectory: '/api.finance.hml'
-    #remoteDirectory: '/teste'
-    enableUtf8: true
-    clean: false
-    cleanContents: false
-    preservePaths: false
-    trustSSL: false
+    rootFolderOrFile: '$(packageFolder)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(packageZip)'
+    replaceExistingArchive: true
+
+- powershell: |
+    Write-Host "Searching for msdeploy.exe..."
+    $msdeploy = $null
+    try { $msdeploy = (Get-Command msdeploy.exe -ErrorAction Stop).Source } catch {}
+    if (-not $msdeploy) {
+      $candidates = @(
+        "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe",
+        "C:\Program Files (x86)\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+      )
+      $msdeploy = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+    }
+    if (-not $msdeploy -or -not (Test-Path $msdeploy)) {
+      Write-Error "msdeploy.exe not found on agent. Ensure agent image has Web Deploy installed or use a self-hosted agent."
+      exit 1
+    }
+    Write-Host "Using msdeploy: $msdeploy"
+
+    if (-not $Env:msdeployPassword) {
+      Write-Error "Secret variable 'msdeployPassword' is not set. Set it in pipeline variables before running."
+      exit 1
+    }
+
+    $serviceUrl = "$(msdeployServiceUrl)"
+    $user = "$(msdeployUser)"
+    $pwd = $Env:msdeployPassword
+    $package = "$(packageZip)"
+
+    # Build destination string. Using Basic auth (WMSVC). allowUntrusted used because remote cert may be untrusted.
+    $dest = "contentPath='$(msdeploySite)',computerName='$serviceUrl',userName='$user',password='$pwd',authType='Basic',includeAcls='False'"
+
+    Write-Host "Deploying package to $serviceUrl (site: $(msdeploySite))"
+    & "$msdeploy" -verb:sync -source:package="$package" -dest:$dest -allowUntrusted -disableLink:AppPoolExtension -disableLink:ContentExtension -disableLink:CertificateExtension -enableRule:AppOffline -enableRule:DoNotDeleteRule -verbose
+  displayName: 'Deploy with msdeploy'
+  env:
+    msdeployPassword: $(msdeployPassword)
+  failOnStderr: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish build artifact (package)'
+  inputs:
+    PathToPublish: '$(packageZip)'
+    ArtifactName: 'webapp-package'
+    publishLocation: 'Container'
