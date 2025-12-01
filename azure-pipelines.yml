@@ -1,18 +1,3 @@
-# Pseudocode / Plan (detailed):
-# - Use a Windows hosted agent because msdeploy.exe is required.
-# - Install .NET 6 SDK.
-# - Restore, build and publish the WebAPI to a local publish folder.
-# - Archive the publish folder into a zip package.
-# - Locate msdeploy.exe on the agent (common Program Files paths or in PATH).
-# - Run msdeploy.exe with the publish-profile MSDeployServiceURL, username and a secret password variable.
-# - Fail the pipeline if msdeploy.exe is not found.
-# - Provide a secret pipeline variable named "msdeployPassword" (do NOT store it here).
-#
-# Notes:
-# - The MSDeployServiceURL and DeployIisAppPath taken from your publish profile are embedded as variables.
-# - Set the secret variable "msdeployPassword" in the pipeline UI or a variable group before running.
-# - This pipeline does not auto-trigger (trigger: none). Adjust triggers as needed.
-
 trigger: none
 pr: none
 
