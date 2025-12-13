@@ -48,7 +48,7 @@ namespace Infrastructure.Repositories
 
                     if (result == null)
                     {
-                        categoriesResult.Add(result);
+                        categoriesResult.Add(new Category { Name = categoryNonRegister, Enable = true, CreationDate = DateTime.Now, LastChangeDate = null, AccountType = "Conta a Pagar" });
                     }
                 }
 
