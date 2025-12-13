@@ -1,5 +1,4 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
+﻿using Domain.Interfaces;
 using Domain.Options;
 using Microsoft.Extensions.Options;
 using Serilog;
@@ -31,14 +30,7 @@ namespace Application.EventHandlers.CreateCategoryEvent
                 return;
             }
 
-            IList<Category> forAdd = new List<Category>();
-
-            foreach (var item in categoriesNonRegister)
-            {
-                forAdd.Add(item);
-            }
-
-            var result = await _categoryRepository.SaveRange(forAdd);
+            var result = await _categoryRepository.SaveRange(categoriesNonRegister);
         }
     }
 }
