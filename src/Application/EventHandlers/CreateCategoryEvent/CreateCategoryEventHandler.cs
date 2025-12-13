@@ -35,7 +35,7 @@ namespace Application.EventHandlers.CreateCategoryEvent
 
             foreach (var item in categoriesNonRegister)
             {
-                forAdd.Add(new Category { Name = item, CreationDate = DateTime.Now, Enable = true });
+                forAdd.Add(item);
             }
 
             var result = await _categoryRepository.SaveRange(forAdd);

@@ -63,14 +63,14 @@ namespace WebAPI
             {
                 x.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Version = "2.2",
+                    Version = "2.3",
                     Title = "Controle Financeiro Residencial",
-                    Description = $"Último restart da aplicação: [{DateTime.Now}]",
+                    Description = $"Último restart da aplicação: [{DateTime.Now}] - Ajuste de Categorias",
                     TermsOfService = URL_ARIELGIACOMINI,
                     Contact = new OpenApiContact
                     {
                         Name = "Ariel Giacomini da Silva",
-                        Email = "arieltecnologia@outlook.com",
+                        Email = "contato@arielgiacomini.com.br",
                         Url = URL_ARIELGIACOMINI
                     },
                     License = new OpenApiLicense

@@ -12,7 +12,8 @@ namespace Infrastructure.Repositories
         private readonly FinanceOrganizationContext _context;
         private readonly ILogger _logger;
 
-        public CategoryRepository(ILogger logger,
+        public CategoryRepository(
+            ILogger logger,
             FinanceOrganizationContext context)
         {
             _logger = logger;
@@ -31,23 +32,23 @@ namespace Infrastructure.Repositories
             return categories;
         }
 
-        public async Task<IList<string>?> GetNonRegister()
+        public async Task<IList<Category>> GetNonRegister()
         {
             try
             {
-                IList<string>? categoriesResult = new List<string>();
+                IList<Category> categoriesResult = new List<Category>();
 
                 var categoriesNonRegister = _context.BillToPay!.AsNoTracking().Select(x => x.Category).Distinct().ToList();
 
                 var categoriesRegister = await GetAllAsync(AccountType.ContaAPagar);
 
-                foreach (var itemNonRegister in categoriesNonRegister)
+                foreach (var categoryNonRegister in categoriesNonRegister)
                 {
-                    var result = categoriesRegister!.FirstOrDefault(x => x.Name == itemNonRegister);
+                    var result = categoriesRegister!.FirstOrDefault(x => x.Name == categoryNonRegister);
 
                     if (result == null)
                     {
-                        categoriesResult.Add(itemNonRegister!);
+                        categoriesResult.Add(result);
                     }
                 }
 
@@ -55,7 +56,8 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.Error(ex, "{message}", ex.Message);
+                throw;
             }
         }
 
