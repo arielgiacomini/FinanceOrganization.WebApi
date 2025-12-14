@@ -11,7 +11,6 @@ variables:
   msdeployServiceUrl: 'https://win8130.site4now.net:8172/MsDeploy.axd?site=arielgiacomini-003-subsite6'
   msdeployUser: 'arielgiacomini-003'
   msdeploySite: 'arielgiacomini-003-subsite6'
-  # NOTE: create a secret pipeline variable named "msdeployPassword" (no default here)
 
 pool:
   vmImage: $(vmImage)
