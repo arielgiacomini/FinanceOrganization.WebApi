@@ -18,7 +18,7 @@ namespace Application.Feature.Category.SearchCategory
         {
             IList<string> stringList = new List<string>();
 
-            var result = await _categoryRepository.GetAllAsync(input.AccountType);
+            var result = await _categoryRepository.GetAllAsync(input.AccountType, input.Enable);
 
             if (result == null)
             {
