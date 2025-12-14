@@ -26,13 +26,14 @@ namespace WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("search")]
-        public async Task<IActionResult> GetCategory([FromHeader] string? accountType, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetCategory([FromHeader] string? accountType, bool? enable, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Busca de todas as categorias disponíveis com o parâmetro: {accountType}", accountType);
+            _logger.LogInformation("Busca de todas as categorias disponíveis com o parâmetro: AccountType: {AccountType} e OnlyEnable: {OnlyEnable}", accountType, enable);
 
             var input = new SearchCategoryInput
             {
-                AccountType = GetAccountTypeByString(accountType)
+                AccountType = GetAccountTypeByString(accountType),
+                Enable = enable
             };
 
             var output = await _searchCategoryHandler.Handle(input);
