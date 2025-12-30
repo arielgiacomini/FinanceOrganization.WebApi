@@ -73,7 +73,7 @@ namespace Infrastructure.Repositories
 
                 foreach (var categoryToEnable in categoriesRegisterDisables)
                 {
-                    var result = categoriesByBillToPay!.FirstOrDefault(x => x.Equals(categoryToEnable.Name));
+                    var result = categoriesByBillToPay?.FirstOrDefault(categoryToEnable.Name);
 
                     if (result != null)
                     {
@@ -92,7 +92,7 @@ namespace Infrastructure.Repositories
                 {
                     if (categoryToDisable.Enable)
                     {
-                        var result = categoriesByBillToPay!.FirstOrDefault(x => x.Equals(categoryToDisable.Name));
+                        var result = categoriesByBillToPay?.FirstOrDefault(categoryToDisable.Name);
 
                         if (result == null)
                         {

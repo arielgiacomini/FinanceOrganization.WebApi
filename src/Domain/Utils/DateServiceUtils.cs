@@ -291,12 +291,36 @@
             int month = DateServiceUtils.Month(splited![0]);
             int.TryParse(splited![1], out int year);
 
+            var hasNewYear = HasNewYear(year, month, monthAdd);
+
+            if (hasNewYear)
+            {
+                year += 1;
+                month = (month) - 12;
+            }
+
             monthYearResult.Month = month;
             monthYearResult.Year = year;
             monthYearResult.MonthText = splited[0];
             monthYearResult.Date = new DateTime(year, month + monthAdd, closingDay).Date;
 
             return monthYearResult;
+        }
+
+        /// <summary>
+        /// Indica se ao adicionar meses ocorre a troca de ano.
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="monthAdd"></param>
+        /// <returns></returns>
+        private static bool HasNewYear(int year, int month, int monthAdd)
+        {
+            if (month + monthAdd > 12)
+            {
+                return true;
+            }
+            return false;
         }
 
         public struct MonthYearResult
