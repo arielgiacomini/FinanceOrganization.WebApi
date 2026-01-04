@@ -18,6 +18,8 @@ using Application.Feature.CashReceivable.EditCashReceivable;
 using Application.Feature.CashReceivable.SearchCashReceivable;
 using Application.Feature.CashReceivableRegistration.CreateCashReceivableRegistration;
 using Application.Feature.Category.SearchCategory;
+using Application.Feature.Date.SearchAllWithFilters;
+using Application.Feature.Date.SearchMonthYear;
 using Application.Feature.Payment.AdjustPayament;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
@@ -50,6 +52,8 @@ namespace Application
             services.AddScoped<IPaymentAdjustmentHandler, PaymentAdjustmentHandler>();
             services.AddScoped<ISearchCashReceivableHandler, SearchCashReceivableHandler>();
             services.AddScoped<IEditCashReceivableHandler, EditCashReceivableHandler>();
+            services.AddScoped<ISearchDateAllWithFiltersHandler, SearchDateAllWithFiltersHandler>();
+            services.AddScoped<ISearchMonthYearHandler, SearchMonthYearHandler>();
 
             return services;
         }

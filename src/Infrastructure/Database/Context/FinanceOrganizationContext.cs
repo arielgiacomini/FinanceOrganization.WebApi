@@ -56,6 +56,11 @@ namespace Infrastructure.Database.Context
         /// </summary>
         public DbSet<CashReceivable> CashReceivable { get; set; }
 
+        /// <summary>
+        /// Tabela de Dimensão de Datas
+        /// </summary>
+        public DbSet<DimDate> DimDate { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new BillToPayRegistrationMapping());
@@ -66,6 +71,7 @@ namespace Infrastructure.Database.Context
             modelBuilder.ApplyConfiguration(new AccountMapping());
             modelBuilder.ApplyConfiguration(new AccountColorMapping());
             modelBuilder.ApplyConfiguration(new CashReceivableMapping());
+            modelBuilder.ApplyConfiguration(new DimDateMapping());
 
             base.OnModelCreating(modelBuilder);
         }
