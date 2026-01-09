@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Entities.Dashboard;
 using Domain.Entities.Extern;
 using Infrastructure.Database.Mapping;
 using Microsoft.EntityFrameworkCore;
@@ -72,6 +73,9 @@ namespace Infrastructure.Database.Context
             modelBuilder.ApplyConfiguration(new AccountColorMapping());
             modelBuilder.ApplyConfiguration(new CashReceivableMapping());
             modelBuilder.ApplyConfiguration(new DimDateMapping());
+
+            modelBuilder.Entity<DailyExpenseByCategoryDateDashboard>()
+                .HasNoKey();
 
             base.OnModelCreating(modelBuilder);
         }
