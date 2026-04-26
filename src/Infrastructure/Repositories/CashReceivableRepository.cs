@@ -192,5 +192,25 @@ namespace Infrastructure.Repositories
 
             return await Task.FromResult(contador);
         }
+
+        public async Task<int> DeleteRange(IList<CashReceivable> cashReceivables)
+        {
+            _context.ChangeTracker.Clear();
+
+            _context.CashReceivable!.RemoveRange(cashReceivables);
+            var result = _context.SaveChanges();
+
+            return await Task.FromResult(result);
+        }
+
+        public async Task<int> Delete(CashReceivable cashReceivable)
+        {
+            _context.ChangeTracker.Clear();
+
+            _ = _context.CashReceivable!.Remove(cashReceivable);
+            var result = _context.SaveChanges();
+
+            return await Task.FromResult(result);
+        }
     }
 }
