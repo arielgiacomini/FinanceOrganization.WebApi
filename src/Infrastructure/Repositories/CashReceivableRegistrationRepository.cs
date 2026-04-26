@@ -78,4 +78,25 @@ public class CashReceivableRegistrationRepository : ICashReceivableRegistrationR
             throw exception;
         }
     }
+
+    public async Task<int> DeleteRange(IList<CashReceivableRegistration> cashReceivableRegistrations)
+    {
+        _context.ChangeTracker.Clear();
+
+        _context.CashReceivableRegistration!.RemoveRange(cashReceivableRegistrations);
+
+        var result = _context.SaveChanges();
+
+        return await Task.FromResult(result);
+    }
+
+    public async Task<int> Delete(CashReceivableRegistration cashReceivableRegistration)
+    {
+        _context.ChangeTracker.Clear();
+
+        _ = _context.CashReceivableRegistration!.Remove(cashReceivableRegistration);
+        var result = _context.SaveChanges();
+
+        return await Task.FromResult(result);
+    }
 }

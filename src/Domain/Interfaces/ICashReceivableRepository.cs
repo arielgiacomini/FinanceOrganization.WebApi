@@ -4,6 +4,8 @@ namespace Domain.Interfaces
 {
     public interface ICashReceivableRepository
     {
+        Task<int> Delete(CashReceivable cashReceivable);
+        Task<int> DeleteRange(IList<CashReceivable> cashReceivables);
         Task<int> Edit(CashReceivable cashReceivable);
         Task<IList<CashReceivable>> GetAll();
         Task<CashReceivable?> GetByAccountAndMonthYear(string account, string monthYear);

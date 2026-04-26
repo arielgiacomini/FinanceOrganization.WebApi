@@ -1,4 +1,6 @@
 ﻿using Application.Feature;
+using Application.Feature.BillToPay.DeleteBillToPay;
+using Application.Feature.CashReceivable.DeleteCashReceivable;
 using Application.Feature.CashReceivable.EditCashReceivable;
 using Application.Feature.CashReceivable.SearchCashReceivable;
 using Application.Feature.CashReceivableRegistration.CreateCashReceivableRegistration;
@@ -16,17 +18,20 @@ namespace WebAPI.Controllers
         private readonly ICreateCashReceivableRegistrationHandler _createCashReceivableHandler;
         private readonly ISearchCashReceivableHandler _searchCashReceivableHandler;
         private readonly IEditCashReceivableHandler _editCashReceivableHandler;
+        private readonly IDeleteCashReceivableHandler _deleteBillToPayHandler;
 
         public CashReceivableController(
             ILogger<CashReceivableController> logger,
             ICreateCashReceivableRegistrationHandler createCashReceivableHandler,
             ISearchCashReceivableHandler searchCashReceivableHandler,
-            IEditCashReceivableHandler editCashReceivableHandler)
+            IEditCashReceivableHandler editCashReceivableHandler,
+            IDeleteCashReceivableHandler deleteBillToPayHandler)
         {
             _logger = logger;
             _createCashReceivableHandler = createCashReceivableHandler;
             _searchCashReceivableHandler = searchCashReceivableHandler;
             _editCashReceivableHandler = editCashReceivableHandler;
+            _deleteBillToPayHandler = deleteBillToPayHandler;
         }
 
         /// <summary>
@@ -101,6 +106,48 @@ namespace WebAPI.Controllers
             _logger.LogInformation("Edição de uma conta a receber");
 
             var output = await _editCashReceivableHandler.Handle(input, cancellationToken);
+
+            return Ok(output);
+        }
+
+        /// <summary>
+        /// Edita um lote de contas a pagar
+        /// </summary>
+        /// <param name="edits"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPut("edit-basket")]
+        public async Task<IActionResult> EditBasketCashReceivable([FromBody] IList<EditCashReceivableInput> edits,
+            CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Alteração de Contas a Receber via Lote. Input: {@Inputs}", edits);
+
+            List<EditCashReceivableOutput> outputList = new();
+            EditCashReceivableOutput output = new();
+
+            foreach (var input in edits)
+            {
+                outputList.Add(await _editCashReceivableHandler.Handle(input, cancellationToken));
+            }
+
+            output.Output = OutputBaseDetails.Success("A edição em lote de Contas a Receber foi realizada com sucesso.", outputList, outputList.Count);
+
+            return Ok(output);
+        }
+
+        /// <summary>
+        /// Deleta uma conta a receber
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteCashReceivable([FromBody] DeleteCashReceivableInput input,
+            CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Deleta registro de uma conta a receber. Input: {@Inputs}", input);
+
+            var output = await _deleteBillToPayHandler.Handle(input, cancellationToken);
 
             return Ok(output);
         }
