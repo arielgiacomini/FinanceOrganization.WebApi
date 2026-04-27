@@ -14,5 +14,6 @@ namespace Domain.Interfaces
         Task<IList<BillToPayRegistration>> GetOnlyOldRecordsAndParticipants(int daysLater, string registrationType);
         Task<int> Save(BillToPayRegistration billToPayRegistration);
         Task<IList<BillToPayRegistration>> GetBillToPayNotRegistrationPrincipal();
+        Task<int> Disable(int id);
     }
 }

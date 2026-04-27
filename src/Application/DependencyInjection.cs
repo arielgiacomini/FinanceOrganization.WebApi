@@ -11,6 +11,7 @@ using Application.Feature.BillToPay.SearchBillToPay;
 using Application.Feature.BillToPay.SearchMonthlyAverageAnalysis;
 using Application.Feature.BillToPayRegistration.CreateBillToPayRegistration;
 using Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBillToPayRegistration;
+using Application.Feature.BillToPayRegistration.DisableBillToPayRegistration;
 using Application.Feature.BillToPayRegistration.RecordsAwaitingCompleteRegistration;
 using Application.Feature.BillToPayRegistration.SearchBillToPayRegistration;
 using Application.Feature.CashReceivable.AdjustCashReceivable;
@@ -18,6 +19,7 @@ using Application.Feature.CashReceivable.DeleteCashReceivable;
 using Application.Feature.CashReceivable.EditCashReceivable;
 using Application.Feature.CashReceivable.SearchCashReceivable;
 using Application.Feature.CashReceivableRegistration.CreateCashReceivableRegistration;
+using Application.Feature.CashReceivableRegistration.DisableCashReceivableRegistration;
 using Application.Feature.Category.SearchCategory;
 using Application.Feature.Date.SearchAllWithFilters;
 using Application.Feature.Date.SearchMonthYear;
@@ -56,6 +58,8 @@ namespace Application
             services.AddScoped<ISearchDateAllWithFiltersHandler, SearchDateAllWithFiltersHandler>();
             services.AddScoped<ISearchMonthYearHandler, SearchMonthYearHandler>();
             services.AddScoped<IDeleteCashReceivableHandler, DeleteCashReceivableHandler>();
+            services.AddScoped<IDisableBillToPayRegistrationHandler, DisableBillToPayRegistrationHandler>();
+            services.AddScoped<IDisableCashReceivableRegistrationHandler, DisableCashReceivableRegistrationHandler>();
 
             return services;
         }
