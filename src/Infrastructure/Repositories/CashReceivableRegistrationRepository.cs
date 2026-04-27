@@ -99,4 +99,24 @@ public class CashReceivableRegistrationRepository : ICashReceivableRegistrationR
 
         return await Task.FromResult(result);
     }
+
+    public async Task<int> Disable(int id)
+    {
+        _context.ChangeTracker.Clear();
+
+        var cashReceivableRegistration = await _context.CashReceivableRegistration!.FindAsync(id);
+        if (cashReceivableRegistration == null)
+        {
+            return 0;
+        }
+
+        cashReceivableRegistration.Enabled = false;
+        cashReceivableRegistration.LastChangeDate = DateTime.Now;
+
+        _context.CashReceivableRegistration!.Update(cashReceivableRegistration);
+
+        var result = _context.SaveChanges();
+
+        return await Task.FromResult(result);
+    }
 }

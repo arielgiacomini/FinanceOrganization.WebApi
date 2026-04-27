@@ -128,5 +128,25 @@ namespace Infrastructure.Repositories
 
             return result;
         }
+
+        public async Task<int> Disable(int id)
+        {
+            _context.ChangeTracker.Clear();
+
+            var billToPayRegistration = await _context.BillToPayRegistration!.FindAsync(id);
+            if (billToPayRegistration == null)
+            {
+                return 0;
+            }
+
+            billToPayRegistration.Enabled = false;
+            billToPayRegistration.LastChangeDate = DateTime.Now;
+
+            _context.BillToPayRegistration!.Update(billToPayRegistration);
+
+            var result = _context.SaveChanges();
+
+            return await Task.FromResult(result);
+        }
     }
 }

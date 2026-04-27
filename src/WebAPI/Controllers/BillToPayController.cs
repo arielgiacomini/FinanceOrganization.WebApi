@@ -6,6 +6,7 @@ using Application.Feature.BillToPay.SearchBillToPay;
 using Application.Feature.BillToPay.SearchMonthlyAverageAnalysis;
 using Application.Feature.BillToPayRegistration.CreateBillToPayRegistration;
 using Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBillToPayRegistration;
+using Application.Feature.BillToPayRegistration.DisableBillToPayRegistration;
 using Application.Feature.BillToPayRegistration.RecordsAwaitingCompleteRegistration;
 using Application.Feature.BillToPayRegistration.SearchBillToPayRegistration;
 using Domain.Utils;
@@ -28,6 +29,7 @@ namespace WebAPI.Controllers
         private readonly ISearchMonthlyAverageAnalysisHandler _searchMonthlyAverageAnalysisHandler;
         private readonly ICreateNFCMobileBillToPayRegistrationHandler _createCreditCardNFCMobileBillToPayHandler;
         private readonly IRecordsAwaitingCompleteRegistrationHandler _recordsAwaitingCompleteRegistrationHandler;
+        private readonly IDisableBillToPayRegistrationHandler _disableBillToPayRegistrationHandler;
 
         public BillToPayController(
             Serilog.ILogger logger,
@@ -39,7 +41,8 @@ namespace WebAPI.Controllers
             IDeleteBillToPayHandler deleteBillToPayHandler,
             ISearchMonthlyAverageAnalysisHandler searchMonthlyAverageAnalysisHandler,
             ICreateNFCMobileBillToPayRegistrationHandler createCreditCardNFCMobileBillToPayHandler,
-            IRecordsAwaitingCompleteRegistrationHandler recordsAwaitingCompleteRegistrationHandler)
+            IRecordsAwaitingCompleteRegistrationHandler recordsAwaitingCompleteRegistrationHandler,
+            IDisableBillToPayRegistrationHandler disableBillToPayRegistrationHandler)
         {
             _logger = logger;
             _createBillToPayRegistrationHandler = createBillToPayRegistrationHandler;
@@ -51,6 +54,7 @@ namespace WebAPI.Controllers
             _searchMonthlyAverageAnalysisHandler = searchMonthlyAverageAnalysisHandler;
             _createCreditCardNFCMobileBillToPayHandler = createCreditCardNFCMobileBillToPayHandler;
             _recordsAwaitingCompleteRegistrationHandler = recordsAwaitingCompleteRegistrationHandler;
+            _disableBillToPayRegistrationHandler = disableBillToPayRegistrationHandler;
         }
 
         /// <summary>
@@ -247,6 +251,23 @@ namespace WebAPI.Controllers
             _logger.Information($"[BillToPayController.PostSearchMonthlyAverageAnalysis()] - Buscas de analises para tomadas de decisões");
 
             var output = await _searchMonthlyAverageAnalysisHandler.Handle(input, cancellationToken);
+
+            return Ok(output);
+        }
+
+        /// <summary>
+        /// Desabilita uma conta a pagar
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpDelete("disable-registration")]
+        public async Task<IActionResult> DisableBillToPayRegistration([FromBody] DisableBillToPayRegistrationInput input,
+            CancellationToken cancellationToken)
+        {
+            _logger.Information($"[BillToPayController.DisableBillToPayRegistration()] - Desabilita uma cadastro de conta. Input: {JsonSerializeUtils.Serialize(input)}");
+
+            var output = await _disableBillToPayRegistrationHandler.Handle(input, cancellationToken);
 
             return Ok(output);
         }

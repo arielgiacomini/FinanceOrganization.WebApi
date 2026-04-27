@@ -1,9 +1,9 @@
 ﻿using Application.Feature;
-using Application.Feature.BillToPay.DeleteBillToPay;
 using Application.Feature.CashReceivable.DeleteCashReceivable;
 using Application.Feature.CashReceivable.EditCashReceivable;
 using Application.Feature.CashReceivable.SearchCashReceivable;
 using Application.Feature.CashReceivableRegistration.CreateCashReceivableRegistration;
+using Application.Feature.CashReceivableRegistration.DisableCashReceivableRegistration;
 using Domain.Utils;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,19 +19,22 @@ namespace WebAPI.Controllers
         private readonly ISearchCashReceivableHandler _searchCashReceivableHandler;
         private readonly IEditCashReceivableHandler _editCashReceivableHandler;
         private readonly IDeleteCashReceivableHandler _deleteBillToPayHandler;
+        private readonly IDisableCashReceivableRegistrationHandler _disableCashReceivableRegistrationHandler;
 
         public CashReceivableController(
             ILogger<CashReceivableController> logger,
             ICreateCashReceivableRegistrationHandler createCashReceivableHandler,
             ISearchCashReceivableHandler searchCashReceivableHandler,
             IEditCashReceivableHandler editCashReceivableHandler,
-            IDeleteCashReceivableHandler deleteBillToPayHandler)
+            IDeleteCashReceivableHandler deleteBillToPayHandler,
+            IDisableCashReceivableRegistrationHandler disableCashReceivableRegistrationHandler)
         {
             _logger = logger;
             _createCashReceivableHandler = createCashReceivableHandler;
             _searchCashReceivableHandler = searchCashReceivableHandler;
             _editCashReceivableHandler = editCashReceivableHandler;
             _deleteBillToPayHandler = deleteBillToPayHandler;
+            _disableCashReceivableRegistrationHandler = disableCashReceivableRegistrationHandler;
         }
 
         /// <summary>
@@ -148,6 +151,23 @@ namespace WebAPI.Controllers
             _logger.LogInformation("Deleta registro de uma conta a receber. Input: {@Inputs}", input);
 
             var output = await _deleteBillToPayHandler.Handle(input, cancellationToken);
+
+            return Ok(output);
+        }
+
+        /// <summary>
+        /// Desabilita uma conta a receber
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpDelete("disable-registration")]
+        public async Task<IActionResult> DisableCashReceivableRegistration([FromBody] DisableCashReceivableRegistrationInput input,
+            CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Dabilitando uma conta a receber. Input: {@Inputs}", input);
+
+            var output = await _disableCashReceivableRegistrationHandler.Handle(input, cancellationToken);
 
             return Ok(output);
         }
