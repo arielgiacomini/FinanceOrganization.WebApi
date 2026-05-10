@@ -45,6 +45,7 @@
         /// </summary>
         public decimal DetailsAmount { get; set; }
         public IList<SearchBillToPayDataDetails>? Details { get; set; }
+        public string? Country { get; set; }
     }
 
     public class SearchBillToPayDataDetails
@@ -83,5 +84,6 @@
         public string? AdditionalMessage { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime? LastChangeDate { get; set; }
+        public string? Country { get; set; }
     }
 }

@@ -108,7 +108,8 @@ namespace Application.Feature.BillToPay.EditBillToPay
                 HasPay = updateBillToPayInput.HasPay,
                 AdditionalMessage = updateBillToPayInput.AdditionalMessage,
                 CreationDate = billToPayDatabase!.CreationDate,
-                LastChangeDate = updateBillToPayInput.LastChangeDate
+                LastChangeDate = updateBillToPayInput.LastChangeDate,
+                Country = updateBillToPayInput.Country
             };
         }
     }

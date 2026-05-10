@@ -204,7 +204,8 @@ namespace Application.Feature.CashReceivable.SearchCashReceivable
                         AdditionalMessage = itemDetail.AdditionalMessage,
                         Enabled = itemDetail.Enabled,
                         CreationDate = itemDetail.CreationDate,
-                        LastChangeDate = itemDetail.LastChangeDate
+                        LastChangeDate = itemDetail.LastChangeDate,
+                        Country = itemDetail.Country
                     });
                 }
             }
@@ -229,7 +230,8 @@ namespace Application.Feature.CashReceivable.SearchCashReceivable
                 Enabled = domain.Enabled,
                 CreationDate = domain.CreationDate,
                 LastChangeDate = domain.LastChangeDate,
-                Details = listDetails
+                Details = listDetails,
+                Country = domain.Country
             };
 
             return searchCashReceivable;

@@ -22,6 +22,16 @@ namespace WebAPI
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                    policy
+                        .SetIsOriginAllowed(_ => true)  // ← aceita qualquer origem
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                );
+            });
+
             services.AddMvc(options => options.EnableEndpointRouting = false);
             var logPathAppSettings = Configuration.GetSection("Log:Path").Value;
             var filePath = logPathAppSettings is null ? DEFAULT_LOG_DIRECTORY : logPathAppSettings;
@@ -49,14 +59,6 @@ namespace WebAPI
                 .CreateLogger();
 
                 return logger;
-            });
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                        .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
-                        .AllowAnyHeader());
             });
 
             services.AddSwaggerGen(x =>
@@ -89,7 +91,7 @@ namespace WebAPI
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors("CorsPolicy");
+            app.UseCors("AllowFrontend");
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

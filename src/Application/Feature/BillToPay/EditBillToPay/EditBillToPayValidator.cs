@@ -23,6 +23,11 @@ namespace Application.Feature.BillToPay.EditBillToPay
                 validatorBase.Add("[29]", $"Não foi encontrado a conta a pagar {input.Name} pelo Id: {input.Id}");
             }
 
+            if (string.IsNullOrEmpty(input.Country))
+            {
+                validatorBase.Add("[30]", "O campo Country é obrigatório.");
+            }
+
             return validatorBase;
         }
     }

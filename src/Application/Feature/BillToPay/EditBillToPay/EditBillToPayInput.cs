@@ -24,5 +24,6 @@
         /// Deve editar a conta de registro (pai) desta.
         /// </summary>
         public bool MustEditRegistrationAccount { get; set; } = true;
+        public string Country { get; set; }
     }
 }

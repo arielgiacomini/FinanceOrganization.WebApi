@@ -167,12 +167,13 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
                     HasReceived = false,
                     AdditionalMessage = cashReceivable.AdditionalMessage,
                     CreationDate = DateTime.Now,
-                    LastChangeDate = new DateTime(1753, 01, 01, 12, 0, 0, DateTimeKind.Local)
+                    LastChangeDate = new DateTime(1753, 01, 01, 12, 0, 0, DateTimeKind.Local),
+                    Country = cashReceivable.Country
                 };
             }
             else
             {
-                var newBillToPay = new CashReceivable()
+                var newCashReceivable = new CashReceivable()
                 {
                     Id = Guid.NewGuid(),
                     IdCashReceivableRegistration = registration!.Id,
@@ -190,20 +191,21 @@ namespace Application.EventHandlers.CreateCashReceivableEvent
                     HasReceived = false,
                     AdditionalMessage = registration.AdditionalMessage,
                     CreationDate = DateTime.Now,
-                    LastChangeDate = new DateTime(1753, 01, 01, 12, 0, 0, DateTimeKind.Local)
+                    LastChangeDate = new DateTime(1753, 01, 01, 12, 0, 0, DateTimeKind.Local),
+                    Country = registration.Country
                 };
 
                 if (!IS_CASH_RECEIVABLE)
                 {
                     if (EnterReceived(registration, account))
                     {
-                        newBillToPay.HasReceived = true;
-                        newBillToPay.DateReceived = agreementDate.ToString();
-                        newBillToPay.LastChangeDate = DateTime.Now;
+                        newCashReceivable.HasReceived = true;
+                        newCashReceivable.DateReceived = agreementDate.ToString();
+                        newCashReceivable.LastChangeDate = DateTime.Now;
                     }
                 }
 
-                return newBillToPay;
+                return newCashReceivable;
             }
         }
 

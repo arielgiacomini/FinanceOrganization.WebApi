@@ -105,7 +105,8 @@ namespace Application.Feature.CashReceivable.EditCashReceivable
                 AdditionalMessage = input.AdditionalMessage,
                 Enabled = input!.Enabled,
                 CreationDate = cashReceivable!.CreationDate,
-                LastChangeDate = input.LastChangeDate
+                LastChangeDate = input.LastChangeDate,
+                Country = input.Country
             };
         }
     }

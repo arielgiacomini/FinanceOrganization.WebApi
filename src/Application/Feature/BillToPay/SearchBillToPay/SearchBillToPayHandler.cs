@@ -191,9 +191,10 @@ namespace Application.Feature.BillToPay.SearchBillToPay
                         HasPay = itemDetail.HasPay,
                         AdditionalMessage = itemDetail.AdditionalMessage,
                         CreationDate = itemDetail.CreationDate,
-                        LastChangeDate = itemDetail.LastChangeDate
+                        LastChangeDate = itemDetail.LastChangeDate,
+                        Country = itemDetail.Country
                     });
-                };
+                }
             }
 
             SearchBillToPayData searchBillToPayData = new()
@@ -216,7 +217,8 @@ namespace Application.Feature.BillToPay.SearchBillToPay
                 LastChangeDate = domain.LastChangeDate,
                 DetailsQuantity = listDetails.Count,
                 DetailsAmount = amount,
-                Details = listDetails
+                Details = listDetails,
+                Country = domain.Country
             };
 
             return searchBillToPayData;

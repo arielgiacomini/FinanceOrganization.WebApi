@@ -45,6 +45,7 @@
         public DateTime CreationDate { get; set; }
         public DateTime? LastChangeDate { get; set; }
         public IList<SearchCashReceivableDataDetails> Details { get; set; }
+        public string? Country { get; set; }
     }
 
     public class SearchCashReceivableDataDetails
@@ -91,6 +92,6 @@
         public bool? Enabled { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime? LastChangeDate { get; set; }
-
+        public string? Country { get; set; }
     }
 }
