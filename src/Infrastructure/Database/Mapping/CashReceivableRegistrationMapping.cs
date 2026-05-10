@@ -25,6 +25,7 @@ namespace Infrastructure.Database.Mapping
             builder.Property(x => x.Enabled).HasColumnName("IND_ATIVO");
             builder.Property(x => x.CreationDate).HasColumnName("DAT_CRIACAO_REGISTRO");
             builder.Property(x => x.LastChangeDate).HasColumnName("DAT_ULTIMA_ALTERACAO");
+            builder.Property(x => x.Country).HasColumnName("DSC_PAIS");
         }
     }
 }

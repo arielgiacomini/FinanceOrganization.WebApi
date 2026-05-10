@@ -350,7 +350,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     HasPay = false,
                     AdditionalMessage = billToPay.AdditionalMessage,
                     CreationDate = DateTime.Now,
-                    LastChangeDate = new DateTime(1753, 01, 01, 12, 0, 0, DateTimeKind.Local)
+                    LastChangeDate = new DateTime(1753, 01, 01, 12, 0, 0, DateTimeKind.Local),
+                    Country = billToPay.Country
                 };
             }
             else
@@ -372,7 +373,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                     HasPay = false,
                     AdditionalMessage = billToPayRegistration.AdditionalMessage,
                     CreationDate = DateTime.Now,
-                    LastChangeDate = new DateTime(1753, 01, 01, 12, 0, 0, DateTimeKind.Local)
+                    LastChangeDate = new DateTime(1753, 01, 01, 12, 0, 0, DateTimeKind.Local),
+                    Country = billToPayRegistration.Country
                 };
 
                 if (consideredPaid)
@@ -410,7 +412,8 @@ namespace Application.EventHandlers.CreateBillToPayEvent
                 BestPayDay = billToPayRegistrationByDb.BestPayDay,
                 AdditionalMessage = billToPayRegistrationByDb.AdditionalMessage,
                 CreationDate = billToPayRegistrationByDb.CreationDate,
-                LastChangeDate = DateTime.Now
+                LastChangeDate = DateTime.Now,
+                Country = billToPayRegistrationByDb.Country
             };
 
             await _billToPayRegistrationRepository.Edit(billToPayRegistration);

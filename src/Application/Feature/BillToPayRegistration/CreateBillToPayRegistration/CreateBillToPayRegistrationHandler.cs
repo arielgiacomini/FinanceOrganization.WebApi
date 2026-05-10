@@ -67,7 +67,8 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
                 RegistrationType = input.RegistrationType,
                 AdditionalMessage = input.AdditionalMessage,
                 CreationDate = input.CreationDate,
-                LastChangeDate = input.LastChangeDate
+                LastChangeDate = input.LastChangeDate,
+                Country = input.Country
             };
         }
     }

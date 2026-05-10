@@ -1,5 +1,4 @@
 ﻿using Domain.Interfaces;
-using Microsoft.Extensions.Logging;
 
 namespace Application.Feature.CashReceivableRegistration.CreateCashReceivableRegistration
 {
@@ -59,7 +58,8 @@ namespace Application.Feature.CashReceivableRegistration.CreateCashReceivableReg
                 RegistrationType = input.RegistrationType,
                 AdditionalMessage = input.AdditionalMessage,
                 CreationDate = input.CreationDate,
-                LastChangeDate = input.LastChangeDate
+                LastChangeDate = input.LastChangeDate,
+                Country = input.Country
             };
         }
     }

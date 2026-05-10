@@ -19,5 +19,6 @@
         public decimal Value { get; set; }
         public DateTime? PurchaseDate { get; set; }
         public string AdditionalMessage { get; set; }
+        public string? Country { get; set; }
     }
 }

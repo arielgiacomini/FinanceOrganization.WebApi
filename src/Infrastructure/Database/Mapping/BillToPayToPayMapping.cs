@@ -26,6 +26,7 @@ namespace Infrastructure.Database.Mapping
             builder.Property(x => x.AdditionalMessage).HasColumnName("DSC_MENSAGEM_ADICIONAL");
             builder.Property(x => x.CreationDate).HasColumnName("DAT_CRIACAO_REGISTRO").HasColumnType("datetime").HasDefaultValue(null);
             builder.Property(x => x.LastChangeDate).HasColumnName("DAT_ULTIMA_ALTERACAO").HasColumnType("datetime").HasDefaultValue(null);
+            builder.Property(x => x.Country).HasColumnName("DSC_PAIS_FISCAL");
         }
     }
 }

@@ -21,5 +21,9 @@
         public string? AdditionalMessage { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime? LastChangeDate { get; set; }
+        /// <summary>
+        /// Gets or sets the country associated with the entity.
+        /// </summary>
+        public string? Country { get; set; }
     }
 }
