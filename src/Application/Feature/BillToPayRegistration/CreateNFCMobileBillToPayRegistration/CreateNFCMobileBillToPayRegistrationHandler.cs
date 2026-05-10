@@ -77,7 +77,8 @@ namespace Application.Feature.BillToPayRegistration.CreateCreditCardNFCMobileBil
                 RegistrationType = input.RegistrationType,
                 AdditionalMessage = input.AdditionalMessage,
                 CreationDate = DateTime.Now.ToLocalTime(),
-                LastChangeDate = null
+                LastChangeDate = null,
+                Country = input.Country
             };
         }
     }

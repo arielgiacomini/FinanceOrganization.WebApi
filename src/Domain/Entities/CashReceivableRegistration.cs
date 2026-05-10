@@ -26,4 +26,8 @@ public class CashReceivableRegistration
     public bool? Enabled { get; set; }
     public DateTime CreationDate { get; set; }
     public DateTime? LastChangeDate { get; set; }
+    /// <summary>
+    /// Indica se é uma conta a receber do Brasil ou Espanha, por exemplo.
+    /// </summary>
+    public string? Country { get; set; }
 }

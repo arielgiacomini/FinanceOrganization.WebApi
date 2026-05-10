@@ -18,5 +18,6 @@ namespace Application.Feature.CashReceivableRegistration.CreateCashReceivableReg
         public string? AdditionalMessage { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime? LastChangeDate { get; set; }
+        public string? Country { get; set; }
     }
 }
