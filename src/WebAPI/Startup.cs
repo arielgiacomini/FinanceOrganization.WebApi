@@ -54,9 +54,10 @@ namespace WebAPI
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                        .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
-                        .AllowAnyHeader());
+                    builder => builder
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials());
             });
 
             services.AddSwaggerGen(x =>
