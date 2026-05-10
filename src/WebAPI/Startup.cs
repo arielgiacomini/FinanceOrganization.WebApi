@@ -55,7 +55,7 @@ namespace WebAPI
             {
                 options.AddPolicy("CorsPolicy",
                     builder => builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
+                        .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                         .AllowAnyHeader());
             });
 
