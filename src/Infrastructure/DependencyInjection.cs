@@ -20,6 +20,7 @@ namespace Infrastructure
             services.AddScoped<ICashReceivableRepository, CashReceivableRepository>();
             services.AddScoped<IDimDateRepository, DimDateRepository>();
             services.AddScoped<IDashboardRepository, DashboardRepository>();
+            services.AddScoped<IWalletRepository, WalletRepository>();
 
             return services;
         }

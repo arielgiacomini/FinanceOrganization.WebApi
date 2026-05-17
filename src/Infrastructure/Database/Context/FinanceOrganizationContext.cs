@@ -62,6 +62,11 @@ namespace Infrastructure.Database.Context
         /// </summary>
         public DbSet<DimDate> DimDate { get; set; }
 
+        /// <summary>
+        /// Tabela de Carteiras
+        /// </summary>
+        public DbSet<Wallet> Wallets { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new BillToPayRegistrationMapping());
@@ -73,6 +78,7 @@ namespace Infrastructure.Database.Context
             modelBuilder.ApplyConfiguration(new AccountColorMapping());
             modelBuilder.ApplyConfiguration(new CashReceivableMapping());
             modelBuilder.ApplyConfiguration(new DimDateMapping());
+            modelBuilder.ApplyConfiguration(new WalletMapping());
 
             modelBuilder.Entity<DailyExpenseByCategoryDateDashboard>()
                 .HasNoKey();
