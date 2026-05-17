@@ -24,6 +24,9 @@ using Application.Feature.Category.SearchCategory;
 using Application.Feature.Date.SearchAllWithFilters;
 using Application.Feature.Date.SearchMonthYear;
 using Application.Feature.Payment.AdjustPayament;
+using Application.Feature.Wallet.CreateWallet;
+using Application.Feature.Wallet.EditWallet;
+using Application.Feature.Wallet.SearchWallet;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 
@@ -60,6 +63,9 @@ namespace Application
             services.AddScoped<IDeleteCashReceivableHandler, DeleteCashReceivableHandler>();
             services.AddScoped<IDisableBillToPayRegistrationHandler, DisableBillToPayRegistrationHandler>();
             services.AddScoped<IDisableCashReceivableRegistrationHandler, DisableCashReceivableRegistrationHandler>();
+            services.AddScoped<ICreateWalletHandler, CreateWalletHandler>();
+            services.AddScoped<ISearchWalletHandler, SearchWalletHandler>();
+            services.AddScoped<IEditWalletHandler, EditWalletHandler>();
 
             return services;
         }
