@@ -2,6 +2,6 @@
 {
     public class EditWalletOutput
     {
-
+        public OutputBaseDetails Output { get; set; } = new OutputBaseDetails();
     }
 }

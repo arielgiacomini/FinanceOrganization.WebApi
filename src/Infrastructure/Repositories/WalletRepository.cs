@@ -17,6 +17,12 @@ namespace Infrastructure.Repositories
             _looger = logger;
         }
 
+        public async Task<Wallet> GetById(Guid id)
+        {
+            var wallet = await _context.Wallets!.FirstOrDefaultAsync(w => w.Id == id);
+            return wallet;
+        }
+
         public async Task<IList<Wallet>> GetAllWallets()
         {
             var wallets = await _context.Wallets!.ToListAsync();
