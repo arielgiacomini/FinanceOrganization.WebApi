@@ -15,10 +15,6 @@
         /// </summary>
         public string WalletValue { get; set; }
         /// <summary>
-        /// Data de criação do registro
-        /// </summary>
-        public DateTime CreationDate { get; set; }
-        /// <summary>
         /// Data de alteração do registro
         /// </summary>
         public DateTime? LastChangeDate { get; set; }

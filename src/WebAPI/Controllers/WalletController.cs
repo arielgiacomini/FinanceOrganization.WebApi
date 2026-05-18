@@ -58,9 +58,14 @@ namespace WebAPI.Controllers
         {
             _logger.Information($"[WalletController.EditWallet()] - Alteração de uma carteira já cadastrada. Input: {JsonSerializeUtils.Serialize(input)}");
 
-            //var output = await _editWalletHandler.Handle(input, cancellationToken);
+            var output = await _editWalletHandler.Handle(input, cancellationToken);
 
-            return Ok();
+            if (output.Output.Status == Application.Feature.OutputBaseDetails.OutputStatus.HasValidationIssue)
+            {
+                return BadRequest(output);
+            }
+
+            return Ok(output);
         }
 
         /// <summary>
