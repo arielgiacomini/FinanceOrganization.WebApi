@@ -201,6 +201,11 @@ namespace WebAPI.Controllers
 
             var output = await _payBillToPayHandler.Handle(input, cancellationToken);
 
+            if (output?.Output?.Status == OutputStatus.HasValidationIssue)
+            {
+                return BadRequest(output);
+            }
+
             return Ok(output);
         }
 

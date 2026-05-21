@@ -7,6 +7,7 @@ namespace Domain.Interfaces
         Task<int> Delete(CashReceivable cashReceivable);
         Task<int> DeleteRange(IList<CashReceivable> cashReceivables);
         Task<int> Edit(CashReceivable cashReceivable);
+        Task<int> EditRange(IList<CashReceivable> cashReceivables);
         Task<IList<CashReceivable>> GetAll();
         Task<CashReceivable?> GetByAccountAndMonthYear(string account, string monthYear);
         Task<CashReceivable> GetByCategoryAndMonthYear(string category, string monthYear);

@@ -212,5 +212,16 @@ namespace Infrastructure.Repositories
 
             return await Task.FromResult(result);
         }
+
+        public async Task<int> EditRange(IList<CashReceivable> cashReceivables)
+        {
+            _context.ChangeTracker.Clear();
+
+            _context.CashReceivable!.UpdateRange(cashReceivables);
+
+            var result = _context.SaveChanges();
+
+            return await Task.FromResult(result);
+        }
     }
 }

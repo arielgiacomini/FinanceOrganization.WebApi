@@ -1,6 +1,8 @@
 ﻿using Application.Feature;
+using Application.Feature.BillToPay.PayBillToPay;
 using Application.Feature.CashReceivable.DeleteCashReceivable;
 using Application.Feature.CashReceivable.EditCashReceivable;
+using Application.Feature.CashReceivable.ReceiveCashReceivable;
 using Application.Feature.CashReceivable.SearchCashReceivable;
 using Application.Feature.CashReceivableRegistration.CreateCashReceivableRegistration;
 using Application.Feature.CashReceivableRegistration.DisableCashReceivableRegistration;
@@ -20,6 +22,7 @@ namespace WebAPI.Controllers
         private readonly IEditCashReceivableHandler _editCashReceivableHandler;
         private readonly IDeleteCashReceivableHandler _deleteBillToPayHandler;
         private readonly IDisableCashReceivableRegistrationHandler _disableCashReceivableRegistrationHandler;
+        private readonly IReceiveCashReceivableHandler _receiveCashReceivableHandler;
 
         public CashReceivableController(
             ILogger<CashReceivableController> logger,
@@ -27,7 +30,8 @@ namespace WebAPI.Controllers
             ISearchCashReceivableHandler searchCashReceivableHandler,
             IEditCashReceivableHandler editCashReceivableHandler,
             IDeleteCashReceivableHandler deleteBillToPayHandler,
-            IDisableCashReceivableRegistrationHandler disableCashReceivableRegistrationHandler)
+            IDisableCashReceivableRegistrationHandler disableCashReceivableRegistrationHandler,
+            IReceiveCashReceivableHandler receiveCashReceivableHandler)
         {
             _logger = logger;
             _createCashReceivableHandler = createCashReceivableHandler;
@@ -35,6 +39,7 @@ namespace WebAPI.Controllers
             _editCashReceivableHandler = editCashReceivableHandler;
             _deleteBillToPayHandler = deleteBillToPayHandler;
             _disableCashReceivableRegistrationHandler = disableCashReceivableRegistrationHandler;
+            _receiveCashReceivableHandler = receiveCashReceivableHandler;
         }
 
         /// <summary>
@@ -168,6 +173,22 @@ namespace WebAPI.Controllers
             _logger.LogInformation("Dabilitando uma conta a receber. Input: {@Inputs}", input);
 
             var output = await _disableCashReceivableRegistrationHandler.Handle(input, cancellationToken);
+
+            return Ok(output);
+        }
+
+        /// <summary>
+        /// Faz o processo de pagamento de uma conta à receber
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpPatch("receive")]
+        public async Task<IActionResult> Receive([FromBody] ReceiveCashReceivableInput input,
+            CancellationToken cancellationToken)
+        {
+            _logger.LogInformation($"[CashReceivableController.Receive()] - Efetuar recebimento. Input: {JsonSerializeUtils.Serialize(input)}");
+            var output = await _receiveCashReceivableHandler.Handle(input, cancellationToken);
 
             return Ok(output);
         }
