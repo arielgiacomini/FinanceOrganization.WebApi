@@ -42,12 +42,11 @@ namespace WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("monthly-cashflow-billtopay-cashreceivable")]
-        public async Task<IActionResult> GetDashboardMonthlyCashFlowByMonthYear([FromHeader] string? years, string? months, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetDashboardMonthlyCashFlowByMonthYear([FromHeader] string? years, string? months, string? foodVoucher, string? loanNextMonths, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Dashboard.GetDashboardMonthlyCashFlowByMonthYear - Busca de Dados");
 
-            var output = await _dashboardRepository.GetDashboardMonthlyCashFlowByMonthYear(years, months);
-
+            var output = await _dashboardRepository.GetDashboardMonthlyCashFlowByMonthYear(years, months, foodVoucher, loanNextMonths);
             return Ok(output);
         }
     }

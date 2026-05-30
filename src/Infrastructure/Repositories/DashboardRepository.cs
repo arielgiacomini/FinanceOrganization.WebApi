@@ -36,11 +36,11 @@ namespace Infrastructure.Repositories
             return result;
         }
 
-        public async Task<IList<MonthlyCashFlowDashboard>> GetDashboardMonthlyCashFlowByMonthYear(string? years, string? months)
+        public async Task<IList<MonthlyCashFlowDashboard>> GetDashboardMonthlyCashFlowByMonthYear(string? years, string? months, string? foodVoucher, string? loanNextMonths)
         {
             try
             {
-                QuerySqlMonthlyCashFlowDashboard query = new(years, months);
+                QuerySqlMonthlyCashFlowDashboard query = new(years, months, foodVoucher, loanNextMonths);
 
                 var result = await _context
                     .Set<MonthlyCashFlowDashboard>()
