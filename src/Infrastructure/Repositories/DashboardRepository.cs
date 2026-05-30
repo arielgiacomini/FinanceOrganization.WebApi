@@ -35,5 +35,25 @@ namespace Infrastructure.Repositories
 
             return result;
         }
+
+        public async Task<IList<MonthlyCashFlowDashboard>> GetDashboardMonthlyCashFlowByMonthYear(string? years, string? months)
+        {
+            try
+            {
+                QuerySqlMonthlyCashFlowDashboard query = new(years, months);
+
+                var result = await _context
+                    .Set<MonthlyCashFlowDashboard>()
+                    .FromSqlInterpolated(query.Sql)
+                    .ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching monthly cash flow dashboard data for years: {Years} and months: {Months}", years, months);
+                throw;
+            }
+        }
     }
 }

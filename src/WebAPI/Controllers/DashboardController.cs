@@ -33,5 +33,22 @@ namespace WebAPI.Controllers
 
             return Ok(output);
         }
+
+        /// <summary>
+        /// Busca os dados do dashboard Contas a Pagar/Receber por mês/ano, quantidade e valor.
+        /// </summary>
+        /// <param name="mesAno"></param>
+        /// <param name="categoria"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet("monthly-cashflow-billtopay-cashreceivable")]
+        public async Task<IActionResult> GetDashboardMonthlyCashFlowByMonthYear([FromHeader] string? years, string? months, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Dashboard.GetDashboardMonthlyCashFlowByMonthYear - Busca de Dados");
+
+            var output = await _dashboardRepository.GetDashboardMonthlyCashFlowByMonthYear(years, months);
+
+            return Ok(output);
+        }
     }
 }
