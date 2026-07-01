@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities.Dashboard
 {
-    public class DailyExpenseByCategoryDateDashboard
+    public class DailyGoalExpenseByCategoryDateDashboard
     {
         /// <summary>
         /// Descrição da Categoria

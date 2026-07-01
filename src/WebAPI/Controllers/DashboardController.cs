@@ -49,5 +49,21 @@ namespace WebAPI.Controllers
             var output = await _dashboardRepository.GetDashboardMonthlyCashFlowByMonthYear(years, months, foodVoucher, loanNextMonths);
             return Ok(output);
         }
+
+        /// <summary>
+        /// Busca os dados do dashboard Contas a Pagar por Categoria e Conta Bancária Diario
+        /// </summary>
+        /// <param name="mesAno"></param>
+        /// <param name="categoria"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        [HttpGet("daily-expense-category-account-date")]
+        public async Task<IActionResult> GetDashboardDailyExpenseByCategoryAndAccountDate([FromHeader] string? years, string? months, string? category, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Dashboard.GetDashboardDailyExpenseByCategoryAndAccountDate - Busca de Dados");
+
+            var output = await _dashboardRepository.GetDailyExpenseByCategoryAndAccountDateDashboard(years, months, category);
+            return Ok(output);
+        }
     }
 }
