@@ -85,7 +85,8 @@ namespace Application.Feature.BillToPay.PayBillToPay
                         HasPay = input.HasPay,
                         AdditionalMessage = bill.AdditionalMessage,
                         CreationDate = bill.CreationDate,
-                        LastChangeDate = input.LastChangeDate
+                        LastChangeDate = input.LastChangeDate,
+                        Country = bill.Country
                     });
                 }
             }

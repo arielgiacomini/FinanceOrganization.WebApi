@@ -17,6 +17,7 @@ using Application.Feature.BillToPayRegistration.SearchBillToPayRegistration;
 using Application.Feature.CashReceivable.AdjustCashReceivable;
 using Application.Feature.CashReceivable.DeleteCashReceivable;
 using Application.Feature.CashReceivable.EditCashReceivable;
+using Application.Feature.CashReceivable.ReceiveCashReceivable;
 using Application.Feature.CashReceivable.SearchCashReceivable;
 using Application.Feature.CashReceivableRegistration.CreateCashReceivableRegistration;
 using Application.Feature.CashReceivableRegistration.DisableCashReceivableRegistration;
@@ -66,6 +67,7 @@ namespace Application
             services.AddScoped<ICreateWalletHandler, CreateWalletHandler>();
             services.AddScoped<ISearchWalletHandler, SearchWalletHandler>();
             services.AddScoped<IEditWalletHandler, EditWalletHandler>();
+            services.AddScoped<IReceiveCashReceivableHandler, ReceiveCashReceivableHandler>();
 
             return services;
         }

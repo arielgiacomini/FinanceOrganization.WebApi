@@ -83,6 +83,9 @@ namespace Infrastructure.Database.Context
             modelBuilder.Entity<DailyExpenseByCategoryDateDashboard>()
                 .HasNoKey();
 
+            modelBuilder.Entity<MonthlyCashFlowDashboard>()
+                .HasNoKey();
+
             base.OnModelCreating(modelBuilder);
         }
 

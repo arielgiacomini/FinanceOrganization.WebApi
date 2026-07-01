@@ -43,7 +43,6 @@
             YearMonth = yearMonth;
         }
 
-
         /// <summary>
         /// Script SQL para buscar os dados do dashboard
         /// </summary>
