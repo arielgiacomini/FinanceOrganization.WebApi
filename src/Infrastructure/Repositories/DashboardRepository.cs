@@ -23,13 +23,13 @@ namespace Infrastructure.Repositories
         /// <param name="yearMonth"></param>
         /// <param name="category"></param>
         /// <returns></returns>
-        public async Task<IList<DailyExpenseByCategoryDateDashboard>> GetDashboardBillToPayCategoryAndValueByMonthYearAndCategory(
+        public async Task<IList<DailyGoalExpenseByCategoryDateDashboard>> GetDashboardBillToPayCategoryAndValueByMonthYearAndCategory(
             string? yearMonth, string? category)
         {
             QuerySqlDailyExpenseByCategoryDateDashboard query = new(yearMonth, category);
 
             var result = await _context
-                .Set<DailyExpenseByCategoryDateDashboard>()
+                .Set<DailyGoalExpenseByCategoryDateDashboard>()
                 .FromSqlInterpolated(query.Sql)
                 .ToListAsync();
 
@@ -52,6 +52,26 @@ namespace Infrastructure.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching monthly cash flow dashboard data for years: {Years} and months: {Months}", years, months);
+                throw;
+            }
+        }
+
+        public async Task<IList<DailyExpenseByCategoryAndAccountDateDashboard>> GetDailyExpenseByCategoryAndAccountDateDashboard(string? years, string? months, string? category)
+        {
+            try
+            {
+                QuerySqlDailyExpenseByCategoryAndAccountDateDashboard query = new(years, months, category);
+
+                var result = await _context
+                    .Set<DailyExpenseByCategoryAndAccountDateDashboard>()
+                    .FromSqlInterpolated(query.Sql)
+                    .ToListAsync();
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching daily expense dashboard data for years: {Years} and months: {Months}", years, months);
                 throw;
             }
         }

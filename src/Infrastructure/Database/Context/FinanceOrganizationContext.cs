@@ -80,10 +80,13 @@ namespace Infrastructure.Database.Context
             modelBuilder.ApplyConfiguration(new DimDateMapping());
             modelBuilder.ApplyConfiguration(new WalletMapping());
 
-            modelBuilder.Entity<DailyExpenseByCategoryDateDashboard>()
+            modelBuilder.Entity<DailyGoalExpenseByCategoryDateDashboard>()
                 .HasNoKey();
 
             modelBuilder.Entity<MonthlyCashFlowDashboard>()
+                .HasNoKey();
+
+            modelBuilder.Entity<DailyExpenseByCategoryAndAccountDateDashboard>()
                 .HasNoKey();
 
             base.OnModelCreating(modelBuilder);
