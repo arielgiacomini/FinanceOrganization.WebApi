@@ -29,7 +29,7 @@
         {
             _years = string.IsNullOrEmpty(years) ? string.Concat(DateTime.Now.Year, ",", DateTime.Now.AddYears(1).Year) : years;
             _months = string.IsNullOrEmpty(months) ? "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12" : months;
-            _category = category ?? "Alimentação:Café da Manhã";
+            _category = category;
         }
 
         /// <summary>
@@ -67,7 +67,7 @@
 							WHERE 1=1
 								AND DimData.Ano IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@ANOS, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL)
 								AND DimData.Mes IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@MESES, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL)
-								AND DSC_CATEGORIA IN (@CATEGORIA)
+								AND @CATEGORIA IS NULL OR DSC_CATEGORIA IN (@CATEGORIA)
 					GROUP BY DimData.Data, DSC_PAIS_FISCAL, IND_MES_ANO, IND_PAGO, DSC_CATEGORIA, DSC_CONTA, DadosDatas.Dia, DadosDatas.NomeMes, DadosDatas.NomeDiaSemana, DadosDatas.FimDeSemana, DadosDatas.EhFeriado
 				)
 					SELECT 
