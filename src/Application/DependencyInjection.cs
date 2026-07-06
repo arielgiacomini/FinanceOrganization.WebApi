@@ -2,6 +2,7 @@
 using Application.EventHandlers.CreateCashReceivableEvent;
 using Application.EventHandlers.CreateCategoryEvent;
 using Application.Feature.Account.CreateAccount;
+using Application.Feature.Auth.GenerateToken;
 using Application.Feature.Account.SearchAccount;
 using Application.Feature.Account.SearchAccountOnlyName;
 using Application.Feature.BillToPay.DeleteBillToPay;
@@ -68,6 +69,7 @@ namespace Application
             services.AddScoped<ISearchWalletHandler, SearchWalletHandler>();
             services.AddScoped<IEditWalletHandler, EditWalletHandler>();
             services.AddScoped<IReceiveCashReceivableHandler, ReceiveCashReceivableHandler>();
+            services.AddScoped<IGenerateTokenHandler, GenerateTokenHandler>();
 
             return services;
         }
