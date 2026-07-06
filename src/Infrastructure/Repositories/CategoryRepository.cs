@@ -92,9 +92,9 @@ namespace Infrastructure.Repositories
                 {
                     if (categoryToDisable.Enable)
                     {
-                        var result = categoriesByBillToPay?.FirstOrDefault(categoryToDisable.Name);
+                        var result = categoriesByBillToPay?.Where(c => c == categoryToDisable.Name).ToList();
 
-                        if (result == null)
+                        if (result == null || result.Count == 0)
                         {
                             categoriesToDisable.Add(categoryToDisable);
                         }
@@ -126,7 +126,7 @@ namespace Infrastructure.Repositories
 
             var result = await UpdateRange(categoriesToAction);
 
-            return result > 1 ? true : false;
+            return result > 1;
         }
 
         public async Task<int> SaveRange(IList<Category> categories)

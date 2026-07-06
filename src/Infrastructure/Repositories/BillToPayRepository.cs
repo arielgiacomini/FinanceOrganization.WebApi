@@ -19,6 +19,16 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task<IList<BillToPay>> GetByCategory(string category)
+        {
+            var billToPay = await _context.BillToPay!
+                .AsNoTracking()
+                .Where(bill => bill.Category == category)
+                .ToListAsync();
+
+            return billToPay;
+        }
+
         public async Task<IList<BillToPay>> GetBillToPayByBillToPayRegistrationId(int billToPayRegistrationId)
         {
             try
