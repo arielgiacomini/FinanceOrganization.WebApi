@@ -53,12 +53,67 @@ namespace Infrastructure.Repositories
                 .FirstOrDefault(account => account.Name == accountName);
         }
 
+        public async Task<Account?> GetById(int id)
+        {
+            var account = await _context.Accounts!.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (account != null)
+            {
+                await IntoColors(new List<Account> { account });
+            }
+
+            return account;
+        }
+
         public async Task<int> Save(Account account)
         {
             _context.Add(account);
             var qtdEntry = await _context.SaveChangesAsync();
 
             return qtdEntry;
+        }
+
+        public async Task<int> Edit(Account account)
+        {
+            _context.ChangeTracker.Clear();
+
+            _context.Accounts!.Update(account);
+            var result = _context.SaveChanges();
+
+            return await Task.FromResult(result);
+        }
+
+        public async Task<int> Delete(Account account)
+        {
+            _context.ChangeTracker.Clear();
+
+            _context.Accounts!.Remove(account);
+            var result = _context.SaveChanges();
+
+            return await Task.FromResult(result);
+        }
+
+        public async Task<AccountColor?> GetAccountColorByAccountId(int accountId)
+        {
+            return await _context.AccountColors!.FirstOrDefaultAsync(x => x.AccountId == accountId);
+        }
+
+        public async Task<int> SaveAccountColor(AccountColor accountColor)
+        {
+            _context.Add(accountColor);
+            var qtdEntry = await _context.SaveChangesAsync();
+
+            return qtdEntry;
+        }
+
+        public async Task<int> EditAccountColor(AccountColor accountColor)
+        {
+            _context.ChangeTracker.Clear();
+
+            _context.AccountColors!.Update(accountColor);
+            var result = _context.SaveChanges();
+
+            return await Task.FromResult(result);
         }
 
         private async Task<IList<AccountColor>?> GetAllAccountColors()

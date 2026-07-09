@@ -1,9 +1,13 @@
-﻿using Application.Feature.Account;
+using Application.Feature.Account;
 
-namespace Application.Feature.Account.CreateAccount
+namespace Application.Feature.Account.EditAccount
 {
-    public class CreateAccountInput
+    public class EditAccountInput
     {
+        /// <summary>
+        /// Identificador único da conta
+        /// </summary>
+        public int Id { get; set; }
         /// <summary>
         /// Descrição da Conta
         /// </summary>
@@ -45,7 +49,7 @@ namespace Application.Feature.Account.CreateAccount
         /// </summary>
         public bool Enable { get; set; }
         /// <summary>
-        /// Cor da conta utilizada para identificação visual. Quando informado, a cor é salva junto com o cadastro da conta.
+        /// Cor da conta utilizada para identificação visual. Quando informado, cria ou atualiza a cor já cadastrada para a conta.
         /// </summary>
         public AccountColorInput? Colors { get; set; }
     }
