@@ -83,7 +83,8 @@ namespace Infrastructure.Database.Context
             modelBuilder.ApplyConfiguration(new CashReceivableMapping());
             modelBuilder.ApplyConfiguration(new DimDateMapping());
             modelBuilder.ApplyConfiguration(new WalletMapping());
-       
+            modelBuilder.ApplyConfiguration(new FinanciamentoImobiliarioRuaPascoalDias263Mapping());
+
             modelBuilder.Entity<DailyGoalExpenseByCategoryDateDashboard>()
                 .HasNoKey();
 
@@ -91,8 +92,6 @@ namespace Infrastructure.Database.Context
                 .HasNoKey();
 
             modelBuilder.Entity<DailyExpenseByCategoryAndAccountDateDashboard>()
-                .HasNoKey();
-            modelBuilder.Entity<FinanciamentoImobiliarioRuaPascoalDias263>()
                 .HasNoKey();
 
             base.OnModelCreating(modelBuilder);

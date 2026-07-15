@@ -21,7 +21,7 @@
         /// <summary>
         /// Amortization System - Represeta o campo Sitema Amort da tabela.
         /// </summary>
-        public int? AmortizationSystem { get; set; }
+        public string? AmortizationSystem { get; set; }
         /// <summary>
         /// EffectiveAnnualRateAA - Representa o campo TaxaEfetivaAA da tabela
         /// </summary>
@@ -33,11 +33,11 @@
         /// <summary>
         /// NominalRateAA - Representa o campo TaxaNominalAA da tabela
         /// </summary>
-        public int? NominalRateAA { get; set; }
+        public decimal? NominalRateAA { get; set; }
         /// <summary>
         /// NominalRateAM - Representa o campo TaxaNominalAM
         /// </summary>
-        public int? NominalRateAM { get; set; }
+        public decimal? NominalRateAM { get; set; }
         /// <summary>
         /// Amortization - Representa o campo Amortizacao da tabela
         /// </summary>
