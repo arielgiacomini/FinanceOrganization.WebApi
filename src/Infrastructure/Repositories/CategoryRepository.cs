@@ -43,7 +43,7 @@ namespace Infrastructure.Repositories
         {
             try
             {
-                IList<Category> categoriesToAdd = new List<Category>();
+                
 
                 var categoriesByBillToPay = _context.BillToPay!.AsNoTracking().Select(x => x.Category).Distinct().ToList();
 
@@ -51,13 +51,14 @@ namespace Infrastructure.Repositories
 
                 #region Passo 1 - Adiciona as categorias que estão na tabela de contas a pagar e não existem na tabela de categorias
 
-                foreach (var categoryNonRegister in categoriesByBillToPay)
+                IList<Category> categoriesToAdd = new List<Category>();
+                foreach (var categoryToAdd in categoriesByBillToPay)
                 {
-                    var result = categoriesRegister!.FirstOrDefault(x => x.Name == categoryNonRegister);
+                    var result = categoriesRegister?.Where(c => c.Name == categoryToAdd).ToList();
 
-                    if (result == null)
+                    if (result == null || result.Count == 0)
                     {
-                        categoriesToAdd.Add(new Category { Name = categoryNonRegister, Enable = true, CreationDate = DateTime.Now, LastChangeDate = null, AccountType = "Conta a Pagar" });
+                        categoriesToAdd.Add(new Category { Name = categoryToAdd, Enable = true, CreationDate = DateTime.Now, LastChangeDate = null, AccountType = "Conta a Pagar" });
                     }
                 }
 
@@ -73,9 +74,9 @@ namespace Infrastructure.Repositories
 
                 foreach (var categoryToEnable in categoriesRegisterDisables)
                 {
-                    var result = categoriesByBillToPay?.FirstOrDefault(categoryToEnable.Name);
+                    var result = categoriesByBillToPay?.Where(c => c == categoryToEnable.Name).ToList();
 
-                    if (result != null)
+                    if (result.Count > 0)
                     {
                         categoriesToEnable.Add(categoryToEnable);
                     }
@@ -92,9 +93,9 @@ namespace Infrastructure.Repositories
                 {
                     if (categoryToDisable.Enable)
                     {
-                        var result = categoriesByBillToPay?.FirstOrDefault(categoryToDisable.Name);
+                        var result = categoriesByBillToPay?.Where(c => c == categoryToDisable.Name).ToList();
 
-                        if (result == null)
+                        if (result == null || result.Count == 0)
                         {
                             categoriesToDisable.Add(categoryToDisable);
                         }
@@ -126,7 +127,7 @@ namespace Infrastructure.Repositories
 
             var result = await UpdateRange(categoriesToAction);
 
-            return result > 1 ? true : false;
+            return result > 1;
         }
 
         public async Task<int> SaveRange(IList<Category> categories)

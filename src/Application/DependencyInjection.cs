@@ -2,6 +2,9 @@
 using Application.EventHandlers.CreateCashReceivableEvent;
 using Application.EventHandlers.CreateCategoryEvent;
 using Application.Feature.Account.CreateAccount;
+using Application.Feature.Account.DeleteAccount;
+using Application.Feature.Account.EditAccount;
+using Application.Feature.Auth.GenerateToken;
 using Application.Feature.Account.SearchAccount;
 using Application.Feature.Account.SearchAccountOnlyName;
 using Application.Feature.BillToPay.DeleteBillToPay;
@@ -54,6 +57,8 @@ namespace Application
             services.AddScoped<ISearchAccountOnlyNameHandler, SearchAccountOnlyNameHandler>();
             services.AddScoped<ISearchAccountHandler, SearchAccountHandler>();
             services.AddScoped<ICreateAccountHandler, CreateAccountHandler>();
+            services.AddScoped<IEditAccountHandler, EditAccountHandler>();
+            services.AddScoped<IDeleteAccountHandler, DeleteAccountHandler>();
             services.AddScoped<ICreateCashReceivableEventHandler, CreateCashReceivableEventHandler>();
             services.AddScoped<IRecordsAwaitingCompleteRegistrationHandler, RecordsAwaitingCompleteRegistrationHandler>();
             services.AddScoped<IAdjustCashReceivableHandler, AdjustCashReceivableHandler>();
@@ -69,6 +74,7 @@ namespace Application
             services.AddScoped<ISearchWalletHandler, SearchWalletHandler>();
             services.AddScoped<IEditWalletHandler, EditWalletHandler>();
             services.AddScoped<IReceiveCashReceivableHandler, ReceiveCashReceivableHandler>();
+            services.AddScoped<IGenerateTokenHandler, GenerateTokenHandler>();
             services.AddScoped<ISearchRealEstateFinancingHandler, SearchRealEstateFinancingHandler>();
 
             return services;
