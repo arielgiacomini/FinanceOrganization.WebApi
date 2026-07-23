@@ -43,22 +43,39 @@ namespace Infrastructure.Repositories
         {
             try
             {
-                
-
                 var categoriesByBillToPay = _context.BillToPay!.AsNoTracking().Select(x => x.Category).Distinct().ToList();
+                var categoriesByCashReceivable = _context.CashReceivable!.AsNoTracking().Select(x => x.Category).Distinct().ToList();
 
-                var categoriesRegister = await GetAllAsync(AccountType.ContaAPagar);
+                var categoriesBillToPayRegister = await GetAllAsync(AccountType.ContaAPagar);
+                var categoriesCashReceivableRegister = await GetAllAsync(AccountType.ContaAReceber);
 
                 #region Passo 1 - Adiciona as categorias que estão na tabela de contas a pagar e não existem na tabela de categorias
 
                 IList<Category> categoriesToAdd = new List<Category>();
+
+                /*
+                 * Adiciona as categorias que estão na tabela de contas a pagar e não existem na tabela de categorias
+                 */
                 foreach (var categoryToAdd in categoriesByBillToPay)
                 {
-                    var result = categoriesRegister?.Where(c => c.Name == categoryToAdd).ToList();
+                    var result = categoriesBillToPayRegister?.Where(c => c.Name == categoryToAdd).ToList();
 
                     if (result == null || result.Count == 0)
                     {
                         categoriesToAdd.Add(new Category { Name = categoryToAdd, Enable = true, CreationDate = DateTime.Now, LastChangeDate = null, AccountType = "Conta a Pagar" });
+                    }
+                }
+
+                /*
+                 * Adiciona as categorias que estão na tabela de contas a receber e não existem na tabela de categorias
+                 */
+                foreach (var categoryToAdd in categoriesByCashReceivable)
+                {
+                    var result = categoriesCashReceivableRegister?.Where(c => c.Name == categoryToAdd).ToList();
+
+                    if (result == null || result.Count == 0)
+                    {
+                        categoriesToAdd.Add(new Category { Name = categoryToAdd, Enable = true, CreationDate = DateTime.Now, LastChangeDate = null, AccountType = "Conta a Receber" });
                     }
                 }
 
@@ -68,13 +85,30 @@ namespace Infrastructure.Repositories
 
                 #region Passo 2 - Habilita as categorias que voltaram a existir na tabela de contas a pagar e que estavam inativadas.
 
-                var categoriesRegisterDisables = await GetAllAsync(AccountType.ContaAPagar, false);
+                var categoriesBillToPayRegisterDisables = await GetAllAsync(AccountType.ContaAPagar, false);
+                var categoriesCashReceivableRegisterDisables = await GetAllAsync(AccountType.ContaAReceber, false);
 
-                var categoriesToEnable = new List<Category>(categoriesRegisterDisables.Count);
+                var categoriesToEnable = new List<Category>(categoriesBillToPayRegisterDisables.Count + categoriesCashReceivableRegisterDisables.Count);
 
-                foreach (var categoryToEnable in categoriesRegisterDisables)
+                /*                  
+                 * Habilita as categorias que voltaram a existir na tabela de contas a pagar e que estavam inativadas.
+                 */
+                foreach (var categoryToEnable in categoriesBillToPayRegisterDisables)
                 {
                     var result = categoriesByBillToPay?.Where(c => c == categoryToEnable.Name).ToList();
+
+                    if (result.Count > 0)
+                    {
+                        categoriesToEnable.Add(categoryToEnable);
+                    }
+                }
+
+                /*
+                 * Habilita as categorias que voltaram a existir na tabela de contas a receber e que estavam inativadas.
+                 */
+                foreach (var categoryToEnable in categoriesCashReceivableRegisterDisables)
+                {
+                    var result = categoriesByCashReceivable?.Where(c => c == categoryToEnable.Name).ToList();
 
                     if (result.Count > 0)
                     {
@@ -88,14 +122,16 @@ namespace Infrastructure.Repositories
 
                 #region Passo 3 - Desabilita as categorias que não existem mais na tabela de contas a pagar.
 
-                var categoriesToDisable = new List<Category>(categoriesRegister.Count);
-                foreach (var categoryToDisable in categoriesRegister)
+                var categoriesToDisable = new List<Category>(categoriesBillToPayRegister.Count + categoriesCashReceivableRegister.Count);
+
+                foreach (var categoryToDisable in categoriesBillToPayRegister)
                 {
                     if (categoryToDisable.Enable)
                     {
-                        var result = categoriesByBillToPay?.Where(c => c == categoryToDisable.Name).ToList();
+                        var resultBillToPay = categoriesByBillToPay?.Where(c => c == categoryToDisable.Name).ToList();
+                        var resultCashReceivable = categoriesByCashReceivable?.Where(c => c == categoryToDisable.Name).ToList();
 
-                        if (result == null || result.Count == 0)
+                        if ((resultBillToPay == null || resultBillToPay.Count == 0) && (resultCashReceivable == null || resultCashReceivable.Count == 0))
                         {
                             categoriesToDisable.Add(categoryToDisable);
                         }
