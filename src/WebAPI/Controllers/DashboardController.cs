@@ -25,7 +25,7 @@ namespace WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("billToPay-day-week-category")]
-        public async Task<IActionResult> GetDashboardBillToPayCategoryAndValueByMonthYearAndCategory([FromHeader] string? mesAno, string? categoria, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetDashboardBillToPayCategoryAndValueByMonthYearAndCategory([FromQuery] string? mesAno, string? categoria, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Dashboard.GetDashboardCategoryAndValueByMonthYearAndCategory - Busca de Dados");
 
@@ -42,7 +42,7 @@ namespace WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("monthly-cashflow-billtopay-cashreceivable")]
-        public async Task<IActionResult> GetDashboardMonthlyCashFlowByMonthYear([FromHeader] string? years, string? months, string? foodVoucher, string? loanNextMonths, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetDashboardMonthlyCashFlowByMonthYear([FromQuery] string? years, string? months, string? foodVoucher, string? loanNextMonths, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Dashboard.GetDashboardMonthlyCashFlowByMonthYear - Busca de Dados");
 
@@ -58,7 +58,7 @@ namespace WebAPI.Controllers
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpGet("daily-expense-category-account-date")]
-        public async Task<IActionResult> GetDashboardDailyExpenseByCategoryAndAccountDate([FromHeader] string? years, string? months, string? category, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetDashboardDailyExpenseByCategoryAndAccountDate([FromQuery] string? years, string? months, string? category, CancellationToken cancellationToken)
         {
             _logger.LogInformation("Dashboard.GetDashboardDailyExpenseByCategoryAndAccountDate - Busca de Dados");
 

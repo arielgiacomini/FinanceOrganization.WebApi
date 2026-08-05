@@ -33,7 +33,14 @@ namespace Application.Feature.Account.CreateAccount
                 return outputValidator;
             }
 
-            var isSaved = await _accountRepository.Save(MapAccountInputToAccountDomain(input));
+            var accountDomain = MapAccountInputToAccountDomain(input);
+
+            var isSaved = await _accountRepository.Save(accountDomain);
+
+            if (input.Colors != null)
+            {
+                await _accountRepository.SaveAccountColor(MapColorInputToDomain(input.Colors, accountDomain.Id));
+            }
 
             var output = new CreateAccountOutput
             {
@@ -41,6 +48,19 @@ namespace Application.Feature.Account.CreateAccount
             };
 
             return output;
+        }
+
+        private static Domain.Entities.AccountColor MapColorInputToDomain(AccountColorInput input, int accountId)
+        {
+            return new Domain.Entities.AccountColor
+            {
+                AccountId = accountId,
+                BackgroundColorHexadecimal = input.BackgroundColorHexadecimal,
+                FonteColorHexadecimal = input.FonteColorHexadecimal,
+                Enable = true,
+                CreationDate = DateTime.Now,
+                LastChangeDate = null
+            };
         }
 
         private static Domain.Entities.Account MapAccountInputToAccountDomain(CreateAccountInput input)

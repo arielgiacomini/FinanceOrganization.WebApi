@@ -1,9 +1,13 @@
 ﻿using Application;
 using Domain.Options;
 using Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace WebAPI
 {
@@ -32,7 +36,6 @@ namespace WebAPI
                 );
             });
 
-            services.AddMvc(options => options.EnableEndpointRouting = false);
             var logPathAppSettings = Configuration.GetSection("Log:Path").Value;
             var filePath = logPathAppSettings is null ? DEFAULT_LOG_DIRECTORY : logPathAppSettings;
 
@@ -47,6 +50,52 @@ namespace WebAPI
 
             services.Configure<GenericBackgroundServiceOptions>(options =>
              Configuration.GetSection("GenericBackgroundServiceOptions").Bind(options));
+
+            services.Configure<JwtOptions>(options =>
+             Configuration.GetSection("Jwt").Bind(options));
+
+            services.Configure<AuthClientOptions>(options =>
+             Configuration.GetSection("AuthClient").Bind(options));
+
+            var jwtOptions = new JwtOptions();
+            Configuration.GetSection("Jwt").Bind(jwtOptions);
+
+            var authClientOptions = new AuthClientOptions();
+            Configuration.GetSection("AuthClient").Bind(authClientOptions);
+
+            if (string.IsNullOrWhiteSpace(jwtOptions.Secret))
+            {
+                throw new InvalidOperationException("Configuração 'Jwt:Secret' não foi definida. Configure via 'dotnet user-secrets' (dev) ou variável de ambiente 'Jwt__Secret' (produção).");
+            }
+
+            if (string.IsNullOrWhiteSpace(authClientOptions.ClientId) || string.IsNullOrWhiteSpace(authClientOptions.ClientSecret))
+            {
+                throw new InvalidOperationException("Configuração 'AuthClient:ClientId'/'AuthClient:ClientSecret' não foi definida. Configure via 'dotnet user-secrets' (dev) ou variáveis de ambiente 'AuthClient__ClientId'/'AuthClient__ClientSecret' (produção).");
+            }
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = jwtOptions.Issuer,
+                        ValidateAudience = true,
+                        ValidAudience = jwtOptions.Audience,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
+                        ClockSkew = TimeSpan.FromSeconds(30)
+                    };
+                });
+
+            services.AddAuthorization();
+
+            services.AddMvc(options =>
+            {
+                options.EnableEndpointRouting = false;
+                options.Filters.Add(new AuthorizeFilter());
+            });
 
             services.AddHostedServices();
             services.AddApplication();
@@ -81,6 +130,31 @@ namespace WebAPI
                         Url = URL_ARIELGIACOMINI
                     }
                 });
+
+                x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Informe o token JWT obtido em 'v1/auth/token'."
+                });
+
+                x.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
         }
 
@@ -92,6 +166,9 @@ namespace WebAPI
             }
 
             app.UseCors("AllowFrontend");
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

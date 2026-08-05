@@ -163,6 +163,18 @@ namespace Application.Feature.BillToPay.SearchBillToPay
                 }
             }
 
+            if (!string.IsNullOrWhiteSpace(input.Category))
+            {
+                var billToPayByCategory = await _billToPayRepository.GetByCategory(input.Category);
+
+                if (billToPayByCategory != null)
+                {
+                    output.Output = OutputBaseDetails.Success("", billToPayByCategory, billToPayByCategory.Count);
+
+                    return output;
+                }
+            }
+
             return output;
         }
 
