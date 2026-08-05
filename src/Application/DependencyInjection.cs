@@ -28,6 +28,7 @@ using Application.Feature.Category.SearchCategory;
 using Application.Feature.Date.SearchAllWithFilters;
 using Application.Feature.Date.SearchMonthYear;
 using Application.Feature.Payment.AdjustPayament;
+using Application.Feature.RealEstateFinancing.SearchRealEstateFinancing;
 using Application.Feature.Wallet.CreateWallet;
 using Application.Feature.Wallet.EditWallet;
 using Application.Feature.Wallet.SearchWallet;
@@ -73,6 +74,7 @@ namespace Application
             services.AddScoped<ISearchWalletHandler, SearchWalletHandler>();
             services.AddScoped<IEditWalletHandler, EditWalletHandler>();
             services.AddScoped<IReceiveCashReceivableHandler, ReceiveCashReceivableHandler>();
+            services.AddScoped<ISearchRealEstateFinancingHandler, SearchRealEstateFinancingHandler>();
             services.AddScoped<IGenerateTokenHandler, GenerateTokenHandler>();
 
             return services;
