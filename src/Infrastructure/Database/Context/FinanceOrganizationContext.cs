@@ -71,6 +71,8 @@ namespace Infrastructure.Database.Context
         /// </summary>
         public DbSet<FinanciamentoImobiliarioRuaPascoalDias263> FinanciamentoImobiliarioRuaPascoalDias263 { get; set; } //DbSet = acesso a uma tabela específica
 
+        public DbSet<FinancingPascoalDias_272> FinanciamentoImobiliarioRuaPascoalDias272 { get; set; } 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new BillToPayRegistrationMapping());
@@ -84,7 +86,8 @@ namespace Infrastructure.Database.Context
             modelBuilder.ApplyConfiguration(new DimDateMapping());
             modelBuilder.ApplyConfiguration(new WalletMapping());
             modelBuilder.ApplyConfiguration(new FinanciamentoImobiliarioRuaPascoalDias263Mapping());
-       
+            modelBuilder.ApplyConfiguration(new FinancingPascoalDias_272Mapping());
+
             modelBuilder.Entity<DailyGoalExpenseByCategoryDateDashboard>()
                 .HasNoKey();
 
