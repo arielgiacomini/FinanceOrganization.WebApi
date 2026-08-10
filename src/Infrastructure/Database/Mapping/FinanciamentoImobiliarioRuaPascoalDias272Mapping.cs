@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Database.Mapping
 {
-    public class FinancingPascoalDias_272Mapping : 
-        IEntityTypeConfiguration<FinancingPascoalDias_272>
+    public class FinanciamentoImobiliarioRuaPascoalDias272Mapping : 
+        IEntityTypeConfiguration<FinanciamentoImobiliarioRuaPascoalDias272>
     {
-        public void Configure(EntityTypeBuilder<FinancingPascoalDias_272> builder)
+        public void Configure(EntityTypeBuilder<FinanciamentoImobiliarioRuaPascoalDias272> builder)
         {
             builder.ToTable("FinanciamentoImobiliarioRuaPascoalDias272").HasNoKey();
             builder.Property(x => x.Installment).HasColumnName("Parcela");

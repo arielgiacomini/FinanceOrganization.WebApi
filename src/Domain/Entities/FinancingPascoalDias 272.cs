@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class FinancingPascoalDias_272
+    public class FinanciamentoImobiliarioRuaPascoalDias272
     {
         /// <summary>
         /// Installment - Representa a coluna Parcela
