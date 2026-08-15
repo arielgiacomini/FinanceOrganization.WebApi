@@ -34,6 +34,7 @@ using Application.Feature.Wallet.EditWallet;
 using Application.Feature.Wallet.SearchWallet;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
+using Application.Feature.RealEstateFinancing.SearchFinancingPascoalDias272;
 
 namespace Application
 {
@@ -75,6 +76,7 @@ namespace Application
             services.AddScoped<IEditWalletHandler, EditWalletHandler>();
             services.AddScoped<IReceiveCashReceivableHandler, ReceiveCashReceivableHandler>();
             services.AddScoped<ISearchRealEstateFinancingHandler, SearchRealEstateFinancingHandler>();
+            services.AddScoped<ISearchFinancingPascoalDias272Handler, SearchFinancingPascoalDias272Handler>();
             services.AddScoped<IGenerateTokenHandler, GenerateTokenHandler>();
 
             return services;

@@ -22,6 +22,7 @@ namespace Infrastructure
             services.AddScoped<IDashboardRepository, DashboardRepository>();
             services.AddScoped<IWalletRepository, WalletRepository>();
             services.AddScoped<IFinanciamentoImobiliarioRuaPascoalDias263Repository, FinanciamentoImobiliarioRuaPascoalDias263Repository>();
+            services.AddScoped<IFinanciamentoImobiliarioRuaPascoalDias272Repository, FinanciamentoImobiliarioRuaPascoalDias272Repository>();
 
             return services;
         }
