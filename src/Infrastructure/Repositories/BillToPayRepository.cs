@@ -23,7 +23,7 @@ namespace Infrastructure.Repositories
         {
             var billToPay = await _context.BillToPay!
                 .AsNoTracking()
-                .Where(bill => bill.Category == category)
+                .Where(bill => bill.Category.StartsWith(category))
                 .ToListAsync();
 
             return billToPay;
