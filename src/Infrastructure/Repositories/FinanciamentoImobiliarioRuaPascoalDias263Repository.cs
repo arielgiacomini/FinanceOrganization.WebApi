@@ -8,10 +8,9 @@ namespace Infrastructure.Repositories
 {
     public class FinanciamentoImobiliarioRuaPascoalDias263Repository : IFinanciamentoImobiliarioRuaPascoalDias263Repository //Criar Interface
     {
-        private readonly FinanceOrganizationContext _context; //Direito a acessar o nosso banco -> DBContext da aplicação
-        private readonly ILogger _looger; //vai guardar o log de erro
+        private readonly FinanceOrganizationContext _context;
+        private readonly ILogger _looger;
 
-        //Construtor
         public FinanciamentoImobiliarioRuaPascoalDias263Repository(
             ILogger logger, FinanceOrganizationContext context)
         {
@@ -19,13 +18,10 @@ namespace Infrastructure.Repositories
             _looger = logger;
         }
 
-        public async Task<IList<FinanciamentoImobiliarioRuaPascoalDias263>> GetAllInstallments() //Vai buscar e devolver uma lista
+        public async Task<IList<FinanciamentoImobiliarioRuaPascoalDias263>> GetAllInstallments() 
         {
             try
             {
-                //variavel que vai armazezar a busca; 
-                //_context.Accounts acessando o DBSet
-                //ToListAsync() Vai executar a consulta e devolver o resultado em lista
                 var installments = await _context.FinanciamentoImobiliarioRuaPascoalDias263.ToListAsync();
 
                 return installments;
