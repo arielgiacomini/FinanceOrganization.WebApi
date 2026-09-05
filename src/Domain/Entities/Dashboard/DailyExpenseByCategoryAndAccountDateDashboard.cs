@@ -5,6 +5,7 @@
         public string? Type { get; set; }
         public string? Account { get; set; }
         public string? Category { get; set; }
+        public string? RegistrationType { get; set; }
         public DateTime? Date { get; set; }
         public int? Day { get; set; }
         public string? Month { get; set; }
@@ -41,7 +42,7 @@
 				DECLARE @MESES VARCHAR(MAX) = {_months}
 				DECLARE @CATEGORIA VARCHAR(MAX) = {_category}
 				
-				;WITH ContaPagar (Data, PaisFiscal, MesAno, Dia, Mes, DiaSemana, FimDeSemana, Feriado, Categoria, Conta, Quantidade, Valor, ValorManipulado, Pago) 
+				;WITH ContaPagar (Data, PaisFiscal, MesAno, Dia, Mes, DiaSemana, FimDeSemana, Feriado, Categoria, TipoRegistro, Conta, Quantidade, Valor, ValorManipulado, Pago) 
 				AS (
 					SELECT 
 							DimData.Data, 
@@ -52,7 +53,8 @@
 							DadosDatas.NomeDiaSemana,
 							DadosDatas.FimDeSemana,
 							DadosDatas.EhFeriado,
-							DSC_CATEGORIA, 
+							DSC_CATEGORIA,
+							IND_TIPO_REGISTRO,
 							DSC_CONTA, 
 							SUM(CASE WHEN IND_PAGO = 1 AND VAL_VALOR <= 0 THEN 0 ELSE 1 END) AS Quantidade, 
 							SUM(VAL_VALOR) AS Valor, 
@@ -63,17 +65,18 @@
 							LEFT JOIN (
 										SELECT * FROM DimData
 									  ) AS DadosDatas 
-											ON CAST(ISNULL(ISNULL(ISNULL(CONTA_PAGAR.DAT_COMPRA, CONTA_PAGAR.DAT_VENCIMENTO), DAT_PAGAMENTO), DAT_CRIACAO_REGISTRO) AS DATE) = DadosDatas.Data
+										ON CAST(ISNULL(ISNULL(ISNULL(CONTA_PAGAR.DAT_COMPRA, CONTA_PAGAR.DAT_VENCIMENTO), DAT_PAGAMENTO), DAT_CRIACAO_REGISTRO) AS DATE) = DadosDatas.Data
 							WHERE 1=1
 								AND @ANOS IS NULL OR DimData.Ano IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@ANOS, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL)
 								AND @MESES IS NULL OR DimData.Mes IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@MESES, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL)
 								AND @CATEGORIA IS NULL OR DSC_CATEGORIA IN (@CATEGORIA)
-					GROUP BY DimData.Data, DSC_PAIS_FISCAL, IND_MES_ANO, IND_PAGO, DSC_CATEGORIA, DSC_CONTA, DadosDatas.Dia, DadosDatas.NomeMes, DadosDatas.NomeDiaSemana, DadosDatas.FimDeSemana, DadosDatas.EhFeriado
+					GROUP BY DimData.Data, DSC_PAIS_FISCAL, IND_MES_ANO, IND_PAGO, DSC_CATEGORIA, IND_TIPO_REGISTRO, DSC_CONTA, DadosDatas.Dia, DadosDatas.NomeMes, DadosDatas.NomeDiaSemana, DadosDatas.FimDeSemana, DadosDatas.EhFeriado
 				)
 					SELECT 
 						    '1 - Gastos por Dia/Mes/Ano/Categoria' AS Type,
 							ContaPagar.Conta                       AS Account,
 							ContaPagar.Categoria                   AS Category,
+							ContaPagar.TipoRegistro                AS RegistrationType,
 							ContaPagar.Data                        AS Date,
 							ContaPagar.Dia                         AS Day,
 							ContaPagar.Mes                         AS Month,
