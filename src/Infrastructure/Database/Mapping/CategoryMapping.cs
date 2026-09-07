@@ -13,6 +13,9 @@ namespace Infrastructure.Database.Mapping
             builder.Property(x => x.Id)
                 .HasColumnName("ID_CATEGORIA")
                 .IsRequired();
+            builder.Property(x => x.UserId)
+                .HasColumnName("UserId")
+                .IsRequired();
             builder.Property(x => x.Name)
                 .HasColumnName("DSC_DESCRICAO");
             builder.Property(x => x.Enable)

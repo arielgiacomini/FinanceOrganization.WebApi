@@ -11,12 +11,15 @@ namespace Infrastructure.Repositories
     {
         private readonly FinanceOrganizationContext _context;
         private readonly ILogger _logger;
+        private readonly ICurrentUserService _currentUserService;
 
         public BillToPayRepository(ILogger logger,
-            FinanceOrganizationContext context)
+            FinanceOrganizationContext context,
+            ICurrentUserService currentUserService)
         {
             _logger = logger;
             _context = context;
+            _currentUserService = currentUserService;
         }
 
         public async Task<IList<BillToPay>> GetByCategory(string category)
@@ -131,6 +134,8 @@ namespace Infrastructure.Repositories
             {
                 try
                 {
+                    item.UserId = _currentUserService.UserId ?? Guid.Empty;
+
                     _context.Add(item);
 
                     _context.SaveChanges();
@@ -151,6 +156,10 @@ namespace Infrastructure.Repositories
         {
             _context.ChangeTracker.Clear();
 
+            // O handler chamador reconstrói o objeto a partir do input e normalmente não carrega
+            // o UserId original — sempre reafirmar aqui, senão a edição zera o dono do registro.
+            billToPay.UserId = _currentUserService.UserId ?? Guid.Empty;
+
             _context.BillToPay!.Update(billToPay);
 
             var result = _context.SaveChanges();
@@ -161,6 +170,11 @@ namespace Infrastructure.Repositories
         public async Task<int> EditRange(IList<BillToPay> billToPays)
         {
             _context.ChangeTracker.Clear();
+
+            foreach (var billToPay in billToPays)
+            {
+                billToPay.UserId = _currentUserService.UserId ?? Guid.Empty;
+            }
 
             _context.BillToPay!.UpdateRange(billToPays);
 

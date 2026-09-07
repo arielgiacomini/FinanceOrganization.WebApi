@@ -10,12 +10,15 @@ public class CashReceivableRegistrationRepository : ICashReceivableRegistrationR
 {
     private readonly ILogger<CashReceivableRegistrationRepository> _logger;
     private readonly FinanceOrganizationContext _context;
+    private readonly ICurrentUserService _currentUserService;
 
     public CashReceivableRegistrationRepository(ILogger<CashReceivableRegistrationRepository> logger,
-            FinanceOrganizationContext context)
+            FinanceOrganizationContext context,
+            ICurrentUserService currentUserService)
     {
         _logger = logger;
         _context = context;
+        _currentUserService = currentUserService;
     }
 
     public async Task<int> Save(CashReceivableRegistration cashReceivable)
@@ -23,6 +26,8 @@ public class CashReceivableRegistrationRepository : ICashReceivableRegistrationR
         int qtd = 0;
         try
         {
+            cashReceivable.UserId = _currentUserService.UserId ?? Guid.Empty;
+
             _context.Add(cashReceivable);
             qtd = await _context.SaveChangesAsync();
 
@@ -39,6 +44,10 @@ public class CashReceivableRegistrationRepository : ICashReceivableRegistrationR
     public async Task<int> Edit(CashReceivableRegistration registration)
     {
         _context.ChangeTracker.Clear();
+
+        // O handler chamador reconstrói o objeto a partir do input e normalmente não carrega
+        // o UserId original — sempre reafirmar aqui, senão a edição zera o dono do registro.
+        registration.UserId = _currentUserService.UserId ?? Guid.Empty;
 
         _context.CashReceivableRegistration!.Update(registration);
 
@@ -104,7 +113,10 @@ public class CashReceivableRegistrationRepository : ICashReceivableRegistrationR
     {
         _context.ChangeTracker.Clear();
 
-        var cashReceivableRegistration = await _context.CashReceivableRegistration!.FindAsync(id);
+        // FindAsync ignora o filtro global de UserId (HasQueryFilter) — usar sempre uma
+        // query normal aqui, senão qualquer usuário autenticado consegue desabilitar o
+        // cadastro de outro usuário só sabendo o Id numérico.
+        var cashReceivableRegistration = await _context.CashReceivableRegistration!.FirstOrDefaultAsync(x => x.Id == id);
         if (cashReceivableRegistration == null)
         {
             return 0;

@@ -10,11 +10,13 @@ namespace Infrastructure.Repositories
     {
         private readonly ILogger<DashboardRepository> _logger;
         private readonly FinanceOrganizationContext _context;
+        private readonly ICurrentUserService _currentUserService;
 
-        public DashboardRepository(ILogger<DashboardRepository> logger, FinanceOrganizationContext context)
+        public DashboardRepository(ILogger<DashboardRepository> logger, FinanceOrganizationContext context, ICurrentUserService currentUserService)
         {
             _logger = logger;
             _context = context;
+            _currentUserService = currentUserService;
         }
 
         /// <summary>
@@ -26,7 +28,7 @@ namespace Infrastructure.Repositories
         public async Task<IList<DailyGoalExpenseByCategoryDateDashboard>> GetDashboardBillToPayCategoryAndValueByMonthYearAndCategory(
             string? yearMonth, string? category)
         {
-            QuerySqlDailyExpenseByCategoryDateDashboard query = new(yearMonth, category);
+            QuerySqlDailyExpenseByCategoryDateDashboard query = new(yearMonth, category, _currentUserService.UserId ?? Guid.Empty);
 
             var result = await _context
                 .Set<DailyGoalExpenseByCategoryDateDashboard>()
@@ -40,7 +42,7 @@ namespace Infrastructure.Repositories
         {
             try
             {
-                QuerySqlMonthlyCashFlowDashboard query = new(years, months, foodVoucher, loanNextMonths);
+                QuerySqlMonthlyCashFlowDashboard query = new(years, months, foodVoucher, loanNextMonths, _currentUserService.UserId ?? Guid.Empty);
 
                 var result = await _context
                     .Set<MonthlyCashFlowDashboard>()
@@ -60,7 +62,7 @@ namespace Infrastructure.Repositories
         {
             try
             {
-                QuerySqlDailyExpenseByCategoryAndAccountDateDashboard query = new(years, months, category);
+                QuerySqlDailyExpenseByCategoryAndAccountDateDashboard query = new(years, months, category, _currentUserService.UserId ?? Guid.Empty);
 
                 var result = await _context
                     .Set<DailyExpenseByCategoryAndAccountDateDashboard>()

@@ -3,6 +3,10 @@
     public class Category
     {
         public int Id { get; set; }
+        /// <summary>
+        /// Usuário dono deste registro
+        /// </summary>
+        public Guid UserId { get; set; }
         public string Name { get; set; } = string.Empty;
         public bool Enable { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.Now;

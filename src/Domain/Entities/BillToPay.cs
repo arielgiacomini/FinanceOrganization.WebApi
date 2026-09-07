@@ -6,6 +6,10 @@
     public class BillToPay
     {
         public Guid Id { get; set; }
+        /// <summary>
+        /// Usuário dono deste registro
+        /// </summary>
+        public Guid UserId { get; set; }
         public int IdBillToPayRegistration { get; set; }
 
         /// <summary>

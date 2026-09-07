@@ -36,11 +36,13 @@
     {
         public static string? Category { get; set; }
         public static string? YearMonth { get; set; }
+        private readonly Guid _userId;
 
-        public QuerySqlDailyExpenseByCategoryDateDashboard(string yearMonth, string category)
+        public QuerySqlDailyExpenseByCategoryDateDashboard(string yearMonth, string category, Guid userId)
         {
             Category = category;
             YearMonth = yearMonth;
+            _userId = userId;
         }
 
         /// <summary>
@@ -72,6 +74,7 @@
 							    ON DimDataDentro.Data = Dentro.DAT_COMPRA
 							WHERE (@Category IS NULL OR Dentro.DSC_CATEGORIA = @Category)
 							  AND Dentro.DSC_DESCRICAO NOT LIKE '%Projetado%'
+							  AND Dentro.UserId = {_userId}
 							GROUP BY 
 							    DimDataDentro.Ano,
 							    DimDataDentro.Mes,

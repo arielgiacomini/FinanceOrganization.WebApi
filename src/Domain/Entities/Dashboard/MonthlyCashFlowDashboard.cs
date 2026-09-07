@@ -19,13 +19,15 @@
         private readonly string _months;
         private readonly string _foodVoucher;
         private readonly string _loanNextMonths;
+        private readonly Guid _userId;
 
-        public QuerySqlMonthlyCashFlowDashboard(string? years, string? months, string? foodVoucher, string? loanNextMonths)
+        public QuerySqlMonthlyCashFlowDashboard(string? years, string? months, string? foodVoucher, string? loanNextMonths, Guid userId)
         {
             _years = string.IsNullOrEmpty(years) ? string.Concat(DateTime.Now.Year, ",", DateTime.Now.AddYears(1).Year) : years;
             _months = string.IsNullOrEmpty(months) ? "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12" : months;
             _foodVoucher = foodVoucher ?? "'Vale Alimentação/Refeição'";
             _loanNextMonths = loanNextMonths ?? "'PLR - Ciclo 2 - 2025 de méritocracia (encerrando 2025)'";
+            _userId = userId;
         }
 
         /// <summary>
@@ -46,6 +48,7 @@ AS (
 			WHERE 1=1
 				AND DimData.Ano IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@ANOS, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL)
 				AND DimData.Mes IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@MESES, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL)
+				AND CONTA_PAGAR.UserId = {_userId}
 	GROUP BY DimData.Data, DSC_PAIS_FISCAL, IND_MES_ANO, IND_PAGO
 ),
  ContaReceber (Data, PaisFiscal, MesAno, Quantidade, Valor, ValorManipulado, Pago, Recebido) 
@@ -56,6 +59,7 @@ AS (
 			WHERE 1=1
 				AND DimData.Ano IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@ANOS, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL)
 				AND DimData.Mes IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@MESES, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL)
+				AND CONTA_RECEBER.UserId = {_userId}
 	GROUP BY DimData.Data, DSC_PAIS_FISCAL, IND_MES_ANO, IND_RECEBIDO
 ), ValeRefeicao (Data, PaisFiscal, MesAno, Quantidade, Valor, ValorManipulado, Pago, Recebido)
 AS (
@@ -66,6 +70,7 @@ AS (
 				AND DimData.Ano IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@ANOS, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL)
 				AND DimData.Mes IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@MESES, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL)
 				AND DSC_CATEGORIA IN (@VALE)
+				AND CONTA_RECEBER.UserId = {_userId}
 	GROUP BY DimData.Data, DSC_PAIS_FISCAL, IND_MES_ANO, IND_RECEBIDO
 ), EmprestimoProximosMeses (Data, PaisFiscal, MesAno, Quantidade, Valor, ValorManipulado, Pago, Recebido)
 AS (
@@ -76,6 +81,7 @@ AS (
 				--AND DimData.Ano IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@ANOS, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL)
 				--AND DimData.Mes IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@MESES, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL)
 				AND DSC_DESCRICAO IN (@EMPRESTIMO_PROX_MESES)
+				AND CONTA_RECEBER.UserId = {_userId}
 	GROUP BY DimData.Data, DSC_PAIS_FISCAL, IND_MES_ANO, IND_RECEBIDO
 )
 	SELECT 
