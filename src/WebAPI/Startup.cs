@@ -84,6 +84,12 @@ namespace WebAPI
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
+                    // Sem isso, o handler remapeia claims padrão (ex.: "sub" -> ClaimTypes.NameIdentifier,
+                    // um URI legado do WS-Federation) ao validar o token recebido. ICurrentUserService lê
+                    // "sub" pelo nome curto (JwtRegisteredClaimNames.Sub) — com o mapeamento ligado, esse
+                    // claim nunca é encontrado e o isolamento por usuário falha silenciosamente (0 linhas).
+                    options.MapInboundClaims = false;
+
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
