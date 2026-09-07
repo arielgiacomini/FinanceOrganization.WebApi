@@ -106,7 +106,13 @@ namespace WebAPI
             services.AddAuthorization();
 
             services.AddHttpContextAccessor();
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            // Registrado também pelo tipo concreto (além da interface) porque GenericBackgroundServices
+            // precisa chamar CurrentUserService.SetUserId() — fora de uma requisição HTTP não existe
+            // token pra derivar o usuário, então cada iteração da rotina atribui isso manualmente, um
+            // usuário de cada vez, dentro do próprio escopo de DI criado pra aquela iteração.
+            services.AddScoped<CurrentUserService>();
+            services.AddScoped<ICurrentUserService>(sp => sp.GetRequiredService<CurrentUserService>());
+            services.AddScoped<ICurrentUserSetter>(sp => sp.GetRequiredService<CurrentUserService>());
 
             services.AddMvc(options =>
             {

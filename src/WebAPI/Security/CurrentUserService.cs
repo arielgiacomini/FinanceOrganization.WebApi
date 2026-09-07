@@ -9,9 +9,9 @@ namespace WebAPI.Security
     /// Único ponto de leitura de identidade do usuário — o filtro global de isolamento
     /// no FinanceOrganizationContext depende exclusivamente disto.
     /// </summary>
-    public class CurrentUserService : ICurrentUserService
+    public class CurrentUserService : ICurrentUserService, ICurrentUserSetter
     {
-        public Guid? UserId { get; }
+        public Guid? UserId { get; private set; }
 
         public CurrentUserService(IHttpContextAccessor httpContextAccessor)
         {
@@ -26,5 +26,13 @@ namespace WebAPI.Security
 
             UserId = Guid.TryParse(subjectClaim, out var userId) ? userId : null;
         }
+
+        /// <summary>
+        /// Só para uso fora de uma requisição HTTP (ex.: GenericBackgroundServices) — não existe token
+        /// nem HttpContext ali, então o "usuário atual" precisa ser atribuído explicitamente, um de cada
+        /// vez, dentro de um escopo de DI próprio criado pra esse usuário. Não expor isso na interface
+        /// ICurrentUserService: nenhum código de request HTTP deveria poder trocar o usuário no meio do caminho.
+        /// </summary>
+        public void SetUserId(Guid userId) => UserId = userId;
     }
 }

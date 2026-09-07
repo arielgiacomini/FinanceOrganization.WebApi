@@ -42,6 +42,11 @@ namespace Infrastructure.Repositories
             return await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.GoogleSub == googleSub);
         }
 
+        public async Task<IList<User>> GetAll()
+        {
+            return await _context.Users.AsNoTracking().ToListAsync();
+        }
+
         public async Task<int> Save(User user)
         {
             try
