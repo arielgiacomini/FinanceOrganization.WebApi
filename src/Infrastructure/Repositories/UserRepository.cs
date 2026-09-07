@@ -24,9 +24,17 @@ namespace Infrastructure.Repositories
 
         public async Task<User?> GetByEmail(string email)
         {
-            var normalizedEmail = email.Trim().ToLowerInvariant();
+            try
+            {
+                var normalizedEmail = email.Trim().ToLowerInvariant();
 
-            return await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == normalizedEmail);
+                return await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == normalizedEmail);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "[UserRepository.GetByEmail()] - Ocorreu um erro ao buscar o usuário por email. Email: {Email}", email);
+                throw;
+            }
         }
 
         public async Task<User?> GetByGoogleSub(string googleSub)

@@ -12,7 +12,10 @@ namespace Application.Feature.Auth.Register
             {
                 validations.Add(nameof(input.Email), "Informe um e-mail válido.");
             }
-            else if (await userRepository.GetByEmail(input.Email) is not null)
+
+            var getByUser = await userRepository.GetByEmail(input.Email);
+
+            if (getByUser is not null)
             {
                 validations.Add(nameof(input.Email), "Já existe uma conta cadastrada com este e-mail.");
             }
