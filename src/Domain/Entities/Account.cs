@@ -7,6 +7,10 @@
         /// </summary>
         public int Id { get; set; }
         /// <summary>
+        /// Usuário dono deste registro
+        /// </summary>
+        public Guid UserId { get; set; }
+        /// <summary>
         /// Descrição da Conta
         /// </summary>
         public string? Name { get; set; }

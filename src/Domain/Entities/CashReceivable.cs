@@ -3,6 +3,10 @@
     public class CashReceivable
     {
         public Guid Id { get; set; }
+        /// <summary>
+        /// Usuário dono deste registro
+        /// </summary>
+        public Guid UserId { get; set; }
         public int IdCashReceivableRegistration { get; set; }
         public string? Name { get; set; }
         public string? Account { get; set; }

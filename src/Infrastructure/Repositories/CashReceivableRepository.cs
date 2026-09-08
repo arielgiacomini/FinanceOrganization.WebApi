@@ -10,13 +10,16 @@ namespace Infrastructure.Repositories
     {
         private readonly ILogger<CashReceivableRepository> _logger;
         private readonly FinanceOrganizationContext _context;
+        private readonly ICurrentUserService _currentUserService;
 
         public CashReceivableRepository(
             ILogger<CashReceivableRepository> logger,
-            FinanceOrganizationContext context)
+            FinanceOrganizationContext context,
+            ICurrentUserService currentUserService)
         {
             _logger = logger;
             _context = context;
+            _currentUserService = currentUserService;
         }
 
         public async Task<IList<CashReceivable>> GetCashReceivableRegistrationId(int cashReceivableRegistrationId)
@@ -47,6 +50,8 @@ namespace Infrastructure.Repositories
             {
                 try
                 {
+                    cashReceivable.UserId = _currentUserService.UserId ?? Guid.Empty;
+
                     _context.Add(cashReceivable);
 
                     _context.SaveChanges();
@@ -66,6 +71,10 @@ namespace Infrastructure.Repositories
         public async Task<int> Edit(CashReceivable cashReceivable)
         {
             _context.ChangeTracker.Clear();
+
+            // O handler chamador reconstrói o objeto a partir do input e normalmente não carrega
+            // o UserId original — sempre reafirmar aqui, senão a edição zera o dono do registro.
+            cashReceivable.UserId = _currentUserService.UserId ?? Guid.Empty;
 
             _context.CashReceivable!.Update(cashReceivable);
 
@@ -178,6 +187,8 @@ namespace Infrastructure.Repositories
 
             try
             {
+                cashReceivable.UserId = _currentUserService.UserId ?? Guid.Empty;
+
                 _context.Add(cashReceivable);
 
                 _context.SaveChanges();
@@ -216,6 +227,11 @@ namespace Infrastructure.Repositories
         public async Task<int> EditRange(IList<CashReceivable> cashReceivables)
         {
             _context.ChangeTracker.Clear();
+
+            foreach (var cashReceivable in cashReceivables)
+            {
+                cashReceivable.UserId = _currentUserService.UserId ?? Guid.Empty;
+            }
 
             _context.CashReceivable!.UpdateRange(cashReceivables);
 

@@ -11,6 +11,7 @@ namespace Infrastructure.Database.Mapping
             builder.ToTable("CARTEIRA");
             builder.HasKey(x => x.Id);
             builder.Property(x => x.Id).HasColumnName("COD").IsRequired().ValueGeneratedOnAdd();
+            builder.Property(x => x.UserId).HasColumnName("UserId").IsRequired();
             builder.Property(w => w.WalletKey).HasColumnName("DSC_CHAVE_CARTEIRA").HasMaxLength(100);
             builder.Property(w => w.WalletValue).HasColumnName("DSC_VALOR_CARTEIRA");
             builder.Property(x => x.CreationDate).HasColumnName("DAT_CRIACAO_REGISTRO");

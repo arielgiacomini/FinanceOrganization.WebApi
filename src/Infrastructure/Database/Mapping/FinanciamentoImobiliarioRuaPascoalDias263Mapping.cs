@@ -14,6 +14,7 @@ namespace Infrastructure.Database.Mapping
         public void Configure(EntityTypeBuilder<FinanciamentoImobiliarioRuaPascoalDias263> builder)
         {
             builder.ToTable("FinanciamentoImobiliarioRuaPascoalDias263").HasNoKey();
+            builder.Property(x => x.UserId).HasColumnName("UserId");
             builder.Property(x => x.Installment).HasColumnName("Parcela");
             builder.Property(x => x.Serie).HasColumnName("Serie");
             builder.Property(x => x.CurrencyType).HasColumnName("Moeda");

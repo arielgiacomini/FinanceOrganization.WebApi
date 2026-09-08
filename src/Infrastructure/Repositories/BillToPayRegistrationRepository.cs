@@ -8,10 +8,12 @@ namespace Infrastructure.Repositories
     public class BillToPayRegistrationRepository : IBillToPayRegistrationRepository
     {
         private readonly FinanceOrganizationContext _context;
+        private readonly ICurrentUserService _currentUserService;
 
-        public BillToPayRegistrationRepository(FinanceOrganizationContext context)
+        public BillToPayRegistrationRepository(FinanceOrganizationContext context, ICurrentUserService currentUserService)
         {
             _context = context;
+            _currentUserService = currentUserService;
         }
 
         public async Task<IList<BillToPayRegistration>> GetAll()
@@ -76,6 +78,8 @@ namespace Infrastructure.Repositories
 
         public async Task<int> Save(BillToPayRegistration billToPayRegistration)
         {
+            billToPayRegistration.UserId = _currentUserService.UserId ?? Guid.Empty;
+
             _context.Add(billToPayRegistration);
             var qtdEntry = await _context.SaveChangesAsync();
 
@@ -85,6 +89,10 @@ namespace Infrastructure.Repositories
         public async Task<int> Edit(BillToPayRegistration billToPayRegistration)
         {
             _context.ChangeTracker.Clear();
+
+            // O handler chamador reconstrói o objeto a partir do input e normalmente não carrega
+            // o UserId original — sempre reafirmar aqui, senão a edição zera o dono do registro.
+            billToPayRegistration.UserId = _currentUserService.UserId ?? Guid.Empty;
 
             _context.BillToPayRegistration!.Update(billToPayRegistration);
 
@@ -133,7 +141,10 @@ namespace Infrastructure.Repositories
         {
             _context.ChangeTracker.Clear();
 
-            var billToPayRegistration = await _context.BillToPayRegistration!.FindAsync(id);
+            // FindAsync ignora o filtro global de UserId (HasQueryFilter) — usar sempre uma
+            // query normal aqui, senão qualquer usuário autenticado consegue desabilitar o
+            // cadastro de outro usuário só sabendo o Id numérico.
+            var billToPayRegistration = await _context.BillToPayRegistration!.FirstOrDefaultAsync(x => x.Id == id);
             if (billToPayRegistration == null)
             {
                 return 0;

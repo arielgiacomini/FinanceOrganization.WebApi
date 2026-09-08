@@ -1,4 +1,5 @@
 ﻿using Domain.Interfaces;
+using Infrastructure.Auth;
 using Infrastructure.Database.Context;
 using Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,8 @@ namespace Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             services.AddTransient<FinanceOrganizationContext>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IGoogleIdTokenValidator, GoogleIdTokenValidator>();
             services.AddScoped<IBillToPayRegistrationRepository, BillToPayRegistrationRepository>();
             services.AddScoped<IBillToPayRepository, BillToPayRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();

@@ -1,4 +1,5 @@
 ﻿using Application;
+using Domain.Interfaces;
 using Domain.Options;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -8,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using WebAPI.Security;
 
 namespace WebAPI
 {
@@ -57,6 +59,12 @@ namespace WebAPI
             services.Configure<AuthClientOptions>(options =>
              Configuration.GetSection("AuthClient").Bind(options));
 
+            services.Configure<GoogleAuthOptions>(options =>
+             Configuration.GetSection("GoogleAuth").Bind(options));
+
+            services.Configure<TrialOptions>(options =>
+             Configuration.GetSection("Trial").Bind(options));
+
             var jwtOptions = new JwtOptions();
             Configuration.GetSection("Jwt").Bind(jwtOptions);
 
@@ -76,6 +84,12 @@ namespace WebAPI
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
+                    // Sem isso, o handler remapeia claims padrão (ex.: "sub" -> ClaimTypes.NameIdentifier,
+                    // um URI legado do WS-Federation) ao validar o token recebido. ICurrentUserService lê
+                    // "sub" pelo nome curto (JwtRegisteredClaimNames.Sub) — com o mapeamento ligado, esse
+                    // claim nunca é encontrado e o isolamento por usuário falha silenciosamente (0 linhas).
+                    options.MapInboundClaims = false;
+
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
@@ -91,10 +105,20 @@ namespace WebAPI
 
             services.AddAuthorization();
 
+            services.AddHttpContextAccessor();
+            // Registrado também pelo tipo concreto (além da interface) porque GenericBackgroundServices
+            // precisa chamar CurrentUserService.SetUserId() — fora de uma requisição HTTP não existe
+            // token pra derivar o usuário, então cada iteração da rotina atribui isso manualmente, um
+            // usuário de cada vez, dentro do próprio escopo de DI criado pra aquela iteração.
+            services.AddScoped<CurrentUserService>();
+            services.AddScoped<ICurrentUserService>(sp => sp.GetRequiredService<CurrentUserService>());
+            services.AddScoped<ICurrentUserSetter>(sp => sp.GetRequiredService<CurrentUserService>());
+
             services.AddMvc(options =>
             {
                 options.EnableEndpointRouting = false;
                 options.Filters.Add(new AuthorizeFilter());
+                options.Filters.Add(typeof(TrialGateFilter));
             });
 
             services.AddHostedServices();

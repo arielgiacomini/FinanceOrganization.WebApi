@@ -3,6 +3,10 @@
     public class FinanciamentoImobiliarioRuaPascoalDias263
     {
         /// <summary>
+        /// Usuário dono deste registro
+        /// </summary>
+        public Guid UserId { get; set; }
+        /// <summary>
         /// Installment - representa o campo Parcela da Tabela
         /// </summary>
         public int? Installment { get; set; }

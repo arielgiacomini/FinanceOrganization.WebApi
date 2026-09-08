@@ -12,14 +12,17 @@ namespace Infrastructure.Repositories
     {
         private readonly FinanceOrganizationContext _context;
         private readonly ILogger _logger;
+        private readonly ICurrentUserService _currentUserService;
         private readonly ConcurrentDictionary<string, IList<Category>> _returnCategoriesToActions = new();
 
         public CategoryRepository(
             ILogger logger,
-            FinanceOrganizationContext context)
+            FinanceOrganizationContext context,
+            ICurrentUserService currentUserService)
         {
             _logger = logger;
             _context = context;
+            _currentUserService = currentUserService;
         }
 
         public async Task<IList<Category>?> GetAllAsync(AccountType accountType, bool? filterEnable = null)
@@ -138,6 +141,8 @@ namespace Infrastructure.Repositories
             {
                 try
                 {
+                    category.UserId = _currentUserService.UserId ?? Guid.Empty;
+
                     _context.Add(category);
 
                     _context.SaveChanges();
@@ -161,6 +166,8 @@ namespace Infrastructure.Repositories
             {
                 try
                 {
+                    category.UserId = _currentUserService.UserId ?? Guid.Empty;
+
                     _context.Update(category);
                     _context.SaveChanges();
                     contador++;

@@ -25,12 +25,14 @@
         private readonly string? _years;
         private readonly string? _months;
         private readonly string? _category;
+        private readonly Guid _userId;
 
-        public QuerySqlDailyExpenseByCategoryAndAccountDateDashboard(string? years, string? months, string? category)
+        public QuerySqlDailyExpenseByCategoryAndAccountDateDashboard(string? years, string? months, string? category, Guid userId)
         {
             _years = years;
             _months = months;
             _category = category;
+            _userId = userId;
         }
 
         /// <summary>
@@ -67,9 +69,10 @@
 									  ) AS DadosDatas 
 										ON CAST(ISNULL(ISNULL(ISNULL(CONTA_PAGAR.DAT_COMPRA, CONTA_PAGAR.DAT_VENCIMENTO), DAT_PAGAMENTO), DAT_CRIACAO_REGISTRO) AS DATE) = DadosDatas.Data
 							WHERE 1=1
-								AND @ANOS IS NULL OR DimData.Ano IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@ANOS, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL)
-								AND @MESES IS NULL OR DimData.Mes IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@MESES, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL)
-								AND @CATEGORIA IS NULL OR DSC_CATEGORIA IN (@CATEGORIA)
+								AND (@ANOS IS NULL OR DimData.Ano IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@ANOS, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL))
+								AND (@MESES IS NULL OR DimData.Mes IN (SELECT TRY_CAST(TRIM(value) AS INT) FROM STRING_SPLIT(@MESES, ',') WHERE TRY_CAST(TRIM(value) AS INT) IS NOT NULL))
+								AND (@CATEGORIA IS NULL OR DSC_CATEGORIA IN (@CATEGORIA))
+								AND CONTA_PAGAR.UserId = {_userId}
 					GROUP BY DimData.Data, DSC_PAIS_FISCAL, IND_MES_ANO, IND_PAGO, DSC_CATEGORIA, IND_TIPO_REGISTRO, DSC_CONTA, DadosDatas.Dia, DadosDatas.NomeMes, DadosDatas.NomeDiaSemana, DadosDatas.FimDeSemana, DadosDatas.EhFeriado
 				)
 					SELECT 

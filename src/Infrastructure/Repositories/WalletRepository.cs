@@ -10,11 +10,13 @@ namespace Infrastructure.Repositories
     {
         private readonly FinanceOrganizationContext _context;
         private readonly ILogger _looger;
+        private readonly ICurrentUserService _currentUserService;
 
-        public WalletRepository(ILogger logger, FinanceOrganizationContext context)
+        public WalletRepository(ILogger logger, FinanceOrganizationContext context, ICurrentUserService currentUserService)
         {
             _context = context;
             _looger = logger;
+            _currentUserService = currentUserService;
         }
 
         public async Task<Wallet> GetById(Guid id)
@@ -43,6 +45,8 @@ namespace Infrastructure.Repositories
         {
             try
             {
+                wallet.UserId = _currentUserService.UserId ?? Guid.Empty;
+
                 _context.Add(wallet);
                 var qtdEntry = await _context.SaveChangesAsync();
 
@@ -59,6 +63,10 @@ namespace Infrastructure.Repositories
         public async Task<int> Edit(Wallet wallet)
         {
             _context.ChangeTracker.Clear();
+
+            // O handler chamador reconstrói o objeto a partir do input e normalmente não carrega
+            // o UserId original — sempre reafirmar aqui, senão a edição zera o dono do registro.
+            wallet.UserId = _currentUserService.UserId ?? Guid.Empty;
 
             _context.Wallets!.Update(wallet);
             var result = _context.SaveChanges();

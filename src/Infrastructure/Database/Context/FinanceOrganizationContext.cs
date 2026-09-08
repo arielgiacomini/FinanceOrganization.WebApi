@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Entities.Dashboard;
 using Domain.Entities.Extern;
+using Domain.Interfaces;
 using Infrastructure.Database.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,10 +12,23 @@ namespace Infrastructure.Database.Context
     {
         private const string SQL_SERVER_CONNECTION_STRING = "SqlServer";
         private readonly string _connectionString;
+        private readonly ICurrentUserService _currentUserService;
 
-        public FinanceOrganizationContext(IConfiguration configuration)
+        public FinanceOrganizationContext(IConfiguration configuration, ICurrentUserService currentUserService)
         {
             _connectionString = configuration.GetConnectionString(SQL_SERVER_CONNECTION_STRING)!;
+            _currentUserService = currentUserService;
+        }
+
+        /// <summary>
+        /// Construtor usado em testes: recebe as options já configuradas (ex.: provider InMemory),
+        /// para poder testar o filtro global de isolamento por usuário sem um SQL Server real.
+        /// </summary>
+        public FinanceOrganizationContext(DbContextOptions<FinanceOrganizationContext> options, ICurrentUserService currentUserService)
+            : base(options)
+        {
+            _connectionString = string.Empty;
+            _currentUserService = currentUserService;
         }
 
         /// <summary>
@@ -71,6 +85,11 @@ namespace Infrastructure.Database.Context
         /// </summary>
         public DbSet<FinanciamentoImobiliarioRuaPascoalDias263> FinanciamentoImobiliarioRuaPascoalDias263 { get; set; } //DbSet = acesso a uma tabela específica
 
+        /// <summary>
+        /// Tabela de Usuários (donos dos dados)
+        /// </summary>
+        public DbSet<User> Users { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new BillToPayRegistrationMapping());
@@ -84,7 +103,20 @@ namespace Infrastructure.Database.Context
             modelBuilder.ApplyConfiguration(new DimDateMapping());
             modelBuilder.ApplyConfiguration(new WalletMapping());
             modelBuilder.ApplyConfiguration(new FinanciamentoImobiliarioRuaPascoalDias263Mapping());
+            modelBuilder.ApplyConfiguration(new UserMapping());
        
+            // Isolamento por usuário: único ponto de verdade. Toda leitura/escrita nessas
+            // tabelas via EF Core passa por aqui automaticamente — nunca filtrar UserId
+            // manualmente em repositório/handler. Ver ICurrentUserService.
+            modelBuilder.Entity<Wallet>().HasQueryFilter(e => e.UserId == _currentUserService.UserId);
+            modelBuilder.Entity<Account>().HasQueryFilter(e => e.UserId == _currentUserService.UserId);
+            modelBuilder.Entity<Category>().HasQueryFilter(e => e.UserId == _currentUserService.UserId);
+            modelBuilder.Entity<BillToPay>().HasQueryFilter(e => e.UserId == _currentUserService.UserId);
+            modelBuilder.Entity<BillToPayRegistration>().HasQueryFilter(e => e.UserId == _currentUserService.UserId);
+            modelBuilder.Entity<CashReceivable>().HasQueryFilter(e => e.UserId == _currentUserService.UserId);
+            modelBuilder.Entity<CashReceivableRegistration>().HasQueryFilter(e => e.UserId == _currentUserService.UserId);
+            modelBuilder.Entity<FinanciamentoImobiliarioRuaPascoalDias263>().HasQueryFilter(e => e.UserId == _currentUserService.UserId);
+
             modelBuilder.Entity<DailyGoalExpenseByCategoryDateDashboard>()
                 .HasNoKey();
 
@@ -99,7 +131,11 @@ namespace Infrastructure.Database.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(_connectionString);
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(_connectionString);
+            }
+
             optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             base.OnConfiguring(optionsBuilder);
         }

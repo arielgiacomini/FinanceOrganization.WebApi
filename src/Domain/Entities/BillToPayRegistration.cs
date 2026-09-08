@@ -6,6 +6,10 @@
     public class BillToPayRegistration
     {
         public int Id { get; set; }
+        /// <summary>
+        /// Usuário dono deste registro
+        /// </summary>
+        public Guid UserId { get; set; }
         public string? Name { get; set; }
         public string? Account { get; set; }
         public string? Frequence { get; set; }

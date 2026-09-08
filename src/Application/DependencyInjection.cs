@@ -5,6 +5,9 @@ using Application.Feature.Account.CreateAccount;
 using Application.Feature.Account.DeleteAccount;
 using Application.Feature.Account.EditAccount;
 using Application.Feature.Auth.GenerateToken;
+using Application.Feature.Auth.GoogleSignIn;
+using Application.Feature.Auth.PasswordGrant;
+using Application.Feature.Auth.Register;
 using Application.Feature.Account.SearchAccount;
 using Application.Feature.Account.SearchAccountOnlyName;
 using Application.Feature.BillToPay.DeleteBillToPay;
@@ -76,6 +79,9 @@ namespace Application
             services.AddScoped<IReceiveCashReceivableHandler, ReceiveCashReceivableHandler>();
             services.AddScoped<ISearchRealEstateFinancingHandler, SearchRealEstateFinancingHandler>();
             services.AddScoped<IGenerateTokenHandler, GenerateTokenHandler>();
+            services.AddScoped<IPasswordGrantHandler, PasswordGrantHandler>();
+            services.AddScoped<IRegisterHandler, RegisterHandler>();
+            services.AddScoped<IGoogleSignInHandler, GoogleSignInHandler>();
 
             return services;
         }

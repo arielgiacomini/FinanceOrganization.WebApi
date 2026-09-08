@@ -10,11 +10,13 @@ namespace Infrastructure.Repositories
     {
         private readonly FinanceOrganizationContext _context;
         private readonly ILogger _looger;
+        private readonly ICurrentUserService _currentUserService;
 
-        public AccountRepository(ILogger logger, FinanceOrganizationContext context)
+        public AccountRepository(ILogger logger, FinanceOrganizationContext context, ICurrentUserService currentUserService)
         {
             _context = context;
             _looger = logger;
+            _currentUserService = currentUserService;
         }
 
         public async Task<IList<Account>> GetAllAccounts()
@@ -67,6 +69,8 @@ namespace Infrastructure.Repositories
 
         public async Task<int> Save(Account account)
         {
+            account.UserId = _currentUserService.UserId ?? Guid.Empty;
+
             _context.Add(account);
             var qtdEntry = await _context.SaveChangesAsync();
 
@@ -76,6 +80,10 @@ namespace Infrastructure.Repositories
         public async Task<int> Edit(Account account)
         {
             _context.ChangeTracker.Clear();
+
+            // O handler chamador reconstrói o objeto a partir do input e normalmente não carrega
+            // o UserId original — sempre reafirmar aqui, senão a edição zera o dono do registro.
+            account.UserId = _currentUserService.UserId ?? Guid.Empty;
 
             _context.Accounts!.Update(account);
             var result = _context.SaveChanges();
