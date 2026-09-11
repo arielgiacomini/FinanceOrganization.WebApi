@@ -7,15 +7,37 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
         public static async Task<Dictionary<string, string>> ValidateInput(
             CreateBillToPayRegistrationInput input,
             IBillToPayRegistrationRepository billToPayRegistrationRepository,
-            IBillToPayRepository billToPayRepository)
+            IBillToPayRepository billToPayRepository,
+            IAccountRepository accountRepository)
         {
-            return await CreateValidateBaseInput(input, billToPayRegistrationRepository, billToPayRepository);
+            return await CreateValidateBaseInput(input, billToPayRegistrationRepository, billToPayRepository, accountRepository);
         }
 
         public static async Task<Dictionary<string, string>> CreateValidateBaseInput(CreateBillToPayRegistrationInput input,
-            IBillToPayRegistrationRepository billToPayRegistrationRepository, IBillToPayRepository billToPayRepository)
+            IBillToPayRegistrationRepository billToPayRegistrationRepository, IBillToPayRepository billToPayRepository,
+            IAccountRepository accountRepository)
         {
             Dictionary<string, string> validatorBase = new();
+
+            if (input.IdBillToPayRegistration.HasValue)
+            {
+                var parentRegistration = await billToPayRegistrationRepository.GetById(input.IdBillToPayRegistration.Value);
+
+                if (parentRegistration == null)
+                {
+                    validatorBase.Add("[59]", $"Não foi encontrada uma conta a pagar cadastrada com o Id: {input.IdBillToPayRegistration} para associação.");
+                }
+
+                if (string.IsNullOrEmpty(input.InitialMonthYear))
+                {
+                    validatorBase.Add("[60]", "Ao associar a uma conta a pagar já cadastrada (IdBillToPayRegistration) é obrigatório informar o InitialMonthYear (Mês/Ano) referente ao registro que está sendo criado diretamente.");
+                }
+
+                if (string.IsNullOrEmpty(input.Account) || await accountRepository.GetAccountByName(input.Account) == null)
+                {
+                    validatorBase.Add("[61]", $"Não foi encontrada a conta [{input.Account}], necessária para o cadastro direto da conta a pagar associada.");
+                }
+            }
 
             if (input.BestPayDay == null && input.PurchaseDate == null)
             {
