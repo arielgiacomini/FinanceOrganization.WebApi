@@ -57,7 +57,7 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
             {
                 // Associação a uma conta a pagar já existente: não passa por CONTA_PAGAR_CADASTRO nem pela
                 // rotina em background CreateBillToPayEventHandler — cadastra direto na tabela oficial CONTA_PAGAR.
-                await CreateDirectBillToPay(input);
+                await CreateDirectBillToPay(input, cancellationToken);
                 isSaved = 1;
             }
             else
@@ -76,16 +76,30 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
         /// <summary>
         /// Cadastra diretamente o BillToPay (CONTA_PAGAR) referente ao mês informado, associado a uma conta a
         /// pagar já existente via IdBillToPayRegistration — usada para preencher rapidamente um mês que ficou
-        /// faltando, sem passar por CONTA_PAGAR_CADASTRO. É uma amarração genérica, válida para qualquer tipo
-        /// de conta/frequência (não depende da lógica de contas fixas recorrentes ou de cartão de crédito).
+        /// faltando, sem passar por CONTA_PAGAR_CADASTRO. É uma amarração genérica (não depende da lógica de
+        /// contas fixas recorrentes), mas mantém as mesmas regras da rotina em background
+        /// (CreateBillToPayEventHandler): vencimento de Cartão de Crédito (dia da conta, mês seguinte ao de
+        /// referência) e o ajuste/desconto de Compra Livre contra a conta fixa correspondente, quando aplicável.
         /// </summary>
-        private async Task CreateDirectBillToPay(CreateBillToPayRegistrationInput input)
+        private async Task CreateDirectBillToPay(CreateBillToPayRegistrationInput input, CancellationToken cancellationToken)
         {
-            var bestPayDay = input.BestPayDay ?? input.PurchaseDate!.Value.Day;
+            var account = await _accountRepository.GetAccountByName(input.Account!);
+            var isCreditCard = account!.IsCreditCard;
+
+            var bestPayDay = isCreditCard && account.DueDate.HasValue
+                ? account.DueDate.Value
+                : input.BestPayDay ?? input.PurchaseDate!.Value.Day;
 
             var initialMonthDate = DateServiceUtils.GetDateTimeByYearMonthBrazilian(input.InitialMonthYear)!.Value;
             var dayInMonth = Math.Min(bestPayDay, DateTime.DaysInMonth(initialMonthDate.Year, initialMonthDate.Month));
-            var dueDate = new DateTime(initialMonthDate.Year, initialMonthDate.Month, dayInMonth, 0, 0, 0, DateTimeKind.Utc);
+            var targetDate = new DateTime(initialMonthDate.Year, initialMonthDate.Month, dayInMonth, 0, 0, 0, DateTimeKind.Utc);
+
+            // addFirstNextMonth desloca o vencimento para o mês seguinte ao de referência, mesma regra da
+            // rotina em background para Cartão de Crédito (o YearMonth/mês de referência não é deslocado).
+            var nextMonthYearToRegister = DateServiceUtils.GetNextYearMonthAndDateTime(
+                targetDate, 0, null, currentMonth: true, addFirstNextMonth: isCreditCard);
+
+            var singleMonth = nextMonthYearToRegister.First();
 
             var consideredPaid = await _paymentAdjustmentHandler
                 .ConsideredPaid(input.Account!, input.RegistrationType!);
@@ -104,7 +118,14 @@ namespace Application.Feature.BillToPayRegistration.CreateBillToPayRegistration
             };
 
             var newBillToPay = CreateBillToPayEventHandler.MapBillToPay(
-                null, transientRegistration, consideredPaid, dueDate, input.InitialMonthYear!, input.PurchaseDate);
+                null, transientRegistration, consideredPaid, singleMonth.Value, singleMonth.Key, input.PurchaseDate);
+
+            // Se for uma Compra Livre, desconta o valor da conta fixa correspondente na mesma categoria/mês
+            // (mesma regra aplicada pela rotina em background via PaymentAdjustmentHandler.Handle).
+            var paymentAdjustment = CreateBillToPayEventHandler.CreatePaymentAdjustment(
+                transientRegistration, 0, account, nextMonthYearToRegister);
+
+            await _paymentAdjustmentHandler.Handle(paymentAdjustment, cancellationToken);
 
             await _billToPayRepository.SaveRange(new List<Domain.Entities.BillToPay> { newBillToPay });
         }
