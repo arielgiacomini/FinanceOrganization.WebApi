@@ -21,6 +21,9 @@ namespace Infrastructure.Database.Mapping
             builder.Property(x => x.TrialStartsAt).HasColumnType("datetime2").IsRequired();
             builder.Property(x => x.TrialEndsAt).HasColumnType("datetime2").IsRequired();
             builder.Property(x => x.SubscriptionStatus).HasMaxLength(20).IsRequired();
+            builder.Property(x => x.QuickCaptureKeyHash).HasMaxLength(64);
+            builder.HasIndex(x => x.QuickCaptureKeyHash).IsUnique().HasFilter("[QuickCaptureKeyHash] IS NOT NULL");
+            builder.Property(x => x.QuickCaptureKeyCreatedAt).HasColumnType("datetime2");
         }
     }
 }

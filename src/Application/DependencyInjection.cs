@@ -7,6 +7,7 @@ using Application.Feature.Account.EditAccount;
 using Application.Feature.Auth.GenerateToken;
 using Application.Feature.Auth.GoogleSignIn;
 using Application.Feature.Auth.PasswordGrant;
+using Application.Feature.Auth.QuickCaptureKey;
 using Application.Feature.Auth.Register;
 using Application.Feature.Account.SearchAccount;
 using Application.Feature.Account.SearchAccountOnlyName;
@@ -82,6 +83,8 @@ namespace Application
             services.AddScoped<IPasswordGrantHandler, PasswordGrantHandler>();
             services.AddScoped<IRegisterHandler, RegisterHandler>();
             services.AddScoped<IGoogleSignInHandler, GoogleSignInHandler>();
+            services.AddScoped<IGenerateQuickCaptureKeyHandler, GenerateQuickCaptureKeyHandler>();
+            services.AddScoped<IRevokeQuickCaptureKeyHandler, RevokeQuickCaptureKeyHandler>();
 
             return services;
         }
