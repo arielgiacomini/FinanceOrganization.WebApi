@@ -126,12 +126,18 @@ namespace WebAPI.Controllers
                 return Unauthorized();
             }
 
-            _logger.Information("[AuthController.GenerateQuickCaptureKey()] - Chave de Lançamento Rápido gerada.");
+            _logger.Information("[AuthController.GenerateQuickCaptureKey()] - Chave de Lançamento Rápido gerada. UserId: {UserId}, Email: {Email}", output.UserId, output.Email);
 
             return Ok(new
             {
                 quick_capture_key = output.QuickCaptureKey,
-                header = QuickCaptureKeyDefaults.HeaderName
+                header = QuickCaptureKeyDefaults.HeaderName,
+                // Devolvido de propósito: confirme aqui, antes de usar a chave em qualquer lugar, que
+                // user_id/email batem com a sua conta principal (a que tem os lançamentos de verdade).
+                // Se não baterem, esta chave foi gerada com uma sessão/conta diferente da que você
+                // pensa — gere de novo autenticado com o Bearer JWT da conta certa.
+                user_id = output.UserId,
+                email = output.Email
             });
         }
 
