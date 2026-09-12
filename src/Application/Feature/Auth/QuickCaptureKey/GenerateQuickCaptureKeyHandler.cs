@@ -44,12 +44,14 @@ namespace Application.Feature.Auth.QuickCaptureKey
 
             await _userRepository.Edit(user);
 
-            _logger.Information("[GenerateQuickCaptureKeyHandler.Handle()] - Nova chave de Lançamento Rápido gerada. UserId: {UserId}", userId);
+            _logger.Information("[GenerateQuickCaptureKeyHandler.Handle()] - Nova chave de Lançamento Rápido gerada. UserId: {UserId}, Email: {Email}", userId, user.Email);
 
             return new GenerateQuickCaptureKeyOutput
             {
                 Success = true,
-                QuickCaptureKey = plainKey
+                QuickCaptureKey = plainKey,
+                UserId = userId,
+                Email = user.Email
             };
         }
     }

@@ -56,6 +56,10 @@ namespace WebAPI.Security.QuickCaptureKey
                 return AuthenticateResult.Fail("Chave de Lançamento Rápido inválida.");
             }
 
+            Logger.LogInformation(
+                "[QuickCaptureKeyHandler] - Autenticado via chave de Lançamento Rápido. UserId: {UserId}, Email: {Email}, Rota: {Method} {Path}",
+                user.Id, user.Email, Request.Method, Request.Path);
+
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString())
