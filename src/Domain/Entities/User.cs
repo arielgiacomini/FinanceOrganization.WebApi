@@ -24,5 +24,12 @@ namespace Domain.Entities
         /// Um dos valores de <see cref="SubscriptionStatus"/>.
         /// </summary>
         public string SubscriptionStatus { get; set; } = Entities.SubscriptionStatus.Trialing;
+        /// <summary>
+        /// Hash (SHA-256, hex) da chave opaca de Lançamento Rápido do usuário. Nulo até o usuário
+        /// gerar uma via POST /v1/auth/quick-capture-key. Nunca guardar o valor em texto plano —
+        /// só existe uma vez, na resposta da geração. Ver QuickCaptureKeyHandler (WebAPI.Security).
+        /// </summary>
+        public string? QuickCaptureKeyHash { get; set; }
+        public DateTime? QuickCaptureKeyCreatedAt { get; set; }
     }
 }

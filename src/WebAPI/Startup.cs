@@ -2,6 +2,7 @@
 using Domain.Interfaces;
 using Domain.Options;
 using Infrastructure;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +11,7 @@ using Serilog;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using WebAPI.Security;
+using WebAPI.Security.QuickCaptureKey;
 
 namespace WebAPI
 {
@@ -81,7 +83,25 @@ namespace WebAPI
                 throw new InvalidOperationException("Configuração 'AuthClient:ClientId'/'AuthClient:ClientSecret' não foi definida. Configure via 'dotnet user-secrets' (dev) ou variáveis de ambiente 'AuthClient__ClientId'/'AuthClient__ClientSecret' (produção).");
             }
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication(options =>
+                {
+                    // Scheme "roteador": decide, por requisição, se valida como Bearer JWT normal ou
+                    // como chave de Lançamento Rápido — nunca os dois ao mesmo tempo. Ver seletor abaixo.
+                    options.DefaultScheme = "SmartAuth";
+                    options.DefaultChallengeScheme = "SmartAuth";
+                })
+                .AddPolicyScheme("SmartAuth", "Bearer JWT ou Chave de Lançamento Rápido", options =>
+                {
+                    // Só desvia para o scheme da chave quando o header está presente E a rota+verbo
+                    // está na allowlist fechada (QuickCaptureKeyDefaults) — em qualquer outro caso
+                    // (inclusive header presente em rota fora da allowlist) segue pelo Bearer normal,
+                    // que vai rejeitar a requisição sem token por conta própria.
+                    options.ForwardDefaultSelector = context =>
+                        context.Request.Headers.ContainsKey(QuickCaptureKeyDefaults.HeaderName)
+                            && QuickCaptureKeyDefaults.IsAllowedEndpoint(context.Request)
+                                ? QuickCaptureKeyDefaults.AuthenticationScheme
+                                : JwtBearerDefaults.AuthenticationScheme;
+                })
                 .AddJwtBearer(options =>
                 {
                     // Sem isso, o handler remapeia claims padrão (ex.: "sub" -> ClaimTypes.NameIdentifier,
@@ -101,7 +121,8 @@ namespace WebAPI
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
                         ClockSkew = TimeSpan.FromSeconds(30)
                     };
-                });
+                })
+                .AddScheme<AuthenticationSchemeOptions, QuickCaptureKeyHandler>(QuickCaptureKeyDefaults.AuthenticationScheme, _ => { });
 
             services.AddAuthorization();
 

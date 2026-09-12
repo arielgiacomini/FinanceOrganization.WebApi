@@ -216,13 +216,13 @@ namespace Application.EventHandlers.CreateBillToPayEvent
             await _billToPayRepository.SaveRange(listBillToPay);
         }
 
-        private static PaymentAdjustmentInput CreatePaymentAdjustment(BillToPayRegistration billToPayRegistration, int qtdMonthAdd, Account account, Dictionary<string, DateTime> nextMonthYearToRegister)
+        public static PaymentAdjustmentInput CreatePaymentAdjustment(BillToPayRegistration billToPayRegistration, int qtdMonthAdd, Account account, Dictionary<string, DateTime> nextMonthYearToRegister)
         {
             return new PaymentAdjustmentInput
             {
                 AccountType = Domain.Entities.Enums.AccountType.ContaAPagar,
                 Name = billToPayRegistration.Name,
-                ConsideredPaid = account.ConsiderPaid.Value,
+                ConsideredPaid = account.ConsiderPaid ?? false,
                 RegistrationType = billToPayRegistration.RegistrationType,
                 QuantityMonthsAdd = qtdMonthAdd,
                 Frequence = billToPayRegistration.Frequence,
