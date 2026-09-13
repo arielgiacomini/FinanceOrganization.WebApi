@@ -20,6 +20,7 @@ namespace WebAPI.Security.QuickCaptureKey
             (new PathString("/v1/account/search-all"), HttpMethods.Get),
             (new PathString("/v1/category/search"), HttpMethods.Get),
             (new PathString("/v1/bills-to-pay/search"), HttpMethods.Post),
+            (new PathString("/v1/wallet/search"), HttpMethods.Post),
         };
 
         public static bool IsAllowedEndpoint(HttpRequest request)
