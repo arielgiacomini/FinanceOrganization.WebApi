@@ -6,8 +6,8 @@ namespace WebAPI.Security.QuickCaptureKey
     /// Config central do bypass de autenticação da tela de Lançamento Rápido: nome do header, nome
     /// do scheme, e a allowlist fechada de rota+verbo onde a chave tem efeito. Único lugar que
     /// precisa mudar para adicionar/remover uma rota do escopo do bypass — nunca liberar aqui rotas
-    /// de edição/exclusão/pagamento, só o que a tela de Lançamento Rápido precisa (criar + os dois
-    /// dropdowns de conta/categoria).
+    /// de edição/exclusão/pagamento, só o que a tela de Lançamento Rápido precisa (criar + os
+    /// dropdowns de conta/categoria + a busca de histórico, todas somente leitura ou o próprio cadastro).
     /// </summary>
     public static class QuickCaptureKeyDefaults
     {
@@ -19,6 +19,7 @@ namespace WebAPI.Security.QuickCaptureKey
             (new PathString("/v1/bills-to-pay/register"), HttpMethods.Post),
             (new PathString("/v1/account/search-all"), HttpMethods.Get),
             (new PathString("/v1/category/search"), HttpMethods.Get),
+            (new PathString("/v1/bills-to-pay/search"), HttpMethods.Post),
         };
 
         public static bool IsAllowedEndpoint(HttpRequest request)
