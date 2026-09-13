@@ -13,7 +13,7 @@ namespace WebAPI.Security
     {
         public Guid? UserId { get; private set; }
 
-        public CurrentUserService(IHttpContextAccessor httpContextAccessor)
+        public CurrentUserService(IHttpContextAccessor httpContextAccessor, Serilog.ILogger logger)
         {
             var user = httpContextAccessor.HttpContext?.User;
 
@@ -25,6 +25,14 @@ namespace WebAPI.Security
                 ?? user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             UserId = Guid.TryParse(subjectClaim, out var userId) ? userId : null;
+
+            // Diagnóstico temporário (investigação da chave de Lançamento Rápido devolvendo dado vazio):
+            // esse é o único ponto de verdade da identidade em toda a request, então logar aqui mostra
+            // exatamente o que qualquer fluxo de autenticação (Bearer, chave, etc.) resolveu.
+            logger.Information(
+                "[CurrentUserService] - UserId resolvido: {UserId} (claim sub bruta: {SubjectClaim}, autenticado: {IsAuthenticated}, scheme: {AuthType}, path: {Path})",
+                UserId, subjectClaim, user?.Identity?.IsAuthenticated, user?.Identity?.AuthenticationType,
+                httpContextAccessor.HttpContext?.Request?.Path);
         }
 
         /// <summary>

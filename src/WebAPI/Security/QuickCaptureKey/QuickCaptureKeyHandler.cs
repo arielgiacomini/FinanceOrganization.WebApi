@@ -20,16 +20,23 @@ namespace WebAPI.Security.QuickCaptureKey
     public class QuickCaptureKeyHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
         private readonly IUserRepository _userRepository;
+        private readonly Serilog.ILogger _appLogger;
 
         public QuickCaptureKeyHandler(
             IOptionsMonitor<AuthenticationSchemeOptions> options,
             ILoggerFactory logger,
             UrlEncoder encoder,
             ISystemClock clock,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            Serilog.ILogger appLogger)
             : base(options, logger, encoder, clock)
         {
             _userRepository = userRepository;
+            // Logger da base (ILoggerFactory/Microsoft.Extensions.Logging) vai pro pipeline de logging
+            // padrão do host, não pro arquivo Serilog que o resto do app usa (não há UseSerilog() aqui) —
+            // por isso este handler loga com o mesmo Serilog.ILogger singleton usado em todo o resto do
+            // app, senão os logs deste handler ficam invisíveis no arquivo de log de produção.
+            _appLogger = appLogger;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -43,6 +50,10 @@ namespace WebAPI.Security.QuickCaptureKey
 
             if (string.IsNullOrWhiteSpace(key) || !QuickCaptureKeyDefaults.IsAllowedEndpoint(Request))
             {
+                _appLogger.Warning(
+                    "[QuickCaptureKeyHandler] - Header presente mas ignorado (chave vazia ou rota fora da allowlist). Rota: {Method} {Path}",
+                    Request.Method, Request.Path);
+
                 return AuthenticateResult.NoResult();
             }
 
@@ -51,14 +62,16 @@ namespace WebAPI.Security.QuickCaptureKey
 
             if (user is null)
             {
-                Logger.LogWarning("[QuickCaptureKeyHandler] - Chave de Lançamento Rápido inválida recebida para {Method} {Path}", Request.Method, Request.Path);
+                _appLogger.Warning(
+                    "[QuickCaptureKeyHandler] - Chave de Lançamento Rápido inválida recebida para {Method} {Path}. Hash: {Hash}",
+                    Request.Method, Request.Path, hash);
 
                 return AuthenticateResult.Fail("Chave de Lançamento Rápido inválida.");
             }
 
-            Logger.LogInformation(
-                "[QuickCaptureKeyHandler] - Autenticado via chave de Lançamento Rápido. UserId: {UserId}, Email: {Email}, Rota: {Method} {Path}",
-                user.Id, user.Email, Request.Method, Request.Path);
+            _appLogger.Information(
+                "[QuickCaptureKeyHandler] - Autenticado via chave de Lançamento Rápido. UserId: {UserId}, Email: {Email}, Rota: {Method} {Path}, Hash: {Hash}",
+                user.Id, user.Email, Request.Method, Request.Path, hash);
 
             var claims = new[]
             {
